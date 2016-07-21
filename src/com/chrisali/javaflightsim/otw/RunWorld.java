@@ -50,15 +50,12 @@ public class RunWorld implements Runnable, FlightDataListener {
 	private Loader loader;
 	private MasterRenderer masterRenderer;
 	private List<Light> lights;
-	private Map<DisplayOptions, Integer> displayOptions;
 	
 	private SimulationController controller;
 	
 	// Sound Fields
-	private Map<AudioOptions, Float> audioOptions;
 	private Map<SoundCategory, Double> soundValues = new EnumMap<>(SoundCategory.class);
 	private boolean recordPrev = true; // Used in FlightDataListener to record soundValues data to PREV_STEP_* enums
-	private AircraftBuilder ab;
 	
 	// Collections for in-game objects
 	private TerrainCollection terrainCollection;
@@ -79,17 +76,9 @@ public class RunWorld implements Runnable, FlightDataListener {
 	 * {@link AircraftBuilder} to determine if multiple engines in aircraft. If {@link SimulationController}
 	 * object specified, display will embed itself within {@link SimulationWindow} in {@link MainFrame} 
 	 * 
-	 * @param displayOptions
-	 * @param audioOptions
-	 * @param ab
+	 * @param controller
 	 */
-	public RunWorld(Map<DisplayOptions, Integer> displayOptions, 
-					Map<AudioOptions, Float> audioOptions, 
-					AircraftBuilder ab,
-					SimulationController controller) {
-		this.displayOptions = displayOptions;
-		this.audioOptions = audioOptions;
-		this.ab = ab;
+	public RunWorld(SimulationController controller) {
 		this.controller = controller;
 	}	
 	
@@ -98,14 +87,11 @@ public class RunWorld implements Runnable, FlightDataListener {
 		
 		//=================================== Set Up ==========================================================
 		
-		// Initializes display window
-		if (controller != null)
-			DisplayManager.createDisplay(controller.getMainFrame().getSimulationWindow().getOutTheWindowCanvas());
+		// Initializes display window depending on presence of SimulationController object
+		if (controller.getMainFrame() != null)
+			DisplayManager.createDisplay(controller.getMainFrame().getSimulationWindow());
 		else
 			DisplayManager.createDisplay();
-			
-		DisplayManager.setHeight(displayOptions.get(DisplayOptions.DISPLAY_HEIGHT));
-		DisplayManager.setWidth(displayOptions.get(DisplayOptions.DISPLAY_WIDTH));
 		
 		loader = new Loader();
 		
@@ -140,7 +126,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 			ParticleMaster.update(camera);
 			
 			//--------- Audio--------------------
-			SoundCollection.update(soundValues, ab);
+			SoundCollection.update(soundValues, controller.getAircraftBuilder());
 			
 			//----------- UI --------------------
 			//text.setTextString(String.valueOf(ownship.getPosition().y));
@@ -222,7 +208,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 		
 		//==================================== Audio =========================================================
 		
-		SoundCollection.initializeSounds(ab, audioOptions);
+		SoundCollection.initializeSounds(controller);
 	}
 	
 	/**

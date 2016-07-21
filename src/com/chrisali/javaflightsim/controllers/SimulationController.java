@@ -96,6 +96,8 @@ public class SimulationController {
 		initialConditions = IntegrationSetup.gatherInitialConditions("InitialConditions");
 		integratorConfig = IntegrationSetup.gatherIntegratorConfig("IntegratorConfig");
 		initialControls = IntegrationSetup.gatherInitialControls("InitialControls");
+		
+		ab = new AircraftBuilder();
 	}
 	
 	//=============================== Configuration ===========================================================
@@ -131,9 +133,7 @@ public class SimulationController {
 		displayOptions = newDisplayOptions;
 		audioOptions = newAudioOptions;
 		
-		if (ab != null)
-			FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "SimulationSetup", simulationOptions, ab.getAircraft().getName());
-		
+		FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "SimulationSetup", simulationOptions, ab.getAircraft().getName());
 		FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "DisplaySetup", newDisplayOptions);
 		FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "AudioSetup", newAudioOptions);
 	}
@@ -252,7 +252,7 @@ public class SimulationController {
 		if (simulationOptions.contains(Options.ANALYSIS_MODE)) {
 			plotSimulation();
 		} else {
-			outTheWindow = new RunWorld(displayOptions, audioOptions, ab, this);
+			outTheWindow = new RunWorld(this);
 			
 			environmentData = new EnvironmentData(outTheWindow);
 			environmentData.addEnvironmentDataListener(runSim);
@@ -273,7 +273,7 @@ public class SimulationController {
 	}
 	
 	/**
-	 * Stops simulation and flight data (if running) threads, and closes the raw data console window
+	 * Stops simulation, data transfer threads (if running), and closes the raw data console window
 	 */
 	public void stopSimulation() {
 		if (runSim != null && Integrate6DOFEquations.isRunning() && simulationThread != null && simulationThread.isAlive())
@@ -283,9 +283,11 @@ public class SimulationController {
 		if (consoleTablePanel != null && consoleTablePanel.isVisible())
 			consoleTablePanel.setVisible(false);
 		if (outTheWindowThread != null && outTheWindowThread.isAlive()) {
-			RunWorld.requestClose();
+			//RunWorld.requestClose();
 			EnvironmentData.setRunning(false);
 		}
+		// Clean up any data from previous run
+		System.gc();
 	}
 	
 	//=============================== Plotting =============================================================
@@ -367,5 +369,9 @@ public class SimulationController {
 	 */
 	public MainFrame getMainFrame() {
 		return mainFrame;
+	}
+	
+	public Thread getOTWThread() {
+		return outTheWindowThread;
 	}
 }

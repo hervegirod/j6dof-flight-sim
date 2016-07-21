@@ -25,20 +25,24 @@ public class DisplayManager {
 	private static float delta;
 	
 	/**
-	 * Commands the creation of the OpenGL display; {@link Canvas} object
-	 * reference passed from {@link MainFrame} sets the parent object,
-	 * allowing the display to be embedded within the {@link SimulationWindow}
+	 * Commands the creation of the OpenGL display; {@link SimulationWindow} object
+	 * reference passed from {@link MainFrame} used to set the {@link Canvas} parent object,
+	 * allowing the display to be embedded within the simulation window
 	 * 
 	 * @param canvas
 	 */
-	public static void createDisplay(Canvas canvas) {
+	public static void createDisplay(SimulationWindow simulationWindow) {
 		try {
 			ContextAttribs attribs = new ContextAttribs(3,3)
 										.withForwardCompatible(true)
 										.withProfileCore(true);
+			
+			Canvas canvas = simulationWindow.getOutTheWindowCanvas();
+			height = canvas.getHeight()+10; // Slight padding to prevent any gaps at top of window
+			width = canvas.getWidth();
+					
 			Display.setParent(canvas);
 			Display.setDisplayMode(new DisplayMode(width, height));
-			Display.setTitle("Java Flight Simulator");
 			Display.create(new PixelFormat().withSamples(aaSamples).withDepthBits(24),attribs);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -86,9 +90,17 @@ public class DisplayManager {
 	private static long getCurrentTime() {
 		return Sys.getTime()*1000/Sys.getTimerResolution();
 	}
+	
+	public static int getHeight() {
+		return height;
+	}
 
 	public static void setHeight(int height) {
 		DisplayManager.height = height;
+	}
+
+	public static int getWidth() {
+		return width;
 	}
 
 	public static void setWidth(int width) {

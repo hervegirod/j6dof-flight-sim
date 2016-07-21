@@ -31,12 +31,12 @@ public class SimulationWindow extends JFrame {
 		
 		//============================ Panels and Grid Bag Setup =================================
 		
-		//	-----------
-		//  |	OTW	  |
-		//  |         |
-		//  |_________|
-		//  | |Panel| |
-		//	-----------
+		//	--------------------------------------
+		//  |	           OTW					 |
+		//  |        							 |
+		//  |____________________________________|
+		//  | Padding |InstrumentPanel| Padding  |
+		//	--------------------------------------
 		
 		JPanel instrumentPanelPanel = new JPanel();
 		
@@ -53,20 +53,55 @@ public class SimulationWindow extends JFrame {
 		
 		//---------------------- Out the Window Canvas -------------------------------------------
 		
-		outTheWindowCanvas = new Canvas();
+		outTheWindowCanvas = new Canvas() {
+
+			private static final long serialVersionUID = 6438710048789252704L;
+
+			@Override
+			public void addNotify() {
+				super.addNotify();
+			}
+
+			@Override
+			public void removeNotify() {
+				super.removeNotify();
+				try {
+					controller.getOTWThread().join();
+					RunWorld.requestClose();
+				} catch (InterruptedException e) {}
+			}
+			
+		};
 		
 		add(outTheWindowCanvas, gc);
 		
 		//------------------------- Instrument Panel ---------------------------------------------
+		
+		gc.gridy      = 1;
+
+		add(instrumentPanelPanel,gc);
 	
 		instrumentPanel = new InstrumentPanel();
+		JPanel padding = new JPanel();
+		padding.setSize(instrumentPanel.getSize());
+		padding.setMinimumSize(instrumentPanel.getSize());
 		
 		gc.gridwidth  = 3;
-		gc.gridy      = 1;
 		gc.gridx      = 1;
-		gc.weighty 	  = 10;
+		gc.weighty 	  = 1;
+		gc.weightx 	  = 5;
 		
-		add(instrumentPanelPanel,gc);
+		instrumentPanelPanel.add(instrumentPanel, gc);
+		
+		gc.gridx      = 0;
+		gc.weightx    = 70;
+		
+		instrumentPanelPanel.add(padding, gc);
+		
+		gc.gridx      = 2;
+		
+		instrumentPanelPanel.add(padding, gc);
+		
 	
 		//========================== Window Settings =============================================
 
@@ -82,6 +117,7 @@ public class SimulationWindow extends JFrame {
 											 controller.getDisplayOptions().get(DisplayOptions.DISPLAY_HEIGHT));
 		setSize(windowSize.width, windowSize.height);
 		setMinimumSize(windowSize);
+		setResizable(false);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		
 	}
