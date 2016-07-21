@@ -1,5 +1,7 @@
 package com.chrisali.javaflightsim.tests;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.EnumSet;
 
 import javax.swing.JFrame;
@@ -21,7 +23,7 @@ public class InstrumentPanelTest {
 	}
 
 	private static void runApp() {
-		Integrate6DOFEquations runSim = new Integrate6DOFEquations(new AircraftBuilder("LookupNavion"),
+		Integrate6DOFEquations runSim = new Integrate6DOFEquations(new AircraftBuilder("Navion"),
 																   EnumSet.of(Options.UNLIMITED_FLIGHT, Options.USE_CH_CONTROLS));
 		FlightData flightData = new FlightData(runSim);
 
@@ -30,7 +32,14 @@ public class InstrumentPanelTest {
 		
 		InstrumentPanel panel = new InstrumentPanel();
 		flightData.addFlightDataListener(panel);
-		panel.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		panel.setVisible(true);
+		
+		JFrame panelWindow = new JFrame("Instrument Panel Test");
+		panelWindow.setLayout(new BorderLayout());
+		panelWindow.add(panel, BorderLayout.CENTER);
+		
+		panelWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		panelWindow.setVisible(true);
+		panelWindow.setSize(810, 500);
+		panelWindow.setMinimumSize(new Dimension(810, 500));
 	}
 }

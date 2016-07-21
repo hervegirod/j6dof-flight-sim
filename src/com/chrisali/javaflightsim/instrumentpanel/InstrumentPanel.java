@@ -4,13 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
@@ -35,7 +32,7 @@ import eu.hansolo.steelseries.tools.LedColor;
  *  gauge framework. Instruments are arranged in a typical "six-pack" layout common in general aviation aircraft, and
  *  make use of flight data gathered by {@link FlightData} from {@link Integrate6DOFEquations}
  */
-public class InstrumentPanel extends JFrame implements FlightDataListener {
+public class InstrumentPanel extends JPanel implements FlightDataListener {
 
 	private static final long serialVersionUID = -3900476226233156470L;
 	
@@ -49,14 +46,12 @@ public class InstrumentPanel extends JFrame implements FlightDataListener {
 	private JLabel			   flapsIndicator;
 	private Led				   gearIndicator;
 	
-	private ClosePanelListener closePanelListener;
-	
 	/**
 	 * Creates a simple instrument panel with a {@link FlightDataListener} to set the gauge values from
 	 * flight data received by the simulation in {@link FlightData}
 	 */
 	public InstrumentPanel() {
-		super("Panel");
+		super();
 		
 		//============================ Borders and Grid Bag Setup ==============================
 		
@@ -218,26 +213,8 @@ public class InstrumentPanel extends JFrame implements FlightDataListener {
 		
 		//========================== Window Settings =============================================
 		
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				if (closePanelListener != null)
-					closePanelListener.panelWindowClosed();
-			}
-		});
-		
 		setSize(810, 500);
 		setMinimumSize(new Dimension(810, 500));
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-	}
-	
-	/**
-	 * Sets a listener to monitor for a window closing event so that the simulation can stop
-	 * 
-	 * @param closePanelListener
-	 */
-	public void setClosePanelListener(ClosePanelListener closePanelListener) {
-		this.closePanelListener = closePanelListener;
 	}
 
 	/**

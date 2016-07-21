@@ -10,9 +10,12 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 import com.chrisali.javaflightsim.datatransfer.FlightDataType;
+import com.chrisali.javaflightsim.menus.MainFrame;
+import com.chrisali.javaflightsim.menus.SimulationWindow;
 import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.otw.audio.AudioMaster;
@@ -49,6 +52,8 @@ public class RunWorld implements Runnable, FlightDataListener {
 	private List<Light> lights;
 	private Map<DisplayOptions, Integer> displayOptions;
 	
+	private SimulationController controller;
+	
 	// Sound Fields
 	private Map<AudioOptions, Float> audioOptions;
 	private Map<SoundCategory, Double> soundValues = new EnumMap<>(SoundCategory.class);
@@ -71,17 +76,21 @@ public class RunWorld implements Runnable, FlightDataListener {
 	
 	/**
 	 * Sets up OTW display with {@link DisplayOptions} and {@link AudioOptions}, as well as a link to
-	 * {@link AircraftBuilder} to determine if multiple engines in aircraft
+	 * {@link AircraftBuilder} to determine if multiple engines in aircraft. If {@link SimulationController}
+	 * object specified, display will embed itself within {@link SimulationWindow} in {@link MainFrame} 
 	 * 
 	 * @param displayOptions
 	 * @param audioOptions
 	 * @param ab
 	 */
 	public RunWorld(Map<DisplayOptions, Integer> displayOptions, 
-					Map<AudioOptions, Float> audioOptions, AircraftBuilder ab) {
+					Map<AudioOptions, Float> audioOptions, 
+					AircraftBuilder ab,
+					SimulationController controller) {
 		this.displayOptions = displayOptions;
 		this.audioOptions = audioOptions;
 		this.ab = ab;
+		this.controller = controller;
 	}	
 	
 	@Override
@@ -90,7 +99,11 @@ public class RunWorld implements Runnable, FlightDataListener {
 		//=================================== Set Up ==========================================================
 		
 		// Initializes display window
-		DisplayManager.createDisplay();
+		if (controller != null)
+			DisplayManager.createDisplay(controller.getMainFrame().getSimulationWindow().getOutTheWindowCanvas());
+		else
+			DisplayManager.createDisplay();
+			
 		DisplayManager.setHeight(displayOptions.get(DisplayOptions.DISPLAY_HEIGHT));
 		DisplayManager.setWidth(displayOptions.get(DisplayOptions.DISPLAY_WIDTH));
 		
@@ -117,7 +130,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 
 		//=============================== Main Loop ==========================================================
 
-		while (!Display.isCloseRequested()) {
+		while (!Display.isCloseRequested() && running) {
 			
 			//--------- Movement ----------------
 			camera.move(ownshipPosition, ownshipRotation.x, ownshipRotation.y, ownshipRotation.z);
@@ -232,6 +245,11 @@ public class RunWorld implements Runnable, FlightDataListener {
 	 * @return If out the window display is running
 	 */
 	public static synchronized boolean isRunning() {return running;}
+	
+	/**
+	 * Sets running boolean in {@link RunWorld} to false to begin the display clean up process
+	 */
+	public static void requestClose() {RunWorld.running = false;}
 
 	@Override
 	public void onFlightDataReceived(FlightData flightData) {

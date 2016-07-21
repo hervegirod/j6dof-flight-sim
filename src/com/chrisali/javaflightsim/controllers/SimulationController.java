@@ -1,5 +1,6 @@
 package com.chrisali.javaflightsim.controllers;
 
+import java.awt.Canvas;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -13,10 +14,11 @@ import java.util.Set;
 import com.chrisali.javaflightsim.consoletable.ConsoleTablePanel;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
-import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
+import com.chrisali.javaflightsim.menus.MainFrame;
 import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.otw.RunWorld;
+import com.chrisali.javaflightsim.otw.renderengine.DisplayManager;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
@@ -66,6 +68,9 @@ public class SimulationController {
 	private AircraftBuilder ab;
 	private EnumMap<MassProperties, Double> massProperties;
 	
+	// Menus and Integrated Simulation Window
+	private MainFrame mainFrame;
+	
 	// Plotting
 	private PlotWindow plotWindow;
 	private Set<String> plotCategories = new HashSet<>(Arrays.asList("Controls", "Instruments", "Position", "Rates", "Miscellaneous"));
@@ -84,9 +89,9 @@ public class SimulationController {
 	 * to be edited through the menu options in the view
 	 */
 	public SimulationController() {
-		simulationOptions = EnumSet.noneOf(Options.class);
-		displayOptions = new EnumMap<DisplayOptions, Integer>(DisplayOptions.class);
-		audioOptions = new EnumMap<AudioOptions, Float>(AudioOptions.class);
+		simulationOptions = FileUtilities.parseSimulationSetup();
+		displayOptions = FileUtilities.parseDisplaySetup();
+		audioOptions = FileUtilities.parseAudioSetup();
 		
 		initialConditions = IntegrationSetup.gatherInitialConditions("InitialConditions");
 		integratorConfig = IntegrationSetup.gatherIntegratorConfig("IntegratorConfig");
@@ -128,8 +133,9 @@ public class SimulationController {
 		
 		if (ab != null)
 			FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "SimulationSetup", simulationOptions, ab.getAircraft().getName());
-			FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "DisplaySetup", newDisplayOptions);
-			FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "AudioSetup", newAudioOptions);
+		
+		FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "DisplaySetup", newDisplayOptions);
+		FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "AudioSetup", newAudioOptions);
 	}
 	
 	/**
@@ -233,10 +239,8 @@ public class SimulationController {
 	 * Initializes, trims and starts the simulation (and flight and environment data, if selected) threads.
 	 * Depending on options specified, a console panel, plot window, instrument panel
 	 * and out the window display window will also be initialized and opened 
-	 * 
-	 * @param panel
 	 */
-	public void startSimulation(InstrumentPanel panel) {
+	public void startSimulation() {
 		Trimming.trimSim(ab, false);
 		runSim = new Integrate6DOFEquations(ab, simulationOptions);
 		
@@ -248,7 +252,7 @@ public class SimulationController {
 		if (simulationOptions.contains(Options.ANALYSIS_MODE)) {
 			plotSimulation();
 		} else {
-			outTheWindow = new RunWorld(displayOptions, audioOptions, ab);
+			outTheWindow = new RunWorld(displayOptions, audioOptions, ab, this);
 			
 			environmentData = new EnvironmentData(outTheWindow);
 			environmentData.addEnvironmentDataListener(runSim);
@@ -257,7 +261,7 @@ public class SimulationController {
 			environmentDataThread.start();
 			
 			flightData = new FlightData(runSim);
-			flightData.addFlightDataListener(panel);
+			flightData.addFlightDataListener(mainFrame.getInstrumentPanel());
 			flightData.addFlightDataListener(outTheWindow);
 			
 			flightDataThread = new Thread(flightData);
@@ -278,8 +282,10 @@ public class SimulationController {
 			FlightData.setRunning(false);
 		if (consoleTablePanel != null && consoleTablePanel.isVisible())
 			consoleTablePanel.setVisible(false);
-		if (outTheWindowThread != null && outTheWindowThread.isAlive())
+		if (outTheWindowThread != null && outTheWindowThread.isAlive()) {
+			RunWorld.requestClose();
 			EnvironmentData.setRunning(false);
+		}
 	}
 	
 	//=============================== Plotting =============================================================
@@ -342,5 +348,24 @@ public class SimulationController {
 
 	public static String getResourcesPath() {
 		return RESOURCES_PATH;
+	}
+	
+	//========================== Menus Main Frame =========================================================
+	
+	/**
+	 * Sets {@link MainFrame} reference for {@link RunWorld}, which needs it to 
+	 * set the parent {@link Canvas} in {@link DisplayManager}
+	 * 
+	 * @param mainFrame
+	 */
+	public void setMainFrame(MainFrame mainFrame) {
+		this.mainFrame = mainFrame;
+	}
+	
+	/**
+	 * @return reference to {@link MainFrame} object in {@link SimulationController}
+	 */
+	public MainFrame getMainFrame() {
+		return mainFrame;
 	}
 }

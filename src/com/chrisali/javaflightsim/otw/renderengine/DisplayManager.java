@@ -1,5 +1,7 @@
 package com.chrisali.javaflightsim.otw.renderengine;
 
+import java.awt.Canvas;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.ContextAttribs;
@@ -7,6 +9,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
+
+import com.chrisali.javaflightsim.menus.MainFrame;
+import com.chrisali.javaflightsim.menus.SimulationWindow;
 
 public class DisplayManager {
 	private static final int FPS_CAP = 60;
@@ -19,12 +24,38 @@ public class DisplayManager {
 	private static long lastFrameTime;
 	private static float delta;
 	
+	/**
+	 * Commands the creation of the OpenGL display; {@link Canvas} object
+	 * reference passed from {@link MainFrame} sets the parent object,
+	 * allowing the display to be embedded within the {@link SimulationWindow}
+	 * 
+	 * @param canvas
+	 */
+	public static void createDisplay(Canvas canvas) {
+		try {
+			ContextAttribs attribs = new ContextAttribs(3,3)
+										.withForwardCompatible(true)
+										.withProfileCore(true);
+			Display.setParent(canvas);
+			Display.setDisplayMode(new DisplayMode(width, height));
+			Display.setTitle("Java Flight Simulator");
+			Display.create(new PixelFormat().withSamples(aaSamples).withDepthBits(24),attribs);
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+		
+		GL11.glViewport(0, 0, width, height);
+		lastFrameTime = getCurrentTime();
+	}
+	
+	/**
+	 * Commands the creation of the OpenGL display in its own window
+	 */
 	public static void createDisplay() {
 		try {
 			ContextAttribs attribs = new ContextAttribs(3,3)
 										.withForwardCompatible(true)
 										.withProfileCore(true);
-			
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setTitle("Java Flight Simulator");
 			Display.create(new PixelFormat().withSamples(aaSamples).withDepthBits(24),attribs);
