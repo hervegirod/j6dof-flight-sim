@@ -47,10 +47,10 @@ public class SimulationWindow extends JFrame {
 		//============================ Panels and Grid Bag Setup =================================
 		
 		//	--------------------------------------
-		//  |	           OTW					 |
-		//  |        							 |
+		//  |	           OTW					 | <- outTheWindowCanvas
+		//  |        							 |  
 		//  |____________________________________|
-		//  | Padding |InstrumentPanel| Padding  |
+		//  | Padding |InstrumentPanel| Padding  | <- instrumentPanelPanel
 		//	--------------------------------------
 		
 		JPanel instrumentPanelPanel = new JPanel();
@@ -100,8 +100,8 @@ public class SimulationWindow extends JFrame {
 		
 		gc.gridwidth  = 3;
 		gc.gridx      = 1;
-		gc.weighty 	  = 1;
-		gc.weightx 	  = 5;
+		gc.weighty 	  = 10;
+		gc.weightx 	  = 20;
 		
 		instrumentPanelPanel.add(instrumentPanel, gc);
 		
@@ -130,10 +130,8 @@ public class SimulationWindow extends JFrame {
 		Dimension windowSize = new Dimension(controller.getDisplayOptions().get(DisplayOptions.DISPLAY_WIDTH), 
 											 controller.getDisplayOptions().get(DisplayOptions.DISPLAY_HEIGHT));
 		setSize(windowSize.width, windowSize.height);
-		setMinimumSize(windowSize);
 		setResizable(false);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		
 	}
 	
 	/**

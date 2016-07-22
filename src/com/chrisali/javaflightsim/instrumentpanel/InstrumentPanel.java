@@ -52,14 +52,24 @@ public class InstrumentPanel extends JPanel implements FlightDataListener {
 	public InstrumentPanel() {
 		super();
 		
+		//====================== <- Glareshield
+		//| [  ] [  ] [  ] [  ]| 
+		//| [  ] [  ] [  ]	   | <- Main Instruments
+		//|--------------------|
+		//|____________________| <- Aux Instruments
+		
 		//============================ Borders and Grid Bag Setup ==============================
 		
 		int margin = 5;
 		Border outerBorder = BorderFactory.createEmptyBorder(margin,margin,margin,margin);
 		Border innerBorder = BorderFactory.createEtchedBorder();
 
+		JPanel glareshield = new JPanel();
 		JPanel mainInstruments = new JPanel();
 		JPanel auxInstruments  = new JPanel();
+		
+		glareshield.setLayout(new GridBagLayout());
+		glareshield.setBackground(Color.BLACK);
 		
 		mainInstruments.setLayout(new GridBagLayout());
 		mainInstruments.setBackground(Color.DARK_GRAY);
@@ -73,12 +83,17 @@ public class InstrumentPanel extends JPanel implements FlightDataListener {
 		
 		gc.fill = GridBagConstraints.BOTH;
 		gc.gridy = 0;
-		gc.weighty = 100;
 		gc.weightx = 100;
+		gc.weighty = 5;
+		
+		add(glareshield, gc);
+		
+		gc.gridy = 1;
+		gc.weighty = 100;
 		
 		add(mainInstruments,gc);
 		
-		gc.gridy = 1;
+		gc.gridy = 2;
 		gc.weighty = 10;
 		
 		add(auxInstruments, gc);
@@ -86,6 +101,13 @@ public class InstrumentPanel extends JPanel implements FlightDataListener {
 		gc.weighty    = 100;
 		gc.gridwidth  = 2;
 		gc.gridheight = 2;
+		
+		//==================================== Glareshield ======================================
+		
+		gc.gridx      = 2;
+		gc.gridy      = 2;
+		
+		glareshield.add(new JLabel(" "), gc);
 		
 		//================================= Main Instruments ====================================
 		//------------------------------------ Altimeter ----------------------------------------
