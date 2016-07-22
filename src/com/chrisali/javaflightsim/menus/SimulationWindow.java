@@ -17,6 +17,15 @@ import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.otw.RunWorld;
 
+/**
+ * JPanel that integrates {@link InstrumentPanel} and the OpenGL OTW view from {@link RunWorld},
+ * producing a display similar to a traditional flight simulator program; uses addNotify() and removeNodity()
+ * stop OTW thread on this thread to destroy OpenGL display correctly when window is closed. The solution is shown here:
+ * <p>http://stackoverflow.com/questions/26199534/how-to-attach-opengl-display-to-a-jframe-and-dispose-of-it-properly</p>
+ * 
+ * @author Christopher Ali
+ *
+ */
 public class SimulationWindow extends JFrame {
 
 	private static final long serialVersionUID = 7290660958478331031L;
@@ -26,6 +35,12 @@ public class SimulationWindow extends JFrame {
 	
 	private ClosePanelListener closePanelListener;
 	
+	/**
+	 * Constructor for simulation window; takes {@link SimulationController} argument to gain access to
+	 * starting and stopping threads for {@link RunWorld} on this thread
+	 * 
+	 * @param controller
+	 */
 	public SimulationWindow(SimulationController controller) {
 		super("Java Flight Simulator");
 		
@@ -60,17 +75,14 @@ public class SimulationWindow extends JFrame {
 			@Override
 			public void addNotify() {
 				super.addNotify();
+				controller.startOTWThread();
 			}
 
 			@Override
 			public void removeNotify() {
+				controller.stopOTWThread();
 				super.removeNotify();
-				try {
-					controller.getOTWThread().join();
-					RunWorld.requestClose();
-				} catch (InterruptedException e) {}
-			}
-			
+			}	
 		};
 		
 		add(outTheWindowCanvas, gc);
@@ -108,8 +120,10 @@ public class SimulationWindow extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				if (closePanelListener != null)
+				if (closePanelListener != null) {
 					closePanelListener.panelWindowClosed();
+					dispose(); // calls removeNotify(), which gracefully stops OTW thread and OpenGL display
+				}
 			}
 		});
 		

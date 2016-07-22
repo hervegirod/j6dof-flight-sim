@@ -21,6 +21,8 @@ public class DisplayManager {
 	
 	private static int aaSamples = 0;
 	
+	private static int colorDepth = 24;
+	
 	private static long lastFrameTime;
 	private static float delta;
 	
@@ -43,7 +45,7 @@ public class DisplayManager {
 					
 			Display.setParent(canvas);
 			Display.setDisplayMode(new DisplayMode(width, height));
-			Display.create(new PixelFormat().withSamples(aaSamples).withDepthBits(24),attribs);
+			Display.create(new PixelFormat().withSamples(aaSamples).withDepthBits(colorDepth),attribs);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
@@ -62,7 +64,7 @@ public class DisplayManager {
 										.withProfileCore(true);
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setTitle("Java Flight Simulator");
-			Display.create(new PixelFormat().withSamples(aaSamples).withDepthBits(24),attribs);
+			Display.create(new PixelFormat().withSamples(aaSamples).withDepthBits(colorDepth),attribs);
 		} catch (LWJGLException e) {
 			e.printStackTrace();
 		}
@@ -110,4 +112,8 @@ public class DisplayManager {
 	public static void setAaSamples(int aaSamples) {
 		DisplayManager.aaSamples = aaSamples;
 	}
+
+	public static void setColorDepth(int colorDepth) {
+		DisplayManager.colorDepth = colorDepth;
 	}
+}

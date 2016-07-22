@@ -1,7 +1,6 @@
 package com.chrisali.javaflightsim.tests;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.util.EnumSet;
 
 import javax.swing.JFrame;
@@ -40,6 +39,6 @@ public class InstrumentPanelTest {
 		panelWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panelWindow.setVisible(true);
 		panelWindow.setSize(810, 500);
-		panelWindow.setMinimumSize(new Dimension(810, 500));
+		panelWindow.setResizable(false);
 	}
 }

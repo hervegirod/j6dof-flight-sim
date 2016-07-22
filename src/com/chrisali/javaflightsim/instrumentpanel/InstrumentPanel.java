@@ -1,7 +1,6 @@
 package com.chrisali.javaflightsim.instrumentpanel;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.text.DecimalFormat;
@@ -213,8 +212,7 @@ public class InstrumentPanel extends JPanel implements FlightDataListener {
 		
 		//========================== Window Settings =============================================
 		
-		setSize(810, 500);
-		setMinimumSize(new Dimension(810, 500));
+		setSize(648, 500);
 	}
 
 	/**

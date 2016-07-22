@@ -87,7 +87,8 @@ public class RunWorld implements Runnable, FlightDataListener {
 		
 		//=================================== Set Up ==========================================================
 		
-		// Initializes display window depending on presence of SimulationController object
+		// Initializes display window depending on presence of SimulationController's MainFrame object,
+		// set in RunJavaFlightSimulator
 		if (controller.getMainFrame() != null)
 			DisplayManager.createDisplay(controller.getMainFrame().getSimulationWindow());
 		else
@@ -126,7 +127,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 			ParticleMaster.update(camera);
 			
 			//--------- Audio--------------------
-			SoundCollection.update(soundValues, controller.getAircraftBuilder());
+			SoundCollection.update(soundValues, controller);
 			
 			//----------- UI --------------------
 			//text.setTextString(String.valueOf(ownship.getPosition().y));
@@ -235,7 +236,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 	/**
 	 * Sets running boolean in {@link RunWorld} to false to begin the display clean up process
 	 */
-	public static void requestClose() {RunWorld.running = false;}
+	public static synchronized void requestClose() {RunWorld.running = false;}
 
 	@Override
 	public void onFlightDataReceived(FlightData flightData) {

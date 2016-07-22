@@ -15,6 +15,7 @@ import com.chrisali.javaflightsim.consoletable.ConsoleTablePanel;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.menus.MainFrame;
+import com.chrisali.javaflightsim.menus.SimulationWindow;
 import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.otw.RunWorld;
@@ -237,8 +238,7 @@ public class SimulationController {
 	
 	/**
 	 * Initializes, trims and starts the simulation (and flight and environment data, if selected) threads.
-	 * Depending on options specified, a console panel, plot window, instrument panel
-	 * and out the window display window will also be initialized and opened 
+	 * Depending on options specified, a console panel and/or plot window will also be initialized and opened 
 	 */
 	public void startSimulation() {
 		Trimming.trimSim(ab, false);
@@ -267,8 +267,7 @@ public class SimulationController {
 			flightDataThread = new Thread(flightData);
 			flightDataThread.start();
 			
-			outTheWindowThread = new Thread(outTheWindow);
-			outTheWindowThread.start();
+			// outTheWindow
 		}
 	}
 	
@@ -282,12 +281,8 @@ public class SimulationController {
 			FlightData.setRunning(false);
 		if (consoleTablePanel != null && consoleTablePanel.isVisible())
 			consoleTablePanel.setVisible(false);
-		if (outTheWindowThread != null && outTheWindowThread.isAlive()) {
-			//RunWorld.requestClose();
+		if (outTheWindowThread != null && outTheWindowThread.isAlive())
 			EnvironmentData.setRunning(false);
-		}
-		// Clean up any data from previous run
-		System.gc();
 	}
 	
 	//=============================== Plotting =============================================================
@@ -352,7 +347,7 @@ public class SimulationController {
 		return RESOURCES_PATH;
 	}
 	
-	//========================== Menus Main Frame =========================================================
+	//========================== Main Frame Menus =========================================================
 	
 	/**
 	 * Sets {@link MainFrame} reference for {@link RunWorld}, which needs it to 
@@ -370,8 +365,28 @@ public class SimulationController {
 	public MainFrame getMainFrame() {
 		return mainFrame;
 	}
+
+	//=========================== OTW Threading ==========================================================
 	
-	public Thread getOTWThread() {
-		return outTheWindowThread;
+	/**
+	 * Initalizes and starts out the window thread; called from {@link SimulationWindow}'s addNotify() method
+	 * to allow OTW thread to start gracefully; uses the Stack Overflow solution shown here:
+	 * <p>http://stackoverflow.com/questions/26199534/how-to-attach-opengl-display-to-a-jframe-and-dispose-of-it-properly</p>
+	 */
+	public void startOTWThread() {
+		outTheWindowThread = new Thread(outTheWindow);
+		outTheWindowThread.start(); 
+	}
+	
+	/**
+	 * Stops out the window thread; called from {@link SimulationWindow}'s removeNotify() method
+	 * to allow OTW thread to stop gracefully; uses the Stack Overflow solution shown here:
+	 * <p>http://stackoverflow.com/questions/26199534/how-to-attach-opengl-display-to-a-jframe-and-dispose-of-it-properly</p>
+	 */
+	public void stopOTWThread() {
+		RunWorld.requestClose(); // sets running boolean in RunWorld to false to begin the clean up process
+		
+		try {outTheWindowThread.join();
+		} catch (InterruptedException e) {}
 	}
 }

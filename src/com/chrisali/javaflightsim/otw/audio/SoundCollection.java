@@ -171,14 +171,15 @@ public class SoundCollection {
 	/**
 	 * Wrapper method to call setRPM(), setControl(), setWind() and setStallHorn() at once;
 	 * uses an EnumMap of {@link SoundCategory} enums to set the double values retrieved by 
-	 * {@link FlightDataListener} in {@link RunWorld}
+	 * {@link FlightDataListener} in {@link RunWorld}. Uses {@link AircraftBuilder} from 
+	 * {@link SimulationController} argument to set RPM values
 	 * 
 	 * @param soundValues
-	 * @param ab
+	 * @param controller
 	 */
-	public static void update(Map<SoundCategory, Double> soundValues, AircraftBuilder ab) {
+	public static void update(Map<SoundCategory, Double> soundValues, SimulationController controller) {
 		if (!soundValues.isEmpty()) {
-			setRPM(ab, soundValues);
+			setRPM(controller.getAircraftBuilder(), soundValues);
 			setControl(SoundEvent.FLAPS, soundValues);
 			setControl(SoundEvent.GEAR, soundValues);
 			setWind(soundValues.get(SoundCategory.WIND));
