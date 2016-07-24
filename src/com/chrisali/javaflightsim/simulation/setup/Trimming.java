@@ -10,7 +10,7 @@ import com.chrisali.javaflightsim.simulation.aero.WingGeometry;
 import com.chrisali.javaflightsim.simulation.aircraft.Aircraft;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.enviroment.Environment;
 import com.chrisali.javaflightsim.simulation.enviroment.EnvironmentParameters;
 import com.chrisali.javaflightsim.simulation.propulsion.Engine;
@@ -29,7 +29,7 @@ import com.chrisali.javaflightsim.utilities.FileUtilities;
 public class Trimming {
 	
 	private static EnumMap<InitialConditions, Double> initialConditions;
-	private static EnumMap<FlightControls, Double> initialControls;
+	private static EnumMap<FlightControlType, Double> initialControls;
 	private static EnumMap<EnvironmentParameters, Double> environmentParams;
 	private static Aircraft aircraft;
 	private static Aerodynamics aero;
@@ -117,8 +117,8 @@ public class Trimming {
 			double CM_0 = (double) aircraft.getStabilityDerivative(StabilityDerivatives.CM_0);
 			
 			elevTrim = (CM_0 + (CM_alpha * alphaTrim)) / CM_d_elev;
-			elevTrim = elevTrim > FlightControls.ELEVATOR.getMaximum() ? FlightControls.ELEVATOR.getMaximum() : 
-					   elevTrim < FlightControls.ELEVATOR.getMinimum() ? FlightControls.ELEVATOR.getMinimum() : elevTrim;
+			elevTrim = elevTrim > FlightControlType.ELEVATOR.getMaximum() ? FlightControlType.ELEVATOR.getMaximum() : 
+					   elevTrim < FlightControlType.ELEVATOR.getMinimum() ? FlightControlType.ELEVATOR.getMinimum() : elevTrim;
 					   
 			counter++;
 					   
@@ -141,10 +141,10 @@ public class Trimming {
 				break;
 			}
 			
-			initialControls.put(FlightControls.THROTTLE_1, throttleTrim);
-			initialControls.put(FlightControls.THROTTLE_2, throttleTrim);
-			initialControls.put(FlightControls.THROTTLE_3, throttleTrim);
-			initialControls.put(FlightControls.THROTTLE_4, throttleTrim);
+			initialControls.put(FlightControlType.THROTTLE_1, throttleTrim);
+			initialControls.put(FlightControlType.THROTTLE_2, throttleTrim);
+			initialControls.put(FlightControlType.THROTTLE_3, throttleTrim);
+			initialControls.put(FlightControlType.THROTTLE_4, throttleTrim);
 			
 			// Get total thrust, equate it with drag of aircraft to find trim throttle
 			totalThrust = 0.0;
@@ -166,7 +166,7 @@ public class Trimming {
 		initialConditions.put(InitialConditions.INITTHETA, thetaTrim);
 		initialConditions.put(InitialConditions.INITW, wVelocityTrim);
 		
-		initialControls.put(FlightControls.ELEVATOR, -elevTrim);
+		initialControls.put(FlightControlType.ELEVATOR, -elevTrim);
 		
 		if (!testMode) {
 			FileUtilities.writeConfigFile(SimulationController.getSimConfigPath(), "InitialConditions", initialConditions);
@@ -187,11 +187,11 @@ public class Trimming {
 		
 		sb.append(InitialConditions.INITW.toString()).append(": ").append(initialConditions.get(InitialConditions.INITW)).append("\n\n");
 	
-		sb.append(FlightControls.ELEVATOR.toString()).append(": ").append(initialControls.get(FlightControls.ELEVATOR)).append("\n\n");
-		sb.append(FlightControls.THROTTLE_1.toString()).append(": ").append(initialControls.get(FlightControls.THROTTLE_1)).append("\n");
-		sb.append(FlightControls.THROTTLE_2.toString()).append(": ").append(initialControls.get(FlightControls.THROTTLE_2)).append("\n");
-		sb.append(FlightControls.THROTTLE_3.toString()).append(": ").append(initialControls.get(FlightControls.THROTTLE_3)).append("\n");
-		sb.append(FlightControls.THROTTLE_4.toString()).append(": ").append(initialControls.get(FlightControls.THROTTLE_4)).append("\n");
+		sb.append(FlightControlType.ELEVATOR.toString()).append(": ").append(initialControls.get(FlightControlType.ELEVATOR)).append("\n\n");
+		sb.append(FlightControlType.THROTTLE_1.toString()).append(": ").append(initialControls.get(FlightControlType.THROTTLE_1)).append("\n");
+		sb.append(FlightControlType.THROTTLE_2.toString()).append(": ").append(initialControls.get(FlightControlType.THROTTLE_2)).append("\n");
+		sb.append(FlightControlType.THROTTLE_3.toString()).append(": ").append(initialControls.get(FlightControlType.THROTTLE_3)).append("\n");
+		sb.append(FlightControlType.THROTTLE_4.toString()).append(": ").append(initialControls.get(FlightControlType.THROTTLE_4)).append("\n");
 		
 		return sb.toString();
 	}

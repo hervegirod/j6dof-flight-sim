@@ -18,7 +18,7 @@ import com.chrisali.javaflightsim.datatransfer.EnvironmentDataType;
 import com.chrisali.javaflightsim.simulation.aero.AccelAndMoments;
 import com.chrisali.javaflightsim.simulation.aircraft.Aircraft;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.AbstractController;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.CHControls;
@@ -74,7 +74,7 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	private double[] totalMoments     		= new double[3];
 	
 	// Simulation Controls (Joystick, Keyboard, etc.)
-	private EnumMap<FlightControls, Double> controls;
+	private EnumMap<FlightControlType, Double> controls;
 	private AbstractController hidController;
 	private Keyboard hidKeyboard;
 	
@@ -372,23 +372,23 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 			}
 			
 			// Controls
-			simOut.put(SimOuts.ELEVATOR,    controls.get(FlightControls.ELEVATOR));
-			simOut.put(SimOuts.AILERON, 	controls.get(FlightControls.AILERON));
-			simOut.put(SimOuts.RUDDER, 	 	controls.get(FlightControls.RUDDER));
-			simOut.put(SimOuts.THROTTLE_1, 	controls.get(FlightControls.THROTTLE_1));
-			simOut.put(SimOuts.THROTTLE_2, 	controls.get(FlightControls.THROTTLE_2));
-			simOut.put(SimOuts.THROTTLE_3, 	controls.get(FlightControls.THROTTLE_3));
-			simOut.put(SimOuts.THROTTLE_4, 	controls.get(FlightControls.THROTTLE_4));
-			simOut.put(SimOuts.PROPELLER_1, controls.get(FlightControls.PROPELLER_1));
-			simOut.put(SimOuts.PROPELLER_2, controls.get(FlightControls.PROPELLER_2));
-			simOut.put(SimOuts.PROPELLER_3, controls.get(FlightControls.PROPELLER_3));
-			simOut.put(SimOuts.PROPELLER_4, controls.get(FlightControls.PROPELLER_4));
-			simOut.put(SimOuts.MIXTURE_1, 	controls.get(FlightControls.MIXTURE_1));
-			simOut.put(SimOuts.MIXTURE_2, 	controls.get(FlightControls.MIXTURE_2));
-			simOut.put(SimOuts.MIXTURE_3, 	controls.get(FlightControls.MIXTURE_3));
-			simOut.put(SimOuts.MIXTURE_4, 	controls.get(FlightControls.MIXTURE_4));
-			simOut.put(SimOuts.FLAPS, 	 	controls.get(FlightControls.FLAPS));
-			simOut.put(SimOuts.GEAR, 	 	controls.get(FlightControls.GEAR));
+			simOut.put(SimOuts.ELEVATOR,    controls.get(FlightControlType.ELEVATOR));
+			simOut.put(SimOuts.AILERON, 	controls.get(FlightControlType.AILERON));
+			simOut.put(SimOuts.RUDDER, 	 	controls.get(FlightControlType.RUDDER));
+			simOut.put(SimOuts.THROTTLE_1, 	controls.get(FlightControlType.THROTTLE_1));
+			simOut.put(SimOuts.THROTTLE_2, 	controls.get(FlightControlType.THROTTLE_2));
+			simOut.put(SimOuts.THROTTLE_3, 	controls.get(FlightControlType.THROTTLE_3));
+			simOut.put(SimOuts.THROTTLE_4, 	controls.get(FlightControlType.THROTTLE_4));
+			simOut.put(SimOuts.PROPELLER_1, controls.get(FlightControlType.PROPELLER_1));
+			simOut.put(SimOuts.PROPELLER_2, controls.get(FlightControlType.PROPELLER_2));
+			simOut.put(SimOuts.PROPELLER_3, controls.get(FlightControlType.PROPELLER_3));
+			simOut.put(SimOuts.PROPELLER_4, controls.get(FlightControlType.PROPELLER_4));
+			simOut.put(SimOuts.MIXTURE_1, 	controls.get(FlightControlType.MIXTURE_1));
+			simOut.put(SimOuts.MIXTURE_2, 	controls.get(FlightControlType.MIXTURE_2));
+			simOut.put(SimOuts.MIXTURE_3, 	controls.get(FlightControlType.MIXTURE_3));
+			simOut.put(SimOuts.MIXTURE_4, 	controls.get(FlightControlType.MIXTURE_4));
+			simOut.put(SimOuts.FLAPS, 	 	controls.get(FlightControlType.FLAPS));
+			simOut.put(SimOuts.GEAR, 	 	controls.get(FlightControlType.GEAR));
 		}
 		
 		synchronized (logsOut) {

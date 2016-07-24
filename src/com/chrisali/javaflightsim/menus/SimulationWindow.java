@@ -95,7 +95,6 @@ public class SimulationWindow extends JFrame {
 	
 		instrumentPanel = new InstrumentPanel();
 		JPanel padding = new JPanel();
-		padding.setSize(instrumentPanel.getSize());
 		padding.setMinimumSize(instrumentPanel.getSize());
 		
 		gc.gridwidth  = 3;

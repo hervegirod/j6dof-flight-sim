@@ -9,7 +9,7 @@ import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
  * InitialControls text file in {@link IntegrationSetup} class. Minima and maxima are also defined in this class 
  * as constants to be used in HID controller classes that implement {@link AbstractController}
  */
-public enum FlightControls {
+public enum FlightControlType {
 	ELEVATOR    ("elevator", 		Math.toRadians(-25), Math.toRadians(15)), // "Minimum" is up elevator
 	AILERON		("aileron",  		Math.toRadians(-15), Math.toRadians(15)), // "Minimum" is left aileron up
 	RUDDER		("rudder",   		Math.toRadians(-15), Math.toRadians(15)), // "Minimum" is right rudder
@@ -34,7 +34,7 @@ public enum FlightControls {
 	private final double minimum;
 	private final double maximum;
 	
-	FlightControls(String control, double minimum, double maximum) {
+	FlightControlType(String control, double minimum, double maximum) {
 		this.control = control;
 		this.minimum = minimum;
 		this.maximum = maximum;

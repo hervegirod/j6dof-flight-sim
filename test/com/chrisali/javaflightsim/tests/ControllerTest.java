@@ -4,7 +4,7 @@ import java.util.EnumMap;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.AbstractController;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.CHControls;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
@@ -12,7 +12,7 @@ import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 public class ControllerTest implements Runnable {
 	@Override
 	public void run() {
-		EnumMap<FlightControls, Double> controls = IntegrationSetup.gatherInitialControls("InitialControls");
+		EnumMap<FlightControlType, Double> controls = IntegrationSetup.gatherInitialControls("InitialControls");
 		double[] integratorConfig 				 = ArrayUtils.toPrimitive(IntegrationSetup.gatherIntegratorConfig("IntegratorConfig").values()
 				   											 							  .toArray(new Double[3]));
 		AbstractController joystick 			 = new CHControls(controls);

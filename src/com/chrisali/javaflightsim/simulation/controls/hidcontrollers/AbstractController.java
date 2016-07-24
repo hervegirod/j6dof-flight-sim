@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 
@@ -28,17 +28,17 @@ public abstract class AbstractController {
 	
 	protected abstract void searchForControllers();
 	
-	protected abstract EnumMap<FlightControls, Double> calculateControllerValues(EnumMap<FlightControls, Double> controls);
+	protected abstract EnumMap<FlightControlType, Double> calculateControllerValues(EnumMap<FlightControlType, Double> controls);
 	
 	/**
-	 *  Uses maximum and minimum values defined in {@link FlightControls} to convert normalized 
+	 *  Uses maximum and minimum values defined in {@link FlightControlType} to convert normalized 
 	 *  joystick axis value to actual control deflection 
 	 *  
 	 * @param controlType
 	 * @param axisValue
 	 * @return Actual control deflection
 	 */
-	protected double calculateControlDeflection(FlightControls controlType, double axisValue) {
+	protected double calculateControlDeflection(FlightControlType controlType, double axisValue) {
 		// Calculate positive and negative slope
 		// (elevator has different values for positive/negative max)
 		if (axisValue <= 0) 
@@ -65,7 +65,7 @@ public abstract class AbstractController {
 	 * @param controls
 	 * @return flightControls EnumMap limited by {@link FlightControlsUtilities#limitControls(EnumMap)}
 	 */
-	public EnumMap<FlightControls, Double> updateFlightControls(EnumMap<FlightControls, Double> controls) {		
+	public EnumMap<FlightControlType, Double> updateFlightControls(EnumMap<FlightControlType, Double> controls) {		
 		return FlightControlsUtilities.limitControls(calculateControllerValues(controls));
 	}
 	

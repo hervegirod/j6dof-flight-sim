@@ -23,7 +23,7 @@ import com.chrisali.javaflightsim.otw.renderengine.DisplayManager;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.integration.SimOuts;
 import com.chrisali.javaflightsim.simulation.setup.InitialConditions;
@@ -57,7 +57,7 @@ public class SimulationController {
 	private EnumSet<Options> simulationOptions;
 	private EnumMap<InitialConditions, Double> initialConditions;
 	private EnumMap<IntegratorConfig, Double> integratorConfig;
-	private EnumMap<FlightControls, Double> initialControls; 
+	private EnumMap<FlightControlType, Double> initialControls; 
 	
 	// Simulation
 	private Integrate6DOFEquations runSim;

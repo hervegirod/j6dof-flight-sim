@@ -5,7 +5,7 @@ import java.util.EnumMap;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.enviroment.EnvironmentParameters;
 
 /**
@@ -49,7 +49,7 @@ public abstract class Engine {
 	 * @param environmentParameters
 	 * @param windParameters
 	 */
-	public abstract void updateEngineState(EnumMap<FlightControls, Double> controls,				
+	public abstract void updateEngineState(EnumMap<FlightControlType, Double> controls,				
 										   EnumMap<EnvironmentParameters, Double> environmentParameters,
 										   double[] windParameters);
 	

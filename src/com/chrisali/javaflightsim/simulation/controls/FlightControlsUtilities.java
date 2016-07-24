@@ -13,7 +13,7 @@ public class FlightControlsUtilities {
 	/**
 	 * Generates a control doublet in the positive and then negative direction, returning to trim value. The start
 	 * time defines when the double should start, the duration indicates how long the control is held in that direction,
-	 * and the amplitude the amount of deflection in one direction. controlInput uses {@link FlightControls} to select
+	 * and the amplitude the amount of deflection in one direction. controlInput uses {@link FlightControlType} to select
 	 * the desired control to use as a doublet 
 	 * 
 	 * @param controls
@@ -24,12 +24,12 @@ public class FlightControlsUtilities {
 	 * @param controlInput
 	 * @return flightControls EnumMap 
 	 */
-	public static EnumMap<FlightControls, Double> makeDoublet(EnumMap<FlightControls, Double> controls,
+	public static EnumMap<FlightControlType, Double> makeDoublet(EnumMap<FlightControlType, Double> controls,
 															  double t,
 															  double startTime, 
 															  double duration, 
 															  double amplitude, 
-															  FlightControls controlInput) {
+															  FlightControlType controlInput) {
 		
 		Double shortT = new BigDecimal(t).setScale(3, BigDecimal.ROUND_HALF_UP).doubleValue();
 		
@@ -52,43 +52,43 @@ public class FlightControlsUtilities {
 	 * @param t
 	 * @return flightControls EnumMap 
 	 */
-	public static EnumMap<FlightControls, Double> doubletSeries(EnumMap<FlightControls, Double> controls, double t) {
+	public static EnumMap<FlightControlType, Double> doubletSeries(EnumMap<FlightControlType, Double> controls, double t) {
 		// Update controls with an aileron doublet
 		controls = FlightControlsUtilities.makeDoublet(controls, 
 													   t, 
 													   10, 
 													   0.5, 
 													   0.035, 
-													   FlightControls.AILERON);
+													   FlightControlType.AILERON);
 		// Update controls with a rudder doublet
 		controls = FlightControlsUtilities.makeDoublet(controls, 
 													   t, 
 													   13, 
 													   0.5, 
 													   0.035, 
-													   FlightControls.RUDDER);
+													   FlightControlType.RUDDER);
 		// Update controls with an elevator doublet
 		controls = FlightControlsUtilities.makeDoublet(controls, 
 													   t, 
 													   50, 
 													   0.5, 
 													   0.035, 
-													   FlightControls.ELEVATOR);
+													   FlightControlType.ELEVATOR);
 		return controls;
 	}
 	
 	
 	/**
 	 *  Limit control inputs to sensible deflection values based on the minimum and maximum values defines for 
-	 *  each member of {@link FlightControls}
+	 *  each member of {@link FlightControlType}
 	 *  
 	 * @param controls
 	 * @return flightControls EnumMap 
 	 */
-	public static EnumMap<FlightControls, Double> limitControls(EnumMap<FlightControls, Double> controls) {
+	public static EnumMap<FlightControlType, Double> limitControls(EnumMap<FlightControlType, Double> controls) {
 		// Loop through enum list; if value in EnumMap controls is greater/less than max/min specified in FlightControls enum, 
 		// set that EnumMap value to Enum's max/min value
-		for (FlightControls flc : FlightControls.values()) {
+		for (FlightControlType flc : FlightControlType.values()) {
 			if (controls.get(flc) > flc.getMaximum())
 				controls.put(flc, flc.getMaximum());
 			else if (controls.get(flc) < flc.getMinimum())
