@@ -68,6 +68,7 @@ public class FlightControls implements Runnable, FlightDataListener {
 	public void run() {
 		running = true;
 		
+		// t keeps time for creation of doublets using FlightControlsUtilities.doubletSeries
 		double t = 0.0;
 		
 		while (running) {
@@ -77,8 +78,11 @@ public class FlightControls implements Runnable, FlightDataListener {
 					controls = hidKeyboard.updateFlightControls(controls);
 					
 					Thread.sleep((long) (integratorConfig.get(IntegratorConfig.DT)*1000));
-				} else 
-					controls = FlightControlsUtilities.doubletSeries(controls, (t += integratorConfig.get(IntegratorConfig.DT)));
+				} else {
+					controls = FlightControlsUtilities.doubletSeries(controls, t);
+				}
+				
+				t += integratorConfig.get(IntegratorConfig.DT);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
