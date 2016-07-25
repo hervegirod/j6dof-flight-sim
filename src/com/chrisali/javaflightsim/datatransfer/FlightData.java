@@ -72,6 +72,8 @@ public class FlightData implements Runnable {
 			flightData.put(FlightDataType.FLAPS, Math.toDegrees(simOut.get(SimOuts.FLAPS)));
 			
 			flightData.put(FlightDataType.AOA, Math.abs(simOut.get(SimOuts.ALPHA)));
+			
+			flightData.put(FlightDataType.PITCH_RATE, Math.toDegrees(simOut.get(SimOuts.Q)));
 		}
 		fireDataArrived();
 	}
@@ -123,7 +125,7 @@ public class FlightData implements Runnable {
 	
 	
 	/**
-	 * Lets other objects request to stop the the flow of flight data by setting running to false
+	 * Lets other objects request to stop the flow of flight data by setting running to false
 	 * 
 	 * @param running
 	 */
