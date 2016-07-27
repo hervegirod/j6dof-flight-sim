@@ -3,9 +3,6 @@ package com.chrisali.javaflightsim.menus;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.EnumMap;
@@ -30,7 +27,6 @@ import com.chrisali.javaflightsim.menus.optionspanel.OptionsConfigurationListene
 import com.chrisali.javaflightsim.menus.optionspanel.OptionsPanel;
 import com.chrisali.javaflightsim.otw.RunWorld;
 import com.chrisali.javaflightsim.otw.renderengine.DisplayManager;
-import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import com.chrisali.javaflightsim.utilities.FileUtilities;
@@ -205,58 +201,6 @@ public class MainFrame extends JFrame {
 			}
 		});
 		add(buttonPanel, BorderLayout.CENTER);
-		
-		//============================== Hot Keys ==================================================
-		
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-			@Override
-			public boolean dispatchKeyEvent(KeyEvent ev) {
-				switch (ev.getKeyCode()) {
-				
-				// Open Plot Window
-				case KeyEvent.VK_L:
-					if (simulationController.getSimulation() != null 
-							&& Integrate6DOFEquations.isRunning() 
-							&& !simulationController.isPlotWindowVisible())
-						simulationController.plotSimulation();
-					break;
-					
-				// Exit Simulation
-				case KeyEvent.VK_Q:
-					if (Integrate6DOFEquations.isRunning()) {
-						simulationController.stopSimulation();
-						simulationWindow.setVisible(false);
-						MainFrame.this.setVisible(true);
-					}
-					break;
-				
-				// Pause
-				case KeyEvent.VK_P:
-					if (Integrate6DOFEquations.isRunning() 
-							&& !simulationController.getSimulationOptions().contains(Options.PAUSED)) {
-						simulationController.getSimulationOptions().add(Options.PAUSED);
-					} else if (Integrate6DOFEquations.isRunning() 
-							&& !simulationController.getSimulationOptions().contains(Options.PAUSED)) {
-						simulationController.getSimulationOptions().remove(Options.PAUSED);
-					}
-					break;
-				
-				// Reset
-				case KeyEvent.VK_R:
-					if (Integrate6DOFEquations.isRunning() 
-							&& simulationController.getSimulationOptions().contains(Options.PAUSED)) {
-						simulationController.getSimulationOptions().add(Options.RESET);
-						simulationController.getSimulationOptions().remove(Options.RESET);
-					}
-					break;
-					
-				default:
-					break;
-				}
-				
-				return false;
-			}
-		});
 		
 		//============================ Miscellaneous ===============================================
 		

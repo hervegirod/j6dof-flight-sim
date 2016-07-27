@@ -2,8 +2,8 @@ package com.chrisali.javaflightsim.simulation.controls;
 
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
@@ -20,7 +20,7 @@ import com.chrisali.javaflightsim.simulation.setup.Options;
  * Contains the Flight Controls thread used to handle flight controls actuated by human interface devices, such as
  * {@link Joystick}, {@link Keyboard}, {@link Mouse} or {@link CHControls}, or by P/PD controllers such as autopilots
  * and stability augmentation sytems. Also contains method to inject doublets into controls when simulation is run
- * as analysis. Uses {@link FlightDataListener} to feed back {@link FlightData} to use in 
+ * as analysis. Uses {@link FlightDataListener} to feed back {@link FlightData} to use in P/PD controllers
  * 
  * 
  * @author Christopher Ali
@@ -33,7 +33,7 @@ public class FlightControls implements Runnable, FlightDataListener {
 	private EnumMap<FlightControlType, Double> controls;
 	
 	private Map<IntegratorConfig, Double> integratorConfig;
-	private Set<Options> options;
+	private EnumSet<Options> options;
 //	private Map<FlightDataType, Double> flightData;
 	
 	private AbstractController hidController;
@@ -46,7 +46,7 @@ public class FlightControls implements Runnable, FlightDataListener {
 	 * 
 	 * @param options
 	 */
-	public FlightControls(Set<Options> options) {
+	public FlightControls(EnumSet<Options> options) {
 		this.controls = IntegrationSetup.gatherInitialControls("InitialControls");
 		this.integratorConfig = IntegrationSetup.gatherIntegratorConfig("IntegratorConfig");
 		this.options = options;
@@ -76,6 +76,10 @@ public class FlightControls implements Runnable, FlightDataListener {
 				if (!options.contains(Options.ANALYSIS_MODE)) {
 					controls = hidController.updateFlightControls(controls);
 					controls = hidKeyboard.updateFlightControls(controls);
+					
+					// update keyboard options every two seconds
+					if ((int) t % 1 == 0)
+						hidKeyboard.updateOptions(options);
 					
 					Thread.sleep((long) (integratorConfig.get(IntegratorConfig.DT)*1000));
 				} else {

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
+import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
+import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 
@@ -30,6 +32,8 @@ public class Keyboard extends AbstractController {
 	private boolean rPressed = false;
 	// Keep track of reset, so that it can only be run once per pause
 	private boolean wasReset = false;
+	
+	SimulationController simController = null; // Remove later; add to argument of updateOptions()
 	
 	/**
 	 *  Constructor for Keyboard class; creates list of controllers using searchForControllers()
@@ -102,6 +106,7 @@ public class Keyboard extends AbstractController {
 					continue;
 				}
 				
+				// Reset simulation
 				if (componentIdentifier.getName().matches(Component.Identifier.Key.R.toString())) {
 					if(component.getPollData() == 1.0f & options.contains(Options.PAUSED) & !options.contains(Options.RESET) &
 					   !rPressed & !wasReset) {
@@ -112,6 +117,29 @@ public class Keyboard extends AbstractController {
 					} else if (component.getPollData() == 0.0f & rPressed) {
 						options.remove(Options.RESET);
 						this.rPressed = false;
+					}
+					
+					continue;
+				}
+				
+				// Quits simulation
+				if (componentIdentifier.getName().matches(Component.Identifier.Key.Q.toString())) {
+					if(component.getPollData() == 1.0f & Integrate6DOFEquations.isRunning()) {
+						simController.stopSimulation();
+						simController.getMainFrame().getSimulationWindow().setVisible(false);
+						simController.getMainFrame().setVisible(true);
+					}
+					
+					continue;
+				}
+				
+				// Plots simulation
+				if (componentIdentifier.getName().matches(Component.Identifier.Key.L.toString())) {
+					if(component.getPollData() == 1.0f 
+							& simController.getSimulation() != null 
+							& Integrate6DOFEquations.isRunning() 
+							& !simController.isPlotWindowVisible()) {
+						simController.plotSimulation();
 					}
 					
 					continue;

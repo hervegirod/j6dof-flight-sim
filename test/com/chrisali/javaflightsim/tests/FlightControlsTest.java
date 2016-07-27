@@ -2,7 +2,6 @@ package com.chrisali.javaflightsim.tests;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.Set;
 
 import com.chrisali.javaflightsim.simulation.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
@@ -18,7 +17,7 @@ import com.chrisali.javaflightsim.simulation.setup.Options;
  */
 public class FlightControlsTest implements Runnable {
 	private FlightControls flightControls;
-	private Set<Options> options;
+	private EnumSet<Options> options;
 	private EnumMap<IntegratorConfig, Double> integratorConfig;
 	private Thread flightControlsThread;
 	
