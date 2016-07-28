@@ -54,7 +54,7 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	private double[] angularRates     		= new double[3];
 	
 	// Environment and Wind Parameters
-	private EnumMap<EnvironmentParameters, Double> environmentParameters;
+	private Map<EnvironmentParameters, Double> environmentParameters;
 	private double   gravity			    = Environment.getGravity();
 	private double[] windParameters   		= new double[3];	
 	private double   alphaDot 				= 0.0f;
@@ -451,7 +451,7 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	/**
 	 * @return current time of simulation (sec)
 	 */
-	public static double getTime() {return t;}
+	public static synchronized double getTime() {return Integrate6DOFEquations.t;}
 	
 	/**
 	 * Lets other objects know if {@link Integrate6DOFEquations#run()} is currently running

@@ -51,7 +51,7 @@ public abstract class Engine {
 	 * @param windParameters
 	 */
 	public abstract void updateEngineState(Map<FlightControlType, Double> controls,				
-										   EnumMap<EnvironmentParameters, Double> environmentParameters,
+										   Map<EnvironmentParameters, Double> environmentParameters,
 										   double[] windParameters);
 	
 	/**

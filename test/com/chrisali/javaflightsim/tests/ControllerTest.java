@@ -1,6 +1,6 @@
 package com.chrisali.javaflightsim.tests;
 
-import java.util.EnumMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -12,7 +12,7 @@ import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 public class ControllerTest implements Runnable {
 	@Override
 	public void run() {
-		EnumMap<FlightControlType, Double> controls = IntegrationSetup.gatherInitialControls("InitialControls");
+		Map<FlightControlType, Double> controls  = IntegrationSetup.gatherInitialControls("InitialControls");
 		double[] integratorConfig 				 = ArrayUtils.toPrimitive(IntegrationSetup.gatherIntegratorConfig("IntegratorConfig").values()
 				   											 							  .toArray(new Double[3]));
 		AbstractController joystick 			 = new CHControls(controls);

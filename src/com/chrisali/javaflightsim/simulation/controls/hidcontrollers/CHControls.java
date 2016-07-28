@@ -1,7 +1,7 @@
 package com.chrisali.javaflightsim.simulation.controls.hidcontrollers;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.Map;
 
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 
@@ -27,7 +27,7 @@ public class CHControls extends AbstractController {
 	 *  Constructor for CHControls class creates list of controllers using searchForControllers()
 	 * @param controls
 	 */
-	public CHControls(EnumMap<FlightControlType, Double> controls) {
+	public CHControls(Map<FlightControlType, Double> controls) {
 		this.controllerList = new ArrayList<>();
 		
 		// Get initial trim values from initial values in controls EnumMap (rad)
@@ -61,11 +61,13 @@ public class CHControls extends AbstractController {
 	}
 
 	/**
-	 *  Get button, POV and axis values from each joystick controller, and return an EnumMap for updateFlightControls 
-	 *  in SimulationController class
+	 *  Get button, POV and axis values from each joystick controller, and return a map for updateFlightControls()
+	 *  in {@link AbstractController}
+	 *  
+	 *  @return controls Map
 	 */
 	@Override
-	protected EnumMap<FlightControlType, Double> calculateControllerValues(EnumMap<FlightControlType, Double> controls) {
+	protected Map<FlightControlType, Double> calculateControllerValues(Map<FlightControlType, Double> controls) {
 		// Iterate through all controllers connected
 		for (Controller controller : controllerList) {
 			

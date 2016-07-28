@@ -1,8 +1,8 @@
 package com.chrisali.javaflightsim.simulation.controls.hidcontrollers;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.Map;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
@@ -43,7 +43,7 @@ public class Keyboard extends AbstractController {
 	 * @param controls
 	 * @param simController
 	 */
-	public Keyboard(EnumMap<FlightControlType, Double> controls, SimulationController simController) {
+	public Keyboard(Map<FlightControlType, Double> controls, SimulationController simController) {
 		this.controllerList = new ArrayList<>();
 		this.simController = simController;
 		this.options = simController.getSimulationOptions();
@@ -153,11 +153,12 @@ public class Keyboard extends AbstractController {
 	}
 	
 	/**
-	 *  Get button  values from keyboard, and return an EnumMap for updateFlightControls in {@link SimulationController)
-	 *  @return flightControls EnumMap
+	 *  Get button  values from keyboard, and return a Map for updateFlightControls in {@link SimulationController)
+	 *  
+	 *  @return flightControls Map
 	 */
 	@Override
-	protected EnumMap<FlightControlType, Double> calculateControllerValues(EnumMap<FlightControlType, Double> controls) {
+	protected Map<FlightControlType, Double> calculateControllerValues(Map<FlightControlType, Double> controls) {
 		// Iterate through all controllers connected
 		for (Controller controller : controllerList) {
 			// Poll controller for data; if disconnected, break out of componentIdentification loop

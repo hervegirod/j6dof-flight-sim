@@ -1,7 +1,6 @@
 package com.chrisali.javaflightsim.simulation.controls;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ public class FlightControls implements Runnable, FlightDataListener {
 
 	private static boolean running;
 	
-	private EnumMap<FlightControlType, Double> controls;
+	private Map<FlightControlType, Double> controls;
 	
 	private Map<IntegratorConfig, Double> integratorConfig;
 	private EnumSet<Options> options;
@@ -69,9 +68,6 @@ public class FlightControls implements Runnable, FlightDataListener {
 	public void run() {
 		running = true;
 		
-		// t keeps time for creation of doublets using FlightControlsUtilities.doubletSeries
-		double t = 0.0;
-		
 		while (running) {
 			try {
 				// if running in analysis mode, controls and options should be 
@@ -80,7 +76,7 @@ public class FlightControls implements Runnable, FlightDataListener {
 					controls = hidKeyboard.updateFlightControls(controls);
 					
 					// update keyboard options every two seconds
-					if ((int) t % 1 == 0)
+					if ((int) Integrate6DOFEquations.getTime() % 1 == 0)
 						hidKeyboard.updateOptions();
 					
 					Thread.sleep((long) (integratorConfig.get(IntegratorConfig.DT)*1000));
@@ -88,7 +84,6 @@ public class FlightControls implements Runnable, FlightDataListener {
 					controls = FlightControlsUtilities.doubletSeries(controls, Integrate6DOFEquations.getTime());
 				}
 				
-				t += integratorConfig.get(IntegratorConfig.DT);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

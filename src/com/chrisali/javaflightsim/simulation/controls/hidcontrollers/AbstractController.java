@@ -2,6 +2,7 @@ package com.chrisali.javaflightsim.simulation.controls.hidcontrollers;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.Map;
 
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
@@ -28,7 +29,7 @@ public abstract class AbstractController {
 	
 	protected abstract void searchForControllers();
 	
-	protected abstract EnumMap<FlightControlType, Double> calculateControllerValues(EnumMap<FlightControlType, Double> controls);
+	protected abstract Map<FlightControlType, Double> calculateControllerValues(Map<FlightControlType, Double> controls);
 	
 	/**
 	 *  Uses maximum and minimum values defined in {@link FlightControlType} to convert normalized 
@@ -65,7 +66,7 @@ public abstract class AbstractController {
 	 * @param controls
 	 * @return flightControls EnumMap limited by {@link FlightControlsUtilities#limitControls(EnumMap)}
 	 */
-	public EnumMap<FlightControlType, Double> updateFlightControls(EnumMap<FlightControlType, Double> controls) {		
+	public Map<FlightControlType, Double> updateFlightControls(Map<FlightControlType, Double> controls) {		
 		return FlightControlsUtilities.limitControls(calculateControllerValues(controls));
 	}
 	

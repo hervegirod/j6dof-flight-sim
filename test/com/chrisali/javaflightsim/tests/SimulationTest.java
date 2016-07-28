@@ -46,11 +46,12 @@ public class SimulationTest {
 		
 		this.flightControls = new FlightControls(simController);
 		this.flightControlsThread = new Thread(flightControls);
-		flightControlsThread.start();
 		
 		Trimming.trimSim(ab, false);
 		this.runSim = new Integrate6DOFEquations(flightControls, ab, simController.getSimulationOptions());
 		this.simulationThread = new Thread(runSim);
+
+		flightControlsThread.start();
 		simulationThread.start();
 		
 		this.plots = new PlotWindow(runSim.getLogsOut(), 

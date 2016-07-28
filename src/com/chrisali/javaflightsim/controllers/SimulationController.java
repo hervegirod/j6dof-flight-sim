@@ -246,11 +246,12 @@ public class SimulationController {
 	public void startSimulation() {
 		flightControls = new FlightControls(this);
 		flightControlsThread = new Thread(flightControls);
-		flightControlsThread.start();
 		
 		Trimming.trimSim(ab, false);
 		runSim = new Integrate6DOFEquations(flightControls, ab, simulationOptions);
 		simulationThread = new Thread(runSim);
+
+		flightControlsThread.start();
 		simulationThread.start();
 		
 		if (simulationOptions.contains(Options.CONSOLE_DISPLAY))

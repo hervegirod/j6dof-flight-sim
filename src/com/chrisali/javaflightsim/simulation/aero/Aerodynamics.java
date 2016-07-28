@@ -1,6 +1,5 @@
 package com.chrisali.javaflightsim.simulation.aero;
 
-import java.util.EnumMap;
 import java.util.Map;
 
 import org.apache.commons.math3.analysis.interpolation.PiecewiseBicubicSplineInterpolatingFunction;
@@ -194,7 +193,7 @@ public class Aerodynamics {
 	 */
 	public double[] calculateBodyForces(double[] windParameters,
 									  	double[] angularRates,
-										EnumMap<EnvironmentParameters, Double> environmentParameters,
+										Map<EnvironmentParameters, Double> environmentParameters,
 									    Map<FlightControlType, Double> controls,
 										double alphaDot) {
 		double qBar = environmentParameters.get(EnvironmentParameters.RHO)*Math.pow(windParameters[0], 2)/2;
@@ -223,7 +222,7 @@ public class Aerodynamics {
 	 */
 	public double[] calculateAeroMoments(double[] windParameters,
 									     double[] angularRates,
-									     EnumMap<EnvironmentParameters, Double> environmentParameters,
+									     Map<EnvironmentParameters, Double> environmentParameters,
 									     Map<FlightControlType, Double> controls,
 									     double alphaDot) {
 		double qBar = environmentParameters.get(EnvironmentParameters.RHO)*Math.pow(windParameters[0], 2)/2;
