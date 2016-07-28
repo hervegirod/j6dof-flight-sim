@@ -24,6 +24,7 @@ import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
+import com.chrisali.javaflightsim.simulation.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.integration.SimOuts;
 import com.chrisali.javaflightsim.simulation.setup.InitialConditions;
@@ -60,10 +61,12 @@ public class SimulationController {
 	private EnumMap<FlightControlType, Double> initialControls; 
 	
 	// Simulation
+	private FlightControls flightControls;
+	private Thread flightControlsThread;
 	private Integrate6DOFEquations runSim;
 	private Thread simulationThread;
-	private Thread flightDataThread;
 	private FlightData flightData;
+	private Thread flightDataThread;
 	
 	// Aircraft
 	private AircraftBuilder ab;
@@ -237,18 +240,22 @@ public class SimulationController {
 	}
 	
 	/**
-	 * Initializes, trims and starts the simulation (and flight and environment data, if selected) threads.
+	 * Initializes, trims and starts the flight controls, simulation (and flight and environment data, if selected) threads.
 	 * Depending on options specified, a console panel and/or plot window will also be initialized and opened 
 	 */
 	public void startSimulation() {
-		Trimming.trimSim(ab, false);
-		runSim = new Integrate6DOFEquations(ab, simulationOptions);
+		flightControls = new FlightControls(this);
+		flightControlsThread = new Thread(flightControls);
+		flightControlsThread.start();
 		
+		Trimming.trimSim(ab, false);
+		runSim = new Integrate6DOFEquations(flightControls, ab, simulationOptions);
 		simulationThread = new Thread(runSim);
 		simulationThread.start();
 		
 		if (simulationOptions.contains(Options.CONSOLE_DISPLAY))
 			initializeConsole();
+		
 		if (simulationOptions.contains(Options.ANALYSIS_MODE)) {
 			plotSimulation();
 		} else {
@@ -266,23 +273,30 @@ public class SimulationController {
 			
 			flightDataThread = new Thread(flightData);
 			flightDataThread.start();
-			
-			// outTheWindow
 		}
 	}
 	
 	/**
-	 * Stops simulation, data transfer threads (if running), and closes the raw data console window
+	 * Stops simulation, flight controls and data transfer threads (if running), closes the raw data {@link ConsoleTablePanel},
+	 * {@link SimulationWindow}, and opens the main menus window again
 	 */
 	public void stopSimulation() {
-		if (runSim != null && Integrate6DOFEquations.isRunning() && simulationThread != null && simulationThread.isAlive())
+		if (runSim != null && Integrate6DOFEquations.isRunning() && simulationThread != null && simulationThread.isAlive()) {
 			Integrate6DOFEquations.setRunning(false);
+			FlightControls.setRunning(false);
+		}
+		
 		if (flightDataThread != null && flightDataThread.isAlive())
 			FlightData.setRunning(false);
+		
 		if (consoleTablePanel != null && consoleTablePanel.isVisible())
 			consoleTablePanel.setVisible(false);
+		
 		if (outTheWindowThread != null && outTheWindowThread.isAlive())
 			EnvironmentData.setRunning(false);
+		
+		getMainFrame().getSimulationWindow().dispose();
+		getMainFrame().setVisible(true);
 	}
 	
 	//=============================== Plotting =============================================================

@@ -1,17 +1,26 @@
 package com.chrisali.javaflightsim.tests;
 
 import java.awt.BorderLayout;
-import java.util.EnumSet;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
+import com.chrisali.javaflightsim.simulation.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 
+/**
+ * Creates a real-time pilot in the loop simulation using {@link Integrate6DOFEquations}, and
+ * creates an {@link InstrumentPanel} object in JFrame object to test all gauges with the 
+ * simulation; uses CH controls running on separate thread in {@link FlightControls} for flight controls
+ * 
+ * @author Christopher Ali
+ *
+ */
 public class InstrumentPanelTest {
 
 	public static void main(String[] args) {
@@ -22,10 +31,19 @@ public class InstrumentPanelTest {
 	}
 
 	private static void runApp() {
-		Integrate6DOFEquations runSim = new Integrate6DOFEquations(new AircraftBuilder("Navion"),
-																   EnumSet.of(Options.UNLIMITED_FLIGHT, Options.USE_CH_CONTROLS));
+		SimulationController simController = new SimulationController();
+		simController.getSimulationOptions().clear();
+		simController.getSimulationOptions().add(Options.UNLIMITED_FLIGHT);
+		simController.getSimulationOptions().add(Options.USE_CH_CONTROLS);
+		
+		FlightControls flightControls = new FlightControls(simController);
+		
+		Integrate6DOFEquations runSim = new Integrate6DOFEquations(flightControls,
+																   new AircraftBuilder("Navion"),
+																   simController.getSimulationOptions());
 		FlightData flightData = new FlightData(runSim);
 
+		new Thread(flightControls).start();
 		new Thread(runSim).start();
 		new Thread(flightData).start();
 		

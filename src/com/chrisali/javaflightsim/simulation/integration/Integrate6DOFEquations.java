@@ -19,12 +19,7 @@ import com.chrisali.javaflightsim.simulation.aero.AccelAndMoments;
 import com.chrisali.javaflightsim.simulation.aircraft.Aircraft;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
-import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
-import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.AbstractController;
-import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.CHControls;
-import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Joystick;
-import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Keyboard;
-import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Mouse;
+import com.chrisali.javaflightsim.simulation.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.enviroment.Environment;
 import com.chrisali.javaflightsim.simulation.enviroment.EnvironmentParameters;
 import com.chrisali.javaflightsim.simulation.propulsion.Engine;
@@ -74,9 +69,7 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	private double[] totalMoments     		= new double[3];
 	
 	// Simulation Controls (Joystick, Keyboard, etc.)
-	private EnumMap<FlightControlType, Double> controls;
-	private AbstractController hidController;
-	private Keyboard hidKeyboard;
+	private Map<FlightControlType, Double> controls;
 	
 	// Integrator Fields
 	private ClassicalRungeKuttaIntegrator integrator;
@@ -84,7 +77,8 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	private double[] y					    = new double[14];
 	private double[] initialConditions      = new double[14]; 
 	private double[] integratorConfig		= new double[3];
-	private double   t;
+	
+	private static double   t;
 	
 	// Aircraft Properties
 	private Aircraft aircraft;
@@ -99,18 +93,20 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	private static boolean running;
 	
 	/**
-	 * Creates the {@link Integrate6DOFEquations} object with an {@link AircraftBuilder object}, a list of run-time options defined
-	 * in the {@link Options} EnumSet
+	 * Creates the {@link Integrate6DOFEquations} object with a reference to {@link FlightControls}, {@link AircraftBuilder} 
+	 * and a set options defined in the {@link Options} EnumSet
 	 * 
+	 * @param flightControls
 	 * @param ab
 	 * @param runOptions
 	 */
-	public Integrate6DOFEquations(AircraftBuilder ab,
+	public Integrate6DOFEquations(FlightControls flightControls,
+								  AircraftBuilder ab,
 								  EnumSet<Options> runOptions) {
+		controls 		   = flightControls.getFlightControls();
 		aircraft 		   = ab.getAircraft();
 		engineList   	   = ab.getEngineList();
 		options		       = runOptions;
-		controls 		   = IntegrationSetup.gatherInitialControls("InitialControls");
 		
 		// Use Apache Commons Lang to convert EnumMap values into primitive double[] 
 		initialConditions = ArrayUtils.toPrimitive(IntegrationSetup.gatherInitialConditions("InitialConditions").values()
@@ -118,21 +114,9 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 		integratorConfig  = ArrayUtils.toPrimitive(IntegrationSetup.gatherIntegratorConfig("IntegratorConfig").values()
 				   												   .toArray(new Double[integratorConfig.length]));
 
-		// Use controllers for pilot in loop simulation if ANALYSIS_MODE not enabled 
-		if (!options.contains(Options.ANALYSIS_MODE)) {
-			if (options.contains(Options.USE_JOYSTICK))
-				hidController = new Joystick(controls);
-			else if (options.contains(Options.USE_MOUSE))
-				hidController = new Mouse(controls);
-			else if (options.contains(Options.USE_CH_CONTROLS))
-				hidController = new CHControls(controls);
-			
-			hidKeyboard = new Keyboard(controls);
-			
-			// Allows simulation to run forever
-			if(options.contains(Options.UNLIMITED_FLIGHT))
-				integratorConfig[2] = Double.POSITIVE_INFINITY;
-		}
+		// Allows simulation to run forever in pilot in the loop simulation if ANALYSIS_MODE not enabled 
+		if (!options.contains(Options.ANALYSIS_MODE) && options.contains(Options.UNLIMITED_FLIGHT))
+			integratorConfig[2] = Double.POSITIVE_INFINITY;
 		
 		// Set up running parameters for integration
 		t = integratorConfig[0];
@@ -232,14 +216,6 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 		// Update environment		
 		environmentParameters = Environment.updateEnvironmentParams(NEDPosition);
 		
-		// Update flight controls with joystick/keyboard/mouse unless in analysis mode;
-		// otherwise create a series of doublets (aileron, rudder and then elevator)
-		if (options.contains(Options.ANALYSIS_MODE)) {	
-			controls = FlightControlsUtilities.doubletSeries(controls, t);
-		} else {
-			controls = hidController.updateFlightControls(controls);
-			controls = hidKeyboard.updateFlightControls(controls);
-		}
 		// Update all engines in engine list
 		for(Engine engine : engineList)
 			 engine.updateEngineState(controls, environmentParameters, windParameters);
@@ -414,10 +390,6 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 			running = true;
 			
 			while (t < integratorConfig[2] && running) {
-				// Set pause/reset from within keyboard's updateOptions method if not in analysis mode
-				if (!options.contains(Options.ANALYSIS_MODE))
-					this.options  = hidKeyboard.updateOptions(options);
-				
 				// If paused and reset selected, reset initialConditions using IntegrationSetup's method 
 				if (options.contains(Options.PAUSED) & options.contains(Options.RESET))				
  					initialConditions = ArrayUtils.toPrimitive(IntegrationSetup.gatherInitialConditions("InitialConditions").values()
@@ -475,6 +447,11 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	 * @return simOut
 	 */
 	public synchronized Map<SimOuts, Double> getSimOut() {return Collections.unmodifiableMap(simOut);}
+	
+	/**
+	 * @return current time of simulation (sec)
+	 */
+	public static double getTime() {return t;}
 	
 	/**
 	 * Lets other objects know if {@link Integrate6DOFEquations#run()} is currently running

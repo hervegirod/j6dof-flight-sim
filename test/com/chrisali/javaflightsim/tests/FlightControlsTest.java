@@ -1,11 +1,7 @@
 package com.chrisali.javaflightsim.tests;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-
+import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.simulation.controls.FlightControls;
-import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
-import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 
 /**
@@ -17,15 +13,14 @@ import com.chrisali.javaflightsim.simulation.setup.Options;
  */
 public class FlightControlsTest implements Runnable {
 	private FlightControls flightControls;
-	private EnumSet<Options> options;
-	private EnumMap<IntegratorConfig, Double> integratorConfig;
 	private Thread flightControlsThread;
+	private SimulationController simController;
 	
 	public FlightControlsTest() {
-		this.options = EnumSet.of(Options.USE_CH_CONTROLS);
-		this.flightControls = new FlightControls(options);
+		this.simController = new SimulationController();
+		simController.getSimulationOptions().add(Options.USE_CH_CONTROLS);
+		this.flightControls = new FlightControls(simController);
 		this.flightControlsThread = new Thread(flightControls);
-		this.integratorConfig = IntegrationSetup.gatherIntegratorConfig("IntegratorConfig");
 	}
 	
 	@Override
@@ -37,7 +32,9 @@ public class FlightControlsTest implements Runnable {
 			
 			while (FlightControls.isRunning()) {
 				System.out.println(flightControls.toString());
-				Thread.sleep((long) (integratorConfig.get(IntegratorConfig.DT)*1000));
+				System.out.println();
+				System.out.println(simController.getSimulationOptions());
+				Thread.sleep((long) (100));
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

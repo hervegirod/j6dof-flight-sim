@@ -2,6 +2,7 @@ package com.chrisali.javaflightsim.simulation.propulsion;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.Map;
 
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.enviroment.EnvironmentParameters;
@@ -58,7 +59,7 @@ public class FixedPitchPropEngine extends Engine {
 	/**
 	 * Updates all fields of engine; called by {@link Integrate6DOFEquations} to recalculate thrust, moment, fuel flow and RPM for this engine
 	 */
-	public void updateEngineState(EnumMap<FlightControlType, Double> controls,				
+	public void updateEngineState(Map<FlightControlType, Double> controls,				
 								  EnumMap<EnvironmentParameters, Double> environmentParameters,
 								  double[] windParameters) {		//{vTrue,beta,alpha}
 		// Assign engine controls depending on engine number specified

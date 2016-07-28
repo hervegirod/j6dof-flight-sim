@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
 
+import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.AbstractController;
@@ -12,6 +13,7 @@ import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.CHControls;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Joystick;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Keyboard;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Mouse;
+import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
@@ -40,16 +42,15 @@ public class FlightControls implements Runnable, FlightDataListener {
 	private Keyboard hidKeyboard;
 	
 	/**
-	 * Constructor for {@link FlightControls}; uses {@link IntegrationSetup#gatherIntegratorConfig(String)} and
-	 * {@link IntegrationSetup#gatherInitialControls(String)} to initialize the EnumMap objects in this class;
-	 * 
+	 * Constructor for {@link FlightControls}; {@link SimulationController} argument to initialize {@link IntegratorConfig} 
+	 * EnumMap, the {@link Options} EnumSet, as well as to update simulation options and call simulation methods
 	 * 
 	 * @param options
 	 */
-	public FlightControls(EnumSet<Options> options) {
+	public FlightControls(SimulationController simController) {
 		this.controls = IntegrationSetup.gatherInitialControls("InitialControls");
-		this.integratorConfig = IntegrationSetup.gatherIntegratorConfig("IntegratorConfig");
-		this.options = options;
+		this.integratorConfig = simController.getIntegratorConfig();
+		this.options = simController.getSimulationOptions();
 		
 		// Use controllers for pilot in loop simulation if ANALYSIS_MODE not enabled 
 		if (!options.contains(Options.ANALYSIS_MODE)) {
@@ -60,7 +61,7 @@ public class FlightControls implements Runnable, FlightDataListener {
 			else if (options.contains(Options.USE_CH_CONTROLS))
 				hidController = new CHControls(controls);
 			
-			hidKeyboard = new Keyboard(controls);
+			hidKeyboard = new Keyboard(controls, simController);
 		}
 	}
 	
@@ -73,17 +74,18 @@ public class FlightControls implements Runnable, FlightDataListener {
 		
 		while (running) {
 			try {
+				// if running in analysis mode, controls and options should be 
 				if (!options.contains(Options.ANALYSIS_MODE)) {
 					controls = hidController.updateFlightControls(controls);
 					controls = hidKeyboard.updateFlightControls(controls);
 					
 					// update keyboard options every two seconds
 					if ((int) t % 1 == 0)
-						hidKeyboard.updateOptions(options);
+						hidKeyboard.updateOptions();
 					
 					Thread.sleep((long) (integratorConfig.get(IntegratorConfig.DT)*1000));
 				} else {
-					controls = FlightControlsUtilities.doubletSeries(controls, t);
+					controls = FlightControlsUtilities.doubletSeries(controls, Integrate6DOFEquations.getTime());
 				}
 				
 				t += integratorConfig.get(IntegratorConfig.DT);
@@ -96,7 +98,7 @@ public class FlightControls implements Runnable, FlightDataListener {
 	}
 
 	/**
-	 * Receive feedback flight data to be used with P/PD controllers
+	 * Receive fed back flight data to be used with P/PD controllers
 	 */
 	@Override
 	public void onFlightDataReceived(FlightData flightData) {

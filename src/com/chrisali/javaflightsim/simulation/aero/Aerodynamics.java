@@ -1,6 +1,7 @@
 package com.chrisali.javaflightsim.simulation.aero;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import org.apache.commons.math3.analysis.interpolation.PiecewiseBicubicSplineInterpolatingFunction;
 
@@ -48,7 +49,7 @@ public class Aerodynamics {
 	 */
 	private double calculateCL(double[] angularRates,
 						  	   double[] windParameters,
-						  	   EnumMap<FlightControlType, Double> controls,
+						  	   Map<FlightControlType, Double> controls,
 						  	   double alphaDot) {
 		double rotaryTerm = aircraft.getWingGeometry(WingGeometry.C_BAR)/(2*windParameters[0]);
 		
@@ -68,7 +69,7 @@ public class Aerodynamics {
 	 * @return CY
 	 */
 	private double calculateCY(double[] windParameters,
-						 	   EnumMap<FlightControlType, Double> controls) {
+						 	   Map<FlightControlType, Double> controls) {
 		return (Double)aircraft.getStabilityDerivative(StabilityDerivatives.CY_BETA)*windParameters[1]+
 			   (Double)aircraft.getStabilityDerivative(StabilityDerivatives.CY_D_RUD)*controls.get(FlightControlType.RUDDER);	
 	}
@@ -81,7 +82,7 @@ public class Aerodynamics {
 	 * @return CD
 	 */
 	private double calculateCD(double[] windParameters,
-					 	  	   EnumMap<FlightControlType, Double> controls) {
+					 	  	   Map<FlightControlType, Double> controls) {
 		return calculateInterpStabDer(windParameters, controls, StabilityDerivatives.CD_ALPHA)*Math.abs(windParameters[2])+ // Need absolute value to prevent negative drag at negative alpha
 			   (Double)aircraft.getStabilityDerivative(StabilityDerivatives.CD_0)+
 			   (Double)aircraft.getStabilityDerivative(StabilityDerivatives.CD_D_FLAP)*controls.get(FlightControlType.FLAPS)+
@@ -99,7 +100,7 @@ public class Aerodynamics {
 	 */
 	private double calculateCRoll(double[] angularRates,
 					  	    	  double[] windParameters,
-					  	    	  EnumMap<FlightControlType, Double> controls) {
+					  	    	  Map<FlightControlType, Double> controls) {
 		double helixAngle = aircraft.getWingGeometry(WingGeometry.B_WING)/(2*windParameters[0]);
 		
 		return (Double)aircraft.getStabilityDerivative(StabilityDerivatives.CROLL_BETA)*windParameters[1]+
@@ -120,7 +121,7 @@ public class Aerodynamics {
 	 */
 	private double calculateCM(double[] angularRates,
 						 	   double[] windParameters,
-						 	   EnumMap<FlightControlType, Double> controls,
+						 	   Map<FlightControlType, Double> controls,
 						 	   double alphaDot) {
 		double rotaryTerm = aircraft.getWingGeometry(WingGeometry.C_BAR)/(2*windParameters[0]);
 		
@@ -142,7 +143,7 @@ public class Aerodynamics {
 	 */
 	private double calculateCN(double[] angularRates,
 						 	   double[] windParameters,
-						 	   EnumMap<FlightControlType, Double> controls) {
+						 	   Map<FlightControlType, Double> controls) {
 		double helixAngle = aircraft.getWingGeometry(WingGeometry.B_WING)/(2*windParameters[0]);
 		
 		return (Double)aircraft.getStabilityDerivative(StabilityDerivatives.CN_BETA)*windParameters[1]+
@@ -163,7 +164,7 @@ public class Aerodynamics {
 	 * @return interpStabDer
 	 */
 	public Double calculateInterpStabDer(double[] windParameters,
-			 							 EnumMap<FlightControlType, Double> controls,
+			 							 Map<FlightControlType, Double> controls,
 			 							 StabilityDerivatives stabDer) {
 		Double interpStabDer;
 		PiecewiseBicubicSplineInterpolatingFunction pbsif;
@@ -194,7 +195,7 @@ public class Aerodynamics {
 	public double[] calculateBodyForces(double[] windParameters,
 									  	double[] angularRates,
 										EnumMap<EnvironmentParameters, Double> environmentParameters,
-									    EnumMap<FlightControlType, Double> controls,
+									    Map<FlightControlType, Double> controls,
 										double alphaDot) {
 		double qBar = environmentParameters.get(EnvironmentParameters.RHO)*Math.pow(windParameters[0], 2)/2;
 		
@@ -223,7 +224,7 @@ public class Aerodynamics {
 	public double[] calculateAeroMoments(double[] windParameters,
 									     double[] angularRates,
 									     EnumMap<EnvironmentParameters, Double> environmentParameters,
-									     EnumMap<FlightControlType, Double> controls,
+									     Map<FlightControlType, Double> controls,
 									     double alphaDot) {
 		double qBar = environmentParameters.get(EnvironmentParameters.RHO)*Math.pow(windParameters[0], 2)/2;
 		

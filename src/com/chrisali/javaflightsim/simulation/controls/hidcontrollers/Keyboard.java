@@ -23,7 +23,8 @@ import net.java.games.input.ControllerEnvironment;
  * Up/Down and Left/Right control the elevator and ailerons, respectively, and all throttles are 
  * controlled by Page Up/Down. The simulation can be toggled paused by pressing P, and while paused
  * the simulation can be reset to initial conditions defined by 
- * {@link IntegrationSetup#gatherInitialConditions(String)} by pressing R
+ * {@link IntegrationSetup#gatherInitialConditions(String)} by pressing R.
+ * The simulation is quit by pressing Q and L plots the simulation.
  * @see AbstractController
  */
 public class Keyboard extends AbstractController {
@@ -33,15 +34,20 @@ public class Keyboard extends AbstractController {
 	// Keep track of reset, so that it can only be run once per pause
 	private boolean wasReset = false;
 	
-	SimulationController simController = null; // Remove later; add to argument of updateOptions()
+	private SimulationController simController;
+	private EnumSet<Options> options;
 	
 	/**
-	 *  Constructor for Keyboard class; creates list of controllers using searchForControllers()
+	 *  Constructor for Keyboard class; creates list of controllers using searchForControllers() and
+	 *  creates a reference to a {@link SimulationController} object 
 	 * @param controls
+	 * @param simController
 	 */
-	public Keyboard(EnumMap<FlightControlType, Double> controls) {
+	public Keyboard(EnumMap<FlightControlType, Double> controls, SimulationController simController) {
 		this.controllerList = new ArrayList<>();
-
+		this.simController = simController;
+		this.options = simController.getSimulationOptions();
+		
 		// Get initial trim values from initial values in controls EnumMap (rad)
 		trimElevator = controls.get(FlightControlType.ELEVATOR);
 		trimAileron  = controls.get(FlightControlType.AILERON);
@@ -71,36 +77,38 @@ public class Keyboard extends AbstractController {
 	}
 	
 	/**
-	 * Updates the EnumSet options, which controls the operation of the simulation; P pauses the simulation
-	 * and R resets it back to the initial conditions defined by {@link IntegrationSetup#gatherInitialConditions(String)}
-	 * in InitialConditions.txt
+	 * Contains hot keys used by the simulation for various tasks: <br>
+	 * P pauses the simulation<br>
+	 * R resets it back to the initial conditions defined in InitialConditions.txt<br>
+	 * Q quits the simulation<br>
+	 * L plots the simulation<br>
 	 * 
-	 * @param options
-	 * @return EnumSet options
+	 * @param simController
 	 */
-	public EnumSet<Options> updateOptions(EnumSet<Options> options) {
+	public void updateOptions() {
 		// Iterate through all controllers connected
-		for (Controller controller : controllerList) {
+		for (Controller keyboard : controllerList) {
 			// Poll controller for data; if disconnected, break out of componentIdentification loop
-			if(!controller.poll()) 
+			if(!keyboard.poll()) 
 				break;
 			
 			// Iterate through all components of the controller.
-			for (Component component : controller.getComponents()) {
+			for (Component component : keyboard.getComponents()) {
 				Identifier componentIdentifier = component.getIdentifier();
 				
 				// When simulation paused, can be reset once per pause with "R" key
 				if (componentIdentifier.getName().matches(Component.Identifier.Key.P.toString())) {
-					if(component.getPollData() == 1.0f & !options.contains(Options.PAUSED) & !pPressed) {
+					if(component.getPollData() == 1.0f && !options.contains(Options.PAUSED) && !pPressed) {
 						options.add(Options.PAUSED);
 						System.err.println("Simulation Paused!");
-						this.pPressed = true;
-					} else if(component.getPollData() == 1.0f & options.contains(Options.PAUSED) & !pPressed) {
+						pPressed = true;
+					} else if(component.getPollData() == 1.0f 
+							  && options.contains(Options.PAUSED) && !pPressed) {
 						options.remove(Options.PAUSED);
-						this.wasReset = false;
-						this.pPressed = true;
-					} else if(component.getPollData() == 0.0f & pPressed) {
-						this.pPressed = false;
+						wasReset = false;
+						pPressed = true;
+					} else if(component.getPollData() == 0.0f && pPressed) {
+						pPressed = false;
 					}
 
 					continue;
@@ -108,15 +116,15 @@ public class Keyboard extends AbstractController {
 				
 				// Reset simulation
 				if (componentIdentifier.getName().matches(Component.Identifier.Key.R.toString())) {
-					if(component.getPollData() == 1.0f & options.contains(Options.PAUSED) & !options.contains(Options.RESET) &
-					   !rPressed & !wasReset) {
+					if(component.getPollData() == 1.0f && options.contains(Options.PAUSED) 
+					    && !options.contains(Options.RESET) && !rPressed && !wasReset) {
 						options.add(Options.RESET);
 						System.err.println("Simulation Reset!");
-						this.wasReset = true;
-						this.rPressed = true;
-					} else if (component.getPollData() == 0.0f & rPressed) {
+						wasReset = true;
+						rPressed = true;
+					} else if (component.getPollData() == 0.0f && rPressed) {
 						options.remove(Options.RESET);
-						this.rPressed = false;
+						rPressed = false;
 					}
 					
 					continue;
@@ -124,10 +132,8 @@ public class Keyboard extends AbstractController {
 				
 				// Quits simulation
 				if (componentIdentifier.getName().matches(Component.Identifier.Key.Q.toString())) {
-					if(component.getPollData() == 1.0f & Integrate6DOFEquations.isRunning()) {
+					if(component.getPollData() == 1.0f && Integrate6DOFEquations.isRunning()) {
 						simController.stopSimulation();
-						simController.getMainFrame().getSimulationWindow().setVisible(false);
-						simController.getMainFrame().setVisible(true);
 					}
 					
 					continue;
@@ -135,10 +141,8 @@ public class Keyboard extends AbstractController {
 				
 				// Plots simulation
 				if (componentIdentifier.getName().matches(Component.Identifier.Key.L.toString())) {
-					if(component.getPollData() == 1.0f 
-							& simController.getSimulation() != null 
-							& Integrate6DOFEquations.isRunning() 
-							& !simController.isPlotWindowVisible()) {
+					if(component.getPollData() == 1.0f && simController.getSimulation() != null 
+						&& Integrate6DOFEquations.isRunning() && !simController.isPlotWindowVisible()) {
 						simController.plotSimulation();
 					}
 					
@@ -146,8 +150,6 @@ public class Keyboard extends AbstractController {
 				}
 			}
 		}
-		
-		return options;
 	}
 	
 	/**

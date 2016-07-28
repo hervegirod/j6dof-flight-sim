@@ -1,6 +1,7 @@
 package com.chrisali.javaflightsim.simulation.aero;
 
 import java.util.EnumMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
@@ -53,7 +54,7 @@ public class AccelAndMoments {
 	public static double[] calculateLinearAccelerations(double[] windParameters,
 									         		    double[] angularRates,
 									         		    EnumMap<EnvironmentParameters, Double> environmentParameters,
-									         		    EnumMap<FlightControlType, Double> controls,
+									         		    Map<FlightControlType, Double> controls,
 									         		    double alphaDot,
 									         		    Set<Engine> engineList,
 									         		    Aircraft aircraft,
@@ -95,7 +96,7 @@ public class AccelAndMoments {
 	public static double[] calculateTotalMoments(double[] windParameters,
 											     double[] angularRates,
 											     EnumMap<EnvironmentParameters, Double> environmentParameters,
-											     EnumMap<FlightControlType, Double> controls,
+											     Map<FlightControlType, Double> controls,
 											     double alphaDot,
 											     Set<Engine> engineList,
 											     Aircraft aircraft,
