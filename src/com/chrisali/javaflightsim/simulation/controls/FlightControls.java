@@ -51,6 +51,11 @@ public class FlightControls implements Runnable, FlightDataListener {
 		this.integratorConfig = simController.getIntegratorConfig();
 		this.options = simController.getSimulationOptions();
 		
+		this.hidKeyboard = new Keyboard(controls, simController);
+	}
+	
+	@Override
+	public void run() {
 		// Use controllers for pilot in loop simulation if ANALYSIS_MODE not enabled 
 		if (!options.contains(Options.ANALYSIS_MODE)) {
 			if (options.contains(Options.USE_JOYSTICK))
@@ -59,34 +64,26 @@ public class FlightControls implements Runnable, FlightDataListener {
 				hidController = new Mouse(controls);
 			else if (options.contains(Options.USE_CH_CONTROLS))
 				hidController = new CHControls(controls);
-			
-			hidKeyboard = new Keyboard(controls, simController);
 		}
-	}
-	
-	@Override
-	public void run() {
+		
 		running = true;
 		
 		while (running) {
 			try {
-				// if running in analysis mode, controls and options should be 
+				// if not running in analysis mode, controls and options should be updated using updateFlightControls()/updateOptions()
 				if (!options.contains(Options.ANALYSIS_MODE)) {
 					controls = hidController.updateFlightControls(controls);
 					controls = hidKeyboard.updateFlightControls(controls);
 					
-					// update keyboard options every two seconds
-					if ((int) Integrate6DOFEquations.getTime() % 1 == 0)
-						hidKeyboard.updateOptions();
+					hidKeyboard.updateOptions();
 					
 					Thread.sleep((long) (integratorConfig.get(IntegratorConfig.DT)*1000));
+				// in analysis mode, controls updated using generated doublets instead of pilot input
 				} else {
 					controls = FlightControlsUtilities.doubletSeries(controls, Integrate6DOFEquations.getTime());
 				}
 				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			} catch (InterruptedException e) {}
 		}
 		
 		running = false;

@@ -258,7 +258,14 @@ public class SimulationController {
 			initializeConsole();
 		
 		if (simulationOptions.contains(Options.ANALYSIS_MODE)) {
-			plotSimulation();
+			try {
+				// Wait a bit to allow the simulation to finish running
+				Thread.sleep(1000);
+				plotSimulation();
+				//Stop flight controls thread after analysis finished
+				FlightControls.setRunning(false);
+			} catch (InterruptedException e) {}
+			
 		} else {
 			outTheWindow = new RunWorld(this);
 			
@@ -289,9 +296,6 @@ public class SimulationController {
 		
 		if (flightDataThread != null && flightDataThread.isAlive())
 			FlightData.setRunning(false);
-		
-		if (consoleTablePanel != null && consoleTablePanel.isVisible())
-			consoleTablePanel.setVisible(false);
 		
 		if (outTheWindowThread != null && outTheWindowThread.isAlive())
 			EnvironmentData.setRunning(false);

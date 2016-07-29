@@ -24,6 +24,7 @@ import com.chrisali.javaflightsim.simulation.enviroment.Environment;
 import com.chrisali.javaflightsim.simulation.enviroment.EnvironmentParameters;
 import com.chrisali.javaflightsim.simulation.propulsion.Engine;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
+import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import com.chrisali.javaflightsim.utilities.SixDOFUtilities;
 
@@ -76,8 +77,9 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	private double[] sixDOFDerivatives		= new double[14];
 	private double[] y					    = new double[14];
 	private double[] initialConditions      = new double[14]; 
-	private double[] integratorConfig		= new double[3];
 	
+	// Static fields for concurrency
+	private static double[] integratorConfig = new double[3];
 	private static double   t;
 	
 	// Aircraft Properties
@@ -418,13 +420,16 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 				if (!options.contains(Options.ANALYSIS_MODE))
 					Thread.sleep((long)(integratorConfig[1]*1000));
 				
-				t += integratorConfig[1];
+				// Increments time using an intrinsic lock
+				incrementTime();
 			}
 			
 		} catch (InterruptedException e) {
 		} finally {running = false;} 
 		
 	}
+	
+	//================================= Simulation Logging =====================================================
 	
 	/**
 	 * Returns an ArrayList of {@link Integrate6DOFEquations#getSimOut()} objects; acts as a logging method, which can be used to plot simulation data
@@ -448,10 +453,19 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	 */
 	public synchronized Map<SimOuts, Double> getSimOut() {return Collections.unmodifiableMap(simOut);}
 	
+	//========================================= Time ============================================================
+	
 	/**
 	 * @return current time of simulation (sec)
 	 */
 	public static synchronized double getTime() {return Integrate6DOFEquations.t;}
+	
+	/**
+	 * Gets the intrinsic lock on {@link Integrate6DOFEquations#t} and increments it by {@link IntegratorConfig#DT} seconds 
+	 */
+	private static synchronized void incrementTime() {Integrate6DOFEquations.t += integratorConfig[1];}
+	
+	//==================================== Running Status =======================================================
 	
 	/**
 	 * Lets other objects know if {@link Integrate6DOFEquations#run()} is currently running
@@ -466,7 +480,9 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	 * @param running
 	 */
 	public static synchronized void setRunning(boolean running) {Integrate6DOFEquations.running = running;}
-
+	
+	//==================================== Environment ==========================================================
+	
 	/**
 	 * Sets the wind speed (kts), wind direction (deg) and temperature (deg C)  
 	 * 
@@ -480,7 +496,7 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 		// Subtract standard temperature from argument to get deviation from standard, then convert C deg to F deg 
 		Environment.setDeltaIsa((temperature-15)*9/5);
 	}
-
+	
 	@Override
 	public void onEnvironmentDataReceived(EnvironmentData environmentData) {
 		Map<EnvironmentDataType, Double> receivedEnvironmentData = environmentData.getEnvironmentData();

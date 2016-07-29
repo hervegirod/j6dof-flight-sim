@@ -54,6 +54,10 @@ public class SimulationTest {
 		flightControlsThread.start();
 		simulationThread.start();
 		
+		
+		try {Thread.sleep(1000);} 
+		catch (InterruptedException e) {}
+		
 		this.plots = new PlotWindow(runSim.getLogsOut(), 
 				    				new HashSet<String>(Arrays.asList("Controls", "Instruments", "Position", "Rates", "Miscellaneous")),
 						 			ab.getAircraft(),
