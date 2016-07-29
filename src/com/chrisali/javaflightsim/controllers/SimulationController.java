@@ -209,10 +209,10 @@ public class SimulationController {
 	 */
 	public void updateIninitialControls() {
 		FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "InitialControls", initialControls);
-	}	
+	}
 	
 	//=============================== Simulation ===========================================================
-	
+
 	/**
 	 * @return instance of simulation
 	 */
@@ -222,6 +222,14 @@ public class SimulationController {
 	 * @return {@link AircraftBuilder} object
 	 */
 	public AircraftBuilder getAircraftBuilder() {return ab;}
+	
+	/**
+	 * Allows {@link AircraftBuilder} to be changed to a different aircraft outside of being parsed in
+	 * the SimulationSetup.txt configuration file
+	 * 
+	 * @param ab
+	 */
+	public void setAircraftBuilder(AircraftBuilder ab) {this.ab = ab;}
 	
 	/**
 	 * @return ArrayList of simulation output data 
@@ -311,7 +319,7 @@ public class SimulationController {
 	 */
 	public void plotSimulation() {
 		if(plotWindow == null)
-			plotWindow = new PlotWindow(runSim.getLogsOut(), plotCategories, ab.getAircraft(), this);
+			plotWindow = new PlotWindow(plotCategories, this);
 		else
 			plotWindow.refreshPlots(runSim.getLogsOut());
 	}

@@ -31,7 +31,6 @@ public class SimulationTest {
 	private Thread simulationThread;
 	
 	private SimulationController simController;
-	private AircraftBuilder ab;
 	
 	private PlotWindow plots;
 	
@@ -39,29 +38,27 @@ public class SimulationTest {
 		this.simController = new SimulationController();
 		simController.getSimulationOptions().clear();
 		simController.getSimulationOptions().add(Options.ANALYSIS_MODE);
-		
-		//this.ab = new AircraftBuilder(); // Navion with lookup tables and Lycoming IO-360
-		//this.ab = new AircraftBuilder("Navion"); // Custom Navion with Lycoming IO-360
-		this.ab = new AircraftBuilder("TwinNavion"); // Twin Navion with 2 Lycoming IO-360
+		simController.setAircraftBuilder(new AircraftBuilder("TwinNavion")); // Twin Navion with 2 Lycoming IO-360
+		//simController.setAircraftBuilder(new AircraftBuilder()); // Default Navion with Lycoming IO-360
+		//simController.setAircraftBuilder(new AircraftBuilder("Navion")); // Navion with lookup tables with Lycoming IO-360
 		
 		this.flightControls = new FlightControls(simController);
 		this.flightControlsThread = new Thread(flightControls);
 		
-		Trimming.trimSim(ab, false);
-		this.runSim = new Integrate6DOFEquations(flightControls, ab, simController.getSimulationOptions());
+		Trimming.trimSim(simController.getAircraftBuilder(), false);
+		this.runSim = new Integrate6DOFEquations(flightControls, 
+												 simController.getAircraftBuilder(), 
+												 simController.getSimulationOptions());
 		this.simulationThread = new Thread(runSim);
 
 		flightControlsThread.start();
 		simulationThread.start();
 		
-		
 		try {Thread.sleep(1000);} 
 		catch (InterruptedException e) {}
 		
-		this.plots = new PlotWindow(runSim.getLogsOut(), 
-				    				new HashSet<String>(Arrays.asList("Controls", "Instruments", "Position", "Rates", "Miscellaneous")),
-						 			ab.getAircraft(),
-						 			null);
+		this.plots = new PlotWindow(new HashSet<String>(Arrays.asList("Controls", "Instruments", "Position", "Rates", "Miscellaneous")),
+						 			simController);
 		plots.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		FlightControls.setRunning(false);

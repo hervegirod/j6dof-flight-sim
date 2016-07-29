@@ -85,7 +85,7 @@ public class Keyboard extends AbstractController {
 	 * 
 	 * @param simController
 	 */
-	public void updateOptions() {
+	public void hotKeys() {
 		// Iterate through all controllers connected
 		for (Controller keyboard : controllerList) {
 			// Poll controller for data; if disconnected, break out of componentIdentification loop

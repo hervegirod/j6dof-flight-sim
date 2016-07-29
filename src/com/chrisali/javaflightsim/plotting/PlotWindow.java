@@ -23,7 +23,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.simulation.aircraft.Aircraft;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.integration.SimOuts;
 
@@ -51,21 +50,16 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 	 * from {@link Integrate6DOFEquations#getLogsOut()}, and assigns them to tabs in a JTabbedPane. 
 	 * 
 	 * @param String simPlotCetegories
-	 * @param List<EnumMap<SimOuts, Double>> logsOut
-	 * @param Aircraft aircraft
 	 * @param SimulationController controller
 	 */
-	public PlotWindow(List<Map<SimOuts, Double>> logsOut, 
-					 Set<String> simPlotCategories,
-					 Aircraft aircraft,
-					 SimulationController controller) {
-		super(aircraft.getName() + " Plots");
+	public PlotWindow(Set<String> simPlotCategories, SimulationController controller) {
+		super(controller.getAircraftBuilder().getAircraft().getName() + " Plots");
 		setLayout(new BorderLayout());
 		
-		plotList = new ArrayList<>();
-		this.logsOut = logsOut;
+		this.logsOut = controller.getLogsOut();
 		this.simPlotCategories = simPlotCategories;
 		this.controller = controller;
+		plotList = new ArrayList<>();
 		
 		//------------------ Tab Pane ------------------------------
 		
@@ -143,11 +137,12 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
 				controller.plotSimulation();
+				//refreshPlots(controller.getLogsOut());
 			}
 		});
 		plotsMenu.add(refreshItem);
 		
-		//------------------- Refresh Item -------------------------------
+		//---------------- Clear Pots Item -------------------------------
 		
 		JMenuItem clearPlotsItem = new JMenuItem("Clear Plots");
 		clearPlotsItem.setMnemonic(KeyEvent.VK_E);

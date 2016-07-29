@@ -75,7 +75,7 @@ public class FlightControls implements Runnable, FlightDataListener {
 					controls = hidController.updateFlightControls(controls);
 					controls = hidKeyboard.updateFlightControls(controls);
 					
-					hidKeyboard.updateOptions();
+					hidKeyboard.hotKeys();
 					
 					Thread.sleep((long) (integratorConfig.get(IntegratorConfig.DT)*1000));
 				// in analysis mode, controls updated using generated doublets instead of pilot input
