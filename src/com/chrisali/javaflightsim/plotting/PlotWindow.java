@@ -66,7 +66,7 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 		tabPane = new JTabbedPane();
 		
 		if (this.logsOut != null && this.simPlotCategories != null)
-			initializePlots();
+			initializePlots(logsOut);
 		
 		tabPane.addChangeListener(new ChangeListener() {
 			@Override
@@ -170,18 +170,16 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 	/**
 	 * Initalizes the plot window by generating plot objects and adding them to a tabbed pane 
 	 */
-	public void initializePlots() {
+	private void initializePlots(List<Map<SimOuts, Double>> logsOut) {
 		tabPaneWorker = new SwingWorker<Void, Integer>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				
-				List<Map<SimOuts, Double>> newLogsOut = new ArrayList<Map<SimOuts, Double>>(logsOut);
 				
 				for (String plotTitle : simPlotCategories) {
 					try {Thread.sleep(125);} 
 					catch (InterruptedException e) {}
 					
-					SimulationPlot plotObject = new SimulationPlot(newLogsOut, plotTitle);
+					SimulationPlot plotObject = new SimulationPlot(logsOut, plotTitle);
 					tabPane.add(plotTitle, plotObject);
 					plotList.add(plotObject);
 				}
@@ -226,12 +224,10 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 				try {Thread.sleep(125);} 
 				catch (InterruptedException e) {}
 				
-				List<Map<SimOuts, Double>> newLogsOut = new ArrayList<Map<SimOuts, Double>>(logsOut);
-				
-				SimulationPlot.updateXYSeriesData(newLogsOut);
+				SimulationPlot.updateXYSeriesData(logsOut);
 				
 				for (SimulationPlot plot : plotList) {
-					plot.getChartPanel().repaint();
+					plot.getChartPanel().revalidate();
 					
 					count++;
 					publish(count);

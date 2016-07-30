@@ -100,8 +100,9 @@ public class SimulationPlot extends JComponent {
 	private static NumberAxis alphDotAxis 		= new NumberAxis("Rate [rad/sec]");
 	private static NumberAxis machAxis 			= new NumberAxis("Mach Number");
 	
+	// Combined Domain Plots
+	
 	private static CombinedDomainXYPlot ratesPlot      = new CombinedDomainXYPlot(timeAxis);
-	private static CombinedDomainXYPlot positionPlot   = new CombinedDomainXYPlot(eastAxis);
 	private static CombinedDomainXYPlot instrumentPlot = new CombinedDomainXYPlot(timeAxis);
 	private static CombinedDomainXYPlot miscPlot       = new CombinedDomainXYPlot(timeAxis);
 	private static CombinedDomainXYPlot controlsPlot   = new CombinedDomainXYPlot(timeAxis);
@@ -171,17 +172,12 @@ public class SimulationPlot extends JComponent {
 	}
 	
 	/**
-	 *  Generates a {@link JFreeChart} object associated with aircraft position (North vs East) on a {@link CombinedDomainXYPlot}.
+	 *  Generates a {@link JFreeChart} object associated with aircraft position (North vs East) on an {@link XYPlot}.
 	 */
 	private JFreeChart makePositionPlot() {
-		positionPlot.add(plotLists.get(PlotType.POSITION), 1);
-		
-		positionPlot.setOrientation(PlotOrientation.VERTICAL);
-		positionPlot.setGap(20);
-		
 		return new JFreeChart("Position", 
 					 	      JFreeChart.DEFAULT_TITLE_FONT, 
-					 	      positionPlot, 
+					 	      plotLists.get(PlotType.POSITION), // Get the XYplot directly from the Map of XYPlots
 					          true);
 	}
 	
