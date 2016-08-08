@@ -371,7 +371,7 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 		
 		synchronized (logsOut) {
 			// Removes the first entry in logsOut to keep a maximum of 100 sec of flight data in UNLIMITED_FLIGHT
-			if (options.contains(Options.UNLIMITED_FLIGHT) & t >= 100)
+			if (options.contains(Options.UNLIMITED_FLIGHT) & t >= 100 & logsOut.size() > 0)
 				logsOut.remove(0);
 				
 			// Add output step to logging arrayList

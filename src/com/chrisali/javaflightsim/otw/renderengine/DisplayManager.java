@@ -38,15 +38,17 @@ public class DisplayManager {
 			ContextAttribs attribs = new ContextAttribs(3,3)
 										.withForwardCompatible(true)
 										.withProfileCore(true);
+			Thread.sleep(500); // Slight pause to allow time for simulation window to initialize itself
 			
+			// AWT Canvas object that Display uses to set its parent to
 			Canvas canvas = simulationWindow.getOutTheWindowCanvas();
-			height = canvas.getHeight()+10; // Slight padding to prevent any gaps at top of window
+			height = canvas.getHeight();
 			width = canvas.getWidth();
 					
 			Display.setParent(canvas);
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.create(new PixelFormat().withSamples(aaSamples).withDepthBits(colorDepth),attribs);
-		} catch (LWJGLException e) {
+		} catch (LWJGLException | InterruptedException e) {
 			e.printStackTrace();
 		}
 		

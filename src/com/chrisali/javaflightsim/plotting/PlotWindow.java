@@ -137,7 +137,6 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 			@Override
 			public void actionPerformed(ActionEvent ev) {
 				controller.plotSimulation();
-				//refreshPlots(controller.getLogsOut());
 			}
 		});
 		plotsMenu.add(refreshItem);
@@ -176,12 +175,17 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 			protected Void doInBackground() throws Exception {
 				
 				for (String plotTitle : simPlotCategories) {
-					try {Thread.sleep(125);} 
-					catch (InterruptedException e) {}
-					
-					SimulationPlot plotObject = new SimulationPlot(logsOut, plotTitle);
-					tabPane.add(plotTitle, plotObject);
-					plotList.add(plotObject);
+					try {
+						SimulationPlot plotObject = new SimulationPlot(logsOut, plotTitle);
+						
+						// Pause a bit to give SimulationPlot object time to initialize 
+						Thread.sleep(1000);
+
+						tabPane.add(plotTitle, plotObject);
+						plotList.add(plotObject);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 				return null;
 			}
@@ -221,17 +225,22 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 			protected Void doInBackground() throws Exception {
 				int count = 0;
 				
-				try {Thread.sleep(125);} 
-				catch (InterruptedException e) {}
-				
-				SimulationPlot.updateXYSeriesData(logsOut);
-				
-				for (SimulationPlot plot : plotList) {
-					plot.getChartPanel().revalidate();
+				try {
+					SimulationPlot.updateXYSeriesData(logsOut);
 					
-					count++;
-					publish(count);
+					Thread.sleep(500);
+				
+					for (SimulationPlot plot : plotList) {
+						plot.getChartPanel().repaint();
+						
+						count++;
+						publish(count);
+					}
+					
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
+				
 				return null;
 			}
 		};
