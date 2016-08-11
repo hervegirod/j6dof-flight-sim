@@ -8,7 +8,6 @@ import javax.swing.SwingUtilities;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
-import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.Options;
@@ -38,9 +37,7 @@ public class InstrumentPanelTest {
 		
 		FlightControls flightControls = new FlightControls(simController);
 		
-		Integrate6DOFEquations runSim = new Integrate6DOFEquations(flightControls,
-																   new AircraftBuilder("Navion"),
-																   simController.getSimulationOptions());
+		Integrate6DOFEquations runSim = new Integrate6DOFEquations(flightControls, simController);
 		FlightData flightData = new FlightData(runSim);
 
 		new Thread(flightControls).start();

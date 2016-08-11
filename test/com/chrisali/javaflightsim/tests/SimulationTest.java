@@ -42,13 +42,12 @@ public class SimulationTest {
 		//simController.setAircraftBuilder(new AircraftBuilder()); // Default Navion with Lycoming IO-360
 		//simController.setAircraftBuilder(new AircraftBuilder("Navion")); // Navion with lookup tables with Lycoming IO-360
 		
+		Trimming.trimSim(simController, false);
+
 		this.flightControls = new FlightControls(simController);
 		this.flightControlsThread = new Thread(flightControls);
 		
-		Trimming.trimSim(simController.getAircraftBuilder(), false);
-		this.runSim = new Integrate6DOFEquations(flightControls, 
-												 simController.getAircraftBuilder(), 
-												 simController.getSimulationOptions());
+		this.runSim = new Integrate6DOFEquations(flightControls, simController);
 		this.simulationThread = new Thread(runSim);
 
 		flightControlsThread.start();

@@ -13,7 +13,6 @@ import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Joystick;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Keyboard;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Mouse;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
-import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 
@@ -47,11 +46,14 @@ public class FlightControls implements Runnable, FlightDataListener {
 	 * @param options
 	 */
 	public FlightControls(SimulationController simController) {
-		this.controls = IntegrationSetup.gatherInitialControls("InitialControls");
+		this.controls = simController.getInitialControls();
 		this.integratorConfig = simController.getIntegratorConfig();
 		this.options = simController.getSimulationOptions();
 		
 		this.hidKeyboard = new Keyboard(controls, simController);
+		
+		// initializes static EnumMap that contains trim values of controls for doublets 
+		FlightControlsUtilities.init();
 	}
 	
 	@Override

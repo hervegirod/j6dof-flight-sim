@@ -101,7 +101,8 @@ public class SimulationController {
 		integratorConfig = IntegrationSetup.gatherIntegratorConfig("IntegratorConfig");
 		initialControls = IntegrationSetup.gatherInitialControls("InitialControls");
 		
-		ab = new AircraftBuilder();
+		String aircraftName = FileUtilities.parseSimulationSetupForAircraft();
+		ab = new AircraftBuilder(aircraftName);
 	}
 	
 	//=============================== Configuration ===========================================================
@@ -143,11 +144,15 @@ public class SimulationController {
 	}
 	
 	/**
-	 * Calls the {@link AircraftBuilder} constructor with using the aircraftName argument
+	 * Calls the {@link AircraftBuilder} constructor with using the aircraftName argument and updates the SimulationSetup.txt
+	 * configuration file with the new selected aircraft
 	 * 
 	 * @param aircraftName
 	 */
-	public void updateAircraft(String aircraftName) {ab = new AircraftBuilder(aircraftName);}
+	public void updateAircraft(String aircraftName) {
+		ab = new AircraftBuilder(aircraftName);
+		FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "SimulationSetup", simulationOptions, aircraftName);
+	}
 	
 	/**
 	 * Updates the MassProperties config file for the selected aircraft using aircraftName
@@ -210,6 +215,11 @@ public class SimulationController {
 	public void updateIninitialControls() {
 		FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "InitialControls", initialControls);
 	}
+
+	/**
+	 * @return initialControls EnumMap
+	 */
+	public EnumMap<FlightControlType, Double> getInitialControls() {return initialControls;}
 	
 	//=============================== Simulation ===========================================================
 
@@ -252,11 +262,12 @@ public class SimulationController {
 	 * Depending on options specified, a console panel and/or plot window will also be initialized and opened 
 	 */
 	public void startSimulation() {
+		Trimming.trimSim(this, false);
+		
 		flightControls = new FlightControls(this);
 		flightControlsThread = new Thread(flightControls);
 		
-		Trimming.trimSim(ab, false);
-		runSim = new Integrate6DOFEquations(flightControls, ab, simulationOptions);
+		runSim = new Integrate6DOFEquations(flightControls, this);
 		simulationThread = new Thread(runSim);
 
 		flightControlsThread.start();

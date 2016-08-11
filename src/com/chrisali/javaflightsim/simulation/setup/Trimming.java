@@ -8,7 +8,6 @@ import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
 import com.chrisali.javaflightsim.simulation.aero.StabilityDerivatives;
 import com.chrisali.javaflightsim.simulation.aero.WingGeometry;
 import com.chrisali.javaflightsim.simulation.aircraft.Aircraft;
-import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.enviroment.Environment;
@@ -49,14 +48,16 @@ public class Trimming {
 	 * 
 	 * as long as the test mode boolean flag is false; otherwise the results will be displayed in the console
 	 * 
-	 * @param ab
+	 * @param controller
 	 * @param testMode
 	 */
-	public static void trimSim(AircraftBuilder ab, boolean testMode) {
-		aircraft = ab.getAircraft();
+	public static void trimSim(SimulationController controller, boolean testMode) {
+		aircraft = controller.getAircraftBuilder().getAircraft();
 		aero = new Aerodynamics(aircraft);
-		initialConditions = IntegrationSetup.gatherInitialConditions("InitialConditions");
-		initialControls = IntegrationSetup.gatherInitialControls("InitialControls");
+		
+		initialConditions = controller.getInitialConditions();
+		initialControls = controller.getInitialControls();
+		
 		environmentParams = Environment.updateEnvironmentParams(new double[]{0,0,initialConditions.get(InitialConditions.INITD)});
 		
 		double alphaMin = -0.18, alphaMax = 0.18, throttleMin = 0.0, throttleMax = 1.0,
@@ -126,7 +127,7 @@ public class Trimming {
 
 		//==================================================== Throttle ============================================================
 		
-		Set<Engine> engines = ab.getEngineList();
+		Set<Engine> engines = controller.getAircraftBuilder().getEngineList();
 		
 		drag = (drag * Math.cos(alphaTrim)) - (lift * Math.sin(alphaTrim)) + (weight * Math.sin(thetaTrim));
 		
@@ -168,6 +169,7 @@ public class Trimming {
 		
 		initialControls.put(FlightControlType.ELEVATOR, -elevTrim);
 		
+		// In test mode do not write any config settings to files
 		if (!testMode) {
 			FileUtilities.writeConfigFile(SimulationController.getSimConfigPath(), "InitialConditions", initialConditions);
 			FileUtilities.writeConfigFile(SimulationController.getSimConfigPath(), "InitialControls", initialControls);

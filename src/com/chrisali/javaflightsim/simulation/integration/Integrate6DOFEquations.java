@@ -12,6 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 
+import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentDataListener;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentDataType;
@@ -95,26 +96,24 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 	private static boolean running;
 	
 	/**
-	 * Creates the {@link Integrate6DOFEquations} object with a reference to {@link FlightControls}, {@link AircraftBuilder} 
-	 * and a set options defined in the {@link Options} EnumSet
+	 * Creates the {@link Integrate6DOFEquations} object with references to {@link FlightControls} and {@link SimulationController}
+	 * objects
 	 * 
 	 * @param flightControls
-	 * @param ab
-	 * @param runOptions
+	 * @param simController
 	 */
-	public Integrate6DOFEquations(FlightControls flightControls,
-								  AircraftBuilder ab,
-								  EnumSet<Options> runOptions) {
+	public Integrate6DOFEquations(FlightControls flightControls, SimulationController simController) {
+		
 		controls 		   = flightControls.getFlightControls();
-		aircraft 		   = ab.getAircraft();
-		engineList   	   = ab.getEngineList();
-		options		       = runOptions;
+		aircraft 		   = simController.getAircraftBuilder().getAircraft();
+		engineList   	   = simController.getAircraftBuilder().getEngineList();
+		options		       = simController.getSimulationOptions();
 		
 		// Use Apache Commons Lang to convert EnumMap values into primitive double[] 
-		initialConditions = ArrayUtils.toPrimitive(IntegrationSetup.gatherInitialConditions("InitialConditions").values()
-				   												   .toArray(new Double[initialConditions.length]));
-		integratorConfig  = ArrayUtils.toPrimitive(IntegrationSetup.gatherIntegratorConfig("IntegratorConfig").values()
-				   												   .toArray(new Double[integratorConfig.length]));
+		initialConditions = ArrayUtils.toPrimitive(simController.getInitialConditions().values()
+				   												.toArray(new Double[initialConditions.length]));
+		integratorConfig  = ArrayUtils.toPrimitive(simController.getIntegratorConfig().values()
+				   												.toArray(new Double[integratorConfig.length]));
 
 		// Allows simulation to run forever in pilot in the loop simulation if ANALYSIS_MODE not enabled 
 		if (!options.contains(Options.ANALYSIS_MODE) && options.contains(Options.UNLIMITED_FLIGHT))

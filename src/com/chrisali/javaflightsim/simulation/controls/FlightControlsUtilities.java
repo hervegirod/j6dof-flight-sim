@@ -12,9 +12,15 @@ import com.chrisali.javaflightsim.simulation.setup.Options;
 public class FlightControlsUtilities {
 	
 	/**
-	 * Main trim values of flight controls to determine 
+	 * Main trim values of flight controls to determine default value if doublet input not underway
 	 */
-	private static Map<FlightControlType, Double> trimControls = IntegrationSetup.gatherInitialControls("InitialControls");
+	private static Map<FlightControlType, Double> trimControls; 
+
+	/**
+	 * Initializes trimControls EnumMap in {@link FlightControlsUtilities}; needs to be called each time controls and
+	 * initial conditions are changed so that new trim values can be read from InitialControls.txt
+	 */
+	public static void init() {trimControls = IntegrationSetup.gatherInitialControls("InitialControls");}
 	
 	/**
 	 * Generates a control doublet in the positive and then negative direction, returning to trim value. The start
