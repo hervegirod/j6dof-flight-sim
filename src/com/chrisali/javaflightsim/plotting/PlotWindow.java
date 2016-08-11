@@ -61,6 +61,11 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 		this.controller = controller;
 		plotList = new ArrayList<>();
 		
+		//-------------- Progress Dialog ----------------------------
+		
+		progressDialog = new ProgressDialog(this, "Refreshing Plots");
+		progressDialog.setProgressDialogListener(this);
+
 		//------------------ Tab Pane ------------------------------
 		
 		tabPane = new JTabbedPane();
@@ -76,10 +81,6 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 		});
 		add(tabPane, BorderLayout.CENTER);
 		
-		//-------------- Progress Dialog ----------------------------
-		
-		progressDialog = new ProgressDialog(this, "Plots Refreshing");
-		progressDialog.setProgressDialogListener(this);
 
 		//================== Window Settings ====================================
 		
@@ -170,12 +171,37 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 	 * Initalizes the plot window by generating plot objects and adding them to a tabbed pane 
 	 */
 	private void initializePlots(List<Map<SimOuts, Double>> logsOut) {
+		progressDialog.setMaximum(simPlotCategories.size());
+		progressDialog.setTitle("Generating Plots");
+		progressDialog.setVisible(true);
+		
 		tabPaneWorker = new SwingWorker<Void, Integer>() {
+			
+			@Override
+			protected void done() {
+				progressDialog.setVisible(false);
+				
+				if (isCancelled())
+					return;
+				
+				if (!isVisible())
+					setVisible(true);
+			}
+			
+			@Override
+			protected void process(List<Integer> counts) {
+				int retreived = counts.get(counts.size()-1);
+				progressDialog.setValue(retreived);
+			}
+			
 			@Override
 			protected Void doInBackground() throws Exception {
 				
-				for (String plotTitle : simPlotCategories) {
-					try {
+				try {
+					int count = 0;
+					
+					for (String plotTitle : simPlotCategories) {
+					
 						SimulationPlot plotObject = new SimulationPlot(logsOut, plotTitle);
 						
 						// Pause a bit to give SimulationPlot object time to initialize 
@@ -183,10 +209,16 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 
 						tabPane.add(plotTitle, plotObject);
 						plotList.add(plotObject);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+						
+						count++;
+						publish(count);
 					}
+						
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
+				
+				
 				return null;
 			}
 		};
@@ -200,7 +232,8 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 	 * @param logsOut
 	 */
 	public void refreshPlots(List<Map<SimOuts, Double>> logsOut) {
-		progressDialog.setMaximum(plotList.size());
+		progressDialog.setMaximum(simPlotCategories.size());
+		progressDialog.setTitle("Refreshing Plots");
 		progressDialog.setVisible(true);
 		
 		refreshPlotWorker = new SwingWorker<Void, Integer>() {
@@ -223,15 +256,16 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 
 			@Override
 			protected Void doInBackground() throws Exception {
-				int count = 0;
 				
 				try {
-					SimulationPlot.updateXYSeriesData(logsOut);
+					int count = 0;
 					
-					Thread.sleep(500);
+					SimulationPlot.updateXYSeriesData(logsOut);
 				
 					for (SimulationPlot plot : plotList) {
 						plot.getChartPanel().repaint();
+						
+						Thread.sleep(500);
 						
 						count++;
 						publish(count);

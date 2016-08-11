@@ -113,6 +113,7 @@ public class SimulationWindow extends JFrame {
 		
 		instrumentPanelPanel.add(padding, gc);
 		
+		//instrumentPanel.setVisible(controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL));
 	
 		//========================== Window Settings =============================================
 

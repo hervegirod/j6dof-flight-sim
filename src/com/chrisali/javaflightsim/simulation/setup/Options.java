@@ -1,5 +1,7 @@
 package com.chrisali.javaflightsim.simulation.setup;
 
+import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
+import com.chrisali.javaflightsim.menus.SimulationWindow;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Joystick;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Mouse;
@@ -17,6 +19,7 @@ import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
  *	<p>USE_JOYSTICK - Uses JInput to integrate a {@link Joystick} to allow pilot in the loop simulation</p>
  *	<p>USE_MOUSE - Uses JInput to integrate a {@link Mouse} to allow pilot in the loop simulation</p>
  *	<p>USE_CH_CONTROLS - Uses JInput to integrate a {@link CHControls} to allow pilot in the loop simulation</p>
+ *	<p>INSTRUMENT_PANEL - Displays {@link InstrumentPanel} view in {@link SimulationWindow}</p>
  */
 public enum Options {
 	ANALYSIS_MODE     ("Analysis Mode"),
@@ -26,7 +29,8 @@ public enum Options {
 	CONSOLE_DISPLAY	  ("Console Display"),
 	USE_JOYSTICK	  ("Use Joystick"),
 	USE_MOUSE		  ("Use Mouse"),
-	USE_CH_CONTROLS	  ("Use CH Controls");
+	USE_CH_CONTROLS	  ("Use CH Controls"),
+	INSTRUMENT_PANEL  ("Show Instrument Panel");
 	
 	private String option;
 	
