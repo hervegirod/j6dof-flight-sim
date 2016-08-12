@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JComponent;
 
@@ -443,9 +444,9 @@ public class SimulationPlot extends JComponent {
 	/**
 	 * Updates all XYSeries objects with new data from logsOut list
 	 * 
-	 * @param logsOut
+	 * @param oldlogsOut
 	 */
-	protected static void updateXYSeriesData(List<Map<SimOuts, Double>> logsOut) {
+	protected static void updateXYSeriesData(List<Map<SimOuts, Double>> oldLogsOut) {
 		
 		// Clear all data from series
 		
@@ -487,6 +488,10 @@ public class SimulationPlot extends JComponent {
 		
 		alphaDotData.clear();
 		machData.clear();
+		
+		// Copy to thread-safe ArrayList for iteration
+		
+		CopyOnWriteArrayList<Map<SimOuts, Double>> logsOut = new CopyOnWriteArrayList<>(oldLogsOut);
 		
 		// Add data from logsOut to each XYSeries; only notify of a SeriesChangeEvent at the end of the loop
 		

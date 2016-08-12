@@ -39,7 +39,7 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 	private JTabbedPane tabPane;
 	private List<SimulationPlot> plotList;
 	private SwingWorker<Void, Integer> tabPaneWorker;
-	private SwingWorker<Void, Integer> refreshPlotWorker;
+	private Thread refreshPlotThread;
 	private ProgressDialog progressDialog;
 	
 	private SimulationController controller;
@@ -93,8 +93,8 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 			public void windowClosing(WindowEvent e) {
 				setVisible(false);
 				
-				if (refreshPlotWorker != null)
-					refreshPlotWorker.cancel(true);
+				if (refreshPlotThread != null)
+					refreshPlotThread.interrupt();
 				if (tabPaneWorker != null)
 					tabPaneWorker.cancel(true);
 			}
@@ -200,12 +200,14 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 				try {
 					int count = 0;
 					
+					// Pause a bit to give SimulationPlot object time to initialize 
+					Thread.sleep(2000);
+					
 					for (String plotTitle : simPlotCategories) {
 					
 						SimulationPlot plotObject = new SimulationPlot(logsOut, plotTitle);
 						
-						// Pause a bit to give SimulationPlot object time to initialize 
-						Thread.sleep(1000);
+						Thread.sleep(250);
 
 						tabPane.add(plotTitle, plotObject);
 						plotList.add(plotObject);
@@ -236,53 +238,34 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 		progressDialog.setTitle("Refreshing Plots");
 		progressDialog.setVisible(true);
 		
-		refreshPlotWorker = new SwingWorker<Void, Integer>() {
+		// Run process in Thread instead of SwingWorker to allow re-execution
+		refreshPlotThread = new Thread(){
 			@Override
-			protected void done() {
-				progressDialog.setVisible(false);
-				
-				if (isCancelled())
-					return;
-				
-				if (!isVisible())
-					setVisible(true);
-			}
-
-			@Override
-			protected void process(List<Integer> counts) {
-				int retreived = counts.get(counts.size()-1);
-				progressDialog.setValue(retreived);
-			}
-
-			@Override
-			protected Void doInBackground() throws Exception {
-				
+			public void run() {
 				try {
 					int count = 0;
 					
 					SimulationPlot.updateXYSeriesData(logsOut);
-				
+					
 					for (SimulationPlot plot : plotList) {
 						plot.getChartPanel().repaint();
 						
-						Thread.sleep(500);
+						Thread.sleep(125);
+						progressDialog.setValue(count);
 						
 						count++;
-						publish(count);
 					}
-					
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
-				return null;
+				} 
+				catch (InterruptedException e) {} 
+				finally {progressDialog.setVisible(false);}
 			}
 		};
-		refreshPlotWorker.execute();
+		
+		refreshPlotThread.start();
 	}
 	
 	@Override
 	public void ProgressDialogCancelled() {
-		refreshPlotWorker.cancel(true);
+		refreshPlotThread.interrupt();
 	}
 }
