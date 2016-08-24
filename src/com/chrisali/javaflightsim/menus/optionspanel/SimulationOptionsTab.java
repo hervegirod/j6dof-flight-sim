@@ -36,6 +36,7 @@ public class SimulationOptionsTab extends JPanel {
 	private JLabel headerLabel;
 	private JCheckBox analysisMode;
 	private JCheckBox consoleDisplay;
+	private JCheckBox showInstrumentPanel;
 	private JList<String> controllers;
 	private JSpinner stepSizeSpinner;
 	private StepSizeValueChangedListener stepSizeValueChangedListener;
@@ -147,6 +148,7 @@ public class SimulationOptionsTab extends JPanel {
 		controllerList.addElement("Joystick");
 		controllerList.addElement("Mouse");
 		controllerList.addElement("CH Controls");
+		controllerList.addElement("Keyboard Only");
 		controllers = new JList<String>(controllerList);
 		controllers.setToolTipText("Chooses which HID controller will control the simulation");
 		controllers.setSelectedIndex(0);
@@ -159,6 +161,29 @@ public class SimulationOptionsTab extends JPanel {
 			}
 		});
 		controlsPanel.add(controllers, gc);
+		
+		//------------ Use Instrument Panel ----------------------
+		gc.gridy++;
+		
+		gc.gridx = 0;
+		gc.anchor = GridBagConstraints.EAST;
+		controlsPanel.add(new JLabel("Instrument Panel:"), gc);
+		
+		gc.gridx = 1;
+		gc.anchor = GridBagConstraints.WEST;
+		showInstrumentPanel = new JCheckBox("Show Panel");
+		showInstrumentPanel.setToolTipText("Chooses whether a Swing instrument panel with gauges will display when the simulation runs");
+		showInstrumentPanel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (((JCheckBox) e.getSource()).isSelected())
+					simulationOptions.add(Options.INSTRUMENT_PANEL);
+				else 
+					simulationOptions.remove(Options.INSTRUMENT_PANEL);
+			}
+		});
+		
+		controlsPanel.add(showInstrumentPanel, gc);
 		
 		//--------- Simulation Step Size Spinner ----------------- 
 		gc.gridy++;
@@ -190,7 +215,8 @@ public class SimulationOptionsTab extends JPanel {
 	
 	/**
 	 * Adds desired HID controller to simulationOptions EnumMap depending on string passed in; removes all other
-	 * HID controller values before adding new value 
+	 * HID controller values before adding new value, unless "Keyboard Only" is selected, in which case no option
+	 * is added
 	 * 
 	 * @param selectedValue
 	 */
@@ -208,6 +234,9 @@ public class SimulationOptionsTab extends JPanel {
 			simulationOptions.removeIf(p -> (p == Options.USE_MOUSE || p == Options.USE_JOYSTICK));
 			simulationOptions.add(Options.USE_CH_CONTROLS);
 			break;
+		case ("Keyboard Only"):
+			simulationOptions.removeIf(p -> (p == Options.USE_MOUSE || p == Options.USE_JOYSTICK || p == Options.USE_CH_CONTROLS));
+			break;
 		default:
 			break;
 		}
@@ -224,6 +253,7 @@ public class SimulationOptionsTab extends JPanel {
 		
 		analysisMode.setSelected(simulationOptions.contains(Options.ANALYSIS_MODE) ? true : false);
 		consoleDisplay.setSelected(simulationOptions.contains(Options.CONSOLE_DISPLAY) ? true : false);
+		showInstrumentPanel.setSelected(simulationOptions.contains(Options.INSTRUMENT_PANEL) ? true : false);
 		
 		if (simulationOptions.contains(Options.USE_CH_CONTROLS))
 			controllers.setSelectedIndex(2);

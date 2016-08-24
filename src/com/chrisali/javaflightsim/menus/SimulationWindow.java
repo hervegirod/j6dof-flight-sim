@@ -16,6 +16,7 @@ import com.chrisali.javaflightsim.instrumentpanel.ClosePanelListener;
 import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.otw.RunWorld;
+import com.chrisali.javaflightsim.simulation.setup.Options;
 
 /**
  * JPanel that integrates {@link InstrumentPanel} and the OpenGL OTW view from {@link RunWorld},
@@ -94,6 +95,8 @@ public class SimulationWindow extends JFrame {
 		add(instrumentPanelPanel,gc);
 	
 		instrumentPanel = new InstrumentPanel();
+		instrumentPanel.setVisible(!controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL));
+
 		JPanel padding = new JPanel();
 		padding.setMinimumSize(instrumentPanel.getSize());
 		
@@ -112,8 +115,6 @@ public class SimulationWindow extends JFrame {
 		gc.gridx      = 2;
 		
 		instrumentPanelPanel.add(padding, gc);
-		
-		//instrumentPanel.setVisible(controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL));
 	
 		//========================== Window Settings =============================================
 

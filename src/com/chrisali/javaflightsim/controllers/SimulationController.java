@@ -287,6 +287,8 @@ public class SimulationController {
 			
 		} else {
 			outTheWindow = new RunWorld(this);
+			// Sets instrument panel visible based on presence of enum in set
+			getMainFrame().getSimulationWindow().getInstrumentPanel().setVisible(simulationOptions.contains(Options.INSTRUMENT_PANEL));
 			
 			environmentData = new EnvironmentData(outTheWindow);
 			environmentData.addEnvironmentDataListener(runSim);

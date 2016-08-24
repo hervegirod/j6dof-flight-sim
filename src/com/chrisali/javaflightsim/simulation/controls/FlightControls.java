@@ -74,7 +74,9 @@ public class FlightControls implements Runnable, FlightDataListener {
 			try {
 				// if not running in analysis mode, controls and options should be updated using updateFlightControls()/updateOptions()
 				if (!options.contains(Options.ANALYSIS_MODE)) {
-					controls = hidController.updateFlightControls(controls);
+					if (hidController != null) 
+						controls = hidController.updateFlightControls(controls);
+					
 					controls = hidKeyboard.updateFlightControls(controls);
 					
 					hidKeyboard.hotKeys();
