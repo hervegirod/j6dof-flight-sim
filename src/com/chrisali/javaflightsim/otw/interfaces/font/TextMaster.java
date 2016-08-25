@@ -16,6 +16,10 @@ public class TextMaster {
 	public static void init(Loader loaderObj) {
 		renderer = new FontRenderer();
 		loader = loaderObj;
+		
+		// Need to clear out previous text from map when reinitializing otherwise will receive fatal error
+		if(!texts.isEmpty()) 
+			texts.clear();
 	}
 	
 	public static void render() {
