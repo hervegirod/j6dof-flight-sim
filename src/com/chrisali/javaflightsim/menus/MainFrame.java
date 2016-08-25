@@ -76,15 +76,7 @@ public class MainFrame extends JFrame {
 		
 		//------------------------- Simulation Window ----------------------------------------------
 		
-		simulationWindow = new SimulationWindow(controller);
-		simulationWindow.setClosePanelListener(new ClosePanelListener() {
-			@Override
-			public void panelWindowClosed() {
-				simulationController.stopSimulation();
-				simulationWindow.setVisible(false);
-				MainFrame.this.setVisible(true);
-			}
-		});
+		initSimulationWindow();
 		
 		//-------------------------- Aircraft Panel ------------------------------------------------
 		
@@ -252,6 +244,24 @@ public class MainFrame extends JFrame {
 		optionsPanel.setAllOptions(simulationController.getSimulationOptions(), stepSize, 
 									simulationController.getDisplayOptions(),
 									simulationController.getAudioOptions());
+	}
+	
+	//=============================== Simulation Window ==============================================
+	
+	/**
+	 * (Re)initializes simulationWindow object so that instrument panel and OTW view are scaled correctly depending
+	 * on if the instrument panel is shown or not
+	 */
+	public void initSimulationWindow() {
+		simulationWindow = new SimulationWindow(simulationController);
+		simulationWindow.setClosePanelListener(new ClosePanelListener() {
+			@Override
+			public void panelWindowClosed() {
+				simulationController.stopSimulation();
+				simulationWindow.setVisible(false);
+				MainFrame.this.setVisible(true);
+			}
+		});
 	}
 	
 	/**

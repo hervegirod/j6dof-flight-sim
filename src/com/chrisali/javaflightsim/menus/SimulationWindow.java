@@ -8,7 +8,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
@@ -45,19 +44,6 @@ public class SimulationWindow extends JFrame {
 	public SimulationWindow(SimulationController controller) {
 		super("Java Flight Simulator");
 		
-		//============================ Panels and Grid Bag Setup =================================
-		
-		//	--------------------------------------
-		//  |	           OTW					 | <- outTheWindowCanvas
-		//  |        							 |  
-		//  |____________________________________|
-		//  | Padding |InstrumentPanel| Padding  | <- instrumentPanelPanel
-		//	--------------------------------------
-		
-		JPanel instrumentPanelPanel = new JPanel();
-		
-		instrumentPanelPanel.setLayout(new GridBagLayout());
-
 		setLayout(new GridBagLayout());
 		
 		GridBagConstraints gc = new GridBagConstraints();
@@ -90,31 +76,12 @@ public class SimulationWindow extends JFrame {
 		
 		//------------------------- Instrument Panel ---------------------------------------------
 		
-		gc.gridy      = 1;
+		gc.gridy++;
 
-		add(instrumentPanelPanel,gc);
-	
 		instrumentPanel = new InstrumentPanel();
-		instrumentPanel.setVisible(!controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL));
 
-		JPanel padding = new JPanel();
-		padding.setMinimumSize(instrumentPanel.getSize());
-		
-		gc.gridwidth  = 3;
-		gc.gridx      = 1;
-		gc.weighty 	  = 10;
-		gc.weightx 	  = 20;
-		
-		instrumentPanelPanel.add(instrumentPanel, gc);
-		
-		gc.gridx      = 0;
-		gc.weightx    = 70;
-		
-		instrumentPanelPanel.add(padding, gc);
-		
-		gc.gridx      = 2;
-		
-		instrumentPanelPanel.add(padding, gc);
+		if (controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL))
+			add(instrumentPanel, gc);
 	
 		//========================== Window Settings =============================================
 

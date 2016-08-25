@@ -168,6 +168,8 @@ public class Trimming {
 		initialConditions.put(InitialConditions.INITW, wVelocityTrim);
 		
 		initialControls.put(FlightControlType.ELEVATOR, -elevTrim);
+		initialControls.put(FlightControlType.AILERON, 0.0);
+		initialControls.put(FlightControlType.RUDDER, 0.0);		
 		
 		// In test mode do not write any config settings to files
 		if (!testMode) {
