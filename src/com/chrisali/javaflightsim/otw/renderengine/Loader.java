@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.lwjgl.BufferUtils;
@@ -25,9 +25,9 @@ public class Loader {
 	
 	private static boolean useAnisotropicFiltering;
 
-	private List<Integer> vaoList = new ArrayList<>();
-	private List<Integer> vboList = new ArrayList<>();
-	private List<Integer> textureList = new ArrayList<>();
+	private List<Integer> vaoList = new LinkedList<>();
+	private List<Integer> vboList = new LinkedList<>();
+	private List<Integer> textureList = new LinkedList<>();
 
 	public RawModel loadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices) {
 		int vaoID = createVAO();
@@ -53,6 +53,7 @@ public class Loader {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, dimensions, positions);
 		unbindVAO();
+		
 		return new RawModel(vaoID, positions.length / dimensions);
 	}
 
@@ -60,6 +61,7 @@ public class Loader {
 		int vaoID = createVAO();
 		this.storeDataInAttributeList(0, 2, positions);
 		unbindVAO();
+		
 		return new RawModel(vaoID, positions.length / 2);
 	}
 
@@ -130,6 +132,10 @@ public class Loader {
 			GL15.glDeleteBuffers(vbo);
 		for (int texture : textureList)
 			GL11.glDeleteTextures(texture);
+		
+		vaoList.clear();
+		vboList.clear();
+		textureList.clear();
 	}
 
 	private int createVAO() {

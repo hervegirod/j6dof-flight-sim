@@ -1,8 +1,10 @@
 package com.chrisali.javaflightsim.otw;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -42,6 +44,7 @@ import com.chrisali.javaflightsim.otw.terrain.Terrain;
 import com.chrisali.javaflightsim.otw.terrain.TerrainCollection;
 import com.chrisali.javaflightsim.otw.textures.ModelTexture;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
+import com.chrisali.javaflightsim.simulation.setup.Options;
 
 /**
  * Runner class for out the window display for Java Flight Sim. It utilizes LWJGL to create a 3D world in OpenGL. 
@@ -72,7 +75,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 	private Vector3f ownshipRotation;
 	private Camera camera;
 	
-	private GUIText text;
+	private Map<String, GUIText> texts = new HashMap<>();
 	
 	private static boolean running = false;
 	
@@ -135,14 +138,16 @@ public class RunWorld implements Runnable, FlightDataListener {
 			SoundCollection.update(soundValues, controller);
 			
 			//----------- UI --------------------
-			text.setTextString(String.valueOf(ownship.getPosition().y));
-			TextMaster.loadText(text);
+			if (controller.getSimulationOptions().contains(Options.PAUSED))
+				texts.get("Paused").setTextString("PAUSED");
+			else
+				texts.get("Paused").setTextString("");
 
 			//------ Render Everything -----------
 			masterRenderer.renderWholeScene(entities, terrainCollection.getTerrainMap(), 
 											lights, camera, new Vector4f(0, 1, 0, 0));
 			ParticleMaster.renderParticles(camera);
-			TextMaster.render();
+			TextMaster.render(texts);
 			
 			DisplayManager.updateDisplay();
 		}
@@ -161,7 +166,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 	}
 	
 	/**
-	 * Initalizes and generates all assets needed to render lights, entities, particles terrain and text
+	 * Initializes and generates all assets needed to render lights, entities, particles terrain and text
 	 */
 	private void loadAssets() {
 		
@@ -178,7 +183,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 		
 		entities = new EntityCollections(lights, terrainCollection.getTerrainMap(), loader);
 		//entities.createAutogenImageEntities("autogen", "Terrain");
-		//entities.createRandomStaticEntities();
+		entities.createRandomStaticEntities();
 		
 		//================================= Ownship ===========================================================
 		
@@ -209,8 +214,10 @@ public class RunWorld implements Runnable, FlightDataListener {
 		//=============================== Interface ==========================================================
 		
 		// Generates font and on screen text
-		FontType font = new FontType(loader.loadTexture("arial", "Fonts"), new File("Resources\\Fonts\\arial.fnt"));
-		text = new GUIText("", 1, font, new Vector2f(0, 0), 1f, true);
+		FontType font = new FontType(loader.loadTexture("ubuntu", "Fonts"), new File("Resources\\Fonts\\ubuntu.fnt"));
+		texts.put("FlightData", new GUIText("", 0.85f, font, new Vector2f(0, 0), 1f, true));
+		texts.put("Paused", new GUIText("PAUSED", 1.15f, font, new Vector2f(0.5f, 0.5f), 1f, false, new Vector3f(1,0,0)));
+		
 		
 		//==================================== Audio =========================================================
 		
@@ -242,6 +249,28 @@ public class RunWorld implements Runnable, FlightDataListener {
 	 * Sets running boolean in {@link RunWorld} to false to begin the display clean up process
 	 */
 	public static synchronized void requestClose() {RunWorld.running = false;}
+	
+	/**
+	 * Prepares a string of flight data that is output on the OTW using the {@link GUIText} object
+	 * 
+	 * @param receivedFlightData
+	 * @return string displaying flight data output 
+	 */
+	private String setTextInfo(Map<FlightDataType, Double> receivedFlightData) {
+		DecimalFormat df4 = new DecimalFormat("#.####");
+		DecimalFormat df2 = new DecimalFormat("#.##");
+		DecimalFormat df0 = new DecimalFormat("#");
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("AIRSPEED: ").append(df0.format(receivedFlightData.get(FlightDataType.IAS))).append(" KIAS ")
+		  .append("HEADING: ").append(df0.format(receivedFlightData.get(FlightDataType.HEADING))).append(" DEG ")
+		  .append("ALTITUDE: ").append(df0.format(receivedFlightData.get(FlightDataType.ALTITUDE))).append(" FT ")
+		  .append("LATITUDE: ").append(df4.format(receivedFlightData.get(FlightDataType.LATITUDE))).append(" DEG ")
+		  .append("LONGITUDE: ").append(df4.format(receivedFlightData.get(FlightDataType.LONGITUDE))).append(" DEG ")
+		  .append("G FORCE: ").append(df2.format(receivedFlightData.get(FlightDataType.GFORCE))).append(" G  ");
+		
+		return sb.toString();
+	}
 
 	@Override
 	public void onFlightDataReceived(FlightData flightData) {
@@ -267,6 +296,9 @@ public class RunWorld implements Runnable, FlightDataListener {
 			soundValues.put(SoundCategory.FLAPS, receivedFlightData.get(FlightDataType.FLAPS));
 			soundValues.put(SoundCategory.GEAR, receivedFlightData.get(FlightDataType.GEAR));
 			soundValues.put(SoundCategory.STALL_HORN, receivedFlightData.get(FlightDataType.AOA));
+			
+			if (texts.get("FlightData") != null)
+				texts.get("FlightData").setTextString(setTextInfo(receivedFlightData));
 			
 			// Record value every other step to ensure a difference between previous and current values; used to 
 			// trigger flaps and gear sounds
