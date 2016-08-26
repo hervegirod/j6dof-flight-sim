@@ -297,7 +297,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 			soundValues.put(SoundCategory.GEAR, receivedFlightData.get(FlightDataType.GEAR));
 			soundValues.put(SoundCategory.STALL_HORN, receivedFlightData.get(FlightDataType.AOA));
 			
-			if (texts.get("FlightData") != null)
+			if (texts.get("FlightData") != null && !controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL))
 				texts.get("FlightData").setTextString(setTextInfo(receivedFlightData));
 			
 			// Record value every other step to ensure a difference between previous and current values; used to 

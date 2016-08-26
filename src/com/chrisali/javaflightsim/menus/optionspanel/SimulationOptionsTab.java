@@ -223,19 +223,20 @@ public class SimulationOptionsTab extends JPanel {
 	private void setDesiredController(String selectedValue) {
 		switch (selectedValue) {
 		case ("Joystick"):
-			simulationOptions.removeIf(p -> (p == Options.USE_MOUSE || p == Options.USE_CH_CONTROLS));
+			simulationOptions.removeIf(p -> (p == Options.USE_MOUSE || p == Options.USE_CH_CONTROLS || p == Options.USE_KEYBOARD_ONLY));
 			simulationOptions.add(Options.USE_JOYSTICK);
 			break;
 		case ("Mouse"):
-			simulationOptions.removeIf(p -> (p == Options.USE_JOYSTICK || p == Options.USE_CH_CONTROLS));
+			simulationOptions.removeIf(p -> (p == Options.USE_JOYSTICK || p == Options.USE_CH_CONTROLS || p == Options.USE_KEYBOARD_ONLY));
 			simulationOptions.add(Options.USE_MOUSE);
 			break;
 		case ("CH Controls"):
-			simulationOptions.removeIf(p -> (p == Options.USE_MOUSE || p == Options.USE_JOYSTICK));
+			simulationOptions.removeIf(p -> (p == Options.USE_MOUSE || p == Options.USE_JOYSTICK || p == Options.USE_KEYBOARD_ONLY));
 			simulationOptions.add(Options.USE_CH_CONTROLS);
 			break;
 		case ("Keyboard Only"):
 			simulationOptions.removeIf(p -> (p == Options.USE_MOUSE || p == Options.USE_JOYSTICK || p == Options.USE_CH_CONTROLS));
+			simulationOptions.add(Options.USE_KEYBOARD_ONLY);
 			break;
 		default:
 			break;

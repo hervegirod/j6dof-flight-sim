@@ -3,6 +3,7 @@ package com.chrisali.javaflightsim.simulation.aero;
 import java.util.Map;
 
 import org.apache.commons.math3.analysis.interpolation.PiecewiseBicubicSplineInterpolatingFunction;
+import org.apache.commons.math3.exception.OutOfRangeException;
 
 import com.chrisali.javaflightsim.simulation.aircraft.Aircraft;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
@@ -174,7 +175,12 @@ public class Aerodynamics {
 			interpStabDer = (Double)aircraft.getStabilityDerivative(stabDer);
 		else {
 			pbsif = (PiecewiseBicubicSplineInterpolatingFunction)aircraft.getStabilityDerivative(stabDer);
-			interpStabDer = pbsif.value(windParameters[2], controls.get(FlightControlType.FLAPS));
+			try {
+				interpStabDer = pbsif.value(windParameters[2], controls.get(FlightControlType.FLAPS));
+			} catch (OutOfRangeException e) {
+				System.err.println("Number out of range for interpolation! Returning 0 for value.");
+				return 0.0;
+			}
 		}
 		
 		return interpStabDer;
