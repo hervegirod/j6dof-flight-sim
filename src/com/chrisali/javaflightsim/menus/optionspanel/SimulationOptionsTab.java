@@ -256,7 +256,9 @@ public class SimulationOptionsTab extends JPanel {
 		consoleDisplay.setSelected(simulationOptions.contains(Options.CONSOLE_DISPLAY) ? true : false);
 		showInstrumentPanel.setSelected(simulationOptions.contains(Options.INSTRUMENT_PANEL) ? true : false);
 		
-		if (simulationOptions.contains(Options.USE_CH_CONTROLS))
+		if (simulationOptions.contains(Options.USE_KEYBOARD_ONLY))
+			controllers.setSelectedIndex(3);
+		else if (simulationOptions.contains(Options.USE_CH_CONTROLS))
 			controllers.setSelectedIndex(2);
 		else if (simulationOptions.contains(Options.USE_MOUSE))
 			controllers.setSelectedIndex(1);

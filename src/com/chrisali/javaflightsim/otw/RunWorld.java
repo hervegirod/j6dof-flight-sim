@@ -257,17 +257,17 @@ public class RunWorld implements Runnable, FlightDataListener {
 	 * @return string displaying flight data output 
 	 */
 	private String setTextInfo(Map<FlightDataType, Double> receivedFlightData) {
-		DecimalFormat df4 = new DecimalFormat("#.####");
-		DecimalFormat df2 = new DecimalFormat("#.##");
-		DecimalFormat df0 = new DecimalFormat("#");
+		DecimalFormat df4 = new DecimalFormat("0.0000");
+		DecimalFormat df2 = new DecimalFormat("0.00");
+		DecimalFormat df0 = new DecimalFormat("0");
 		
 		StringBuffer sb = new StringBuffer();
-		sb.append("AIRSPEED: ").append(df0.format(receivedFlightData.get(FlightDataType.IAS))).append(" KIAS ")
-		  .append("HEADING: ").append(df0.format(receivedFlightData.get(FlightDataType.HEADING))).append(" DEG ")
-		  .append("ALTITUDE: ").append(df0.format(receivedFlightData.get(FlightDataType.ALTITUDE))).append(" FT ")
-		  .append("LATITUDE: ").append(df4.format(receivedFlightData.get(FlightDataType.LATITUDE))).append(" DEG ")
-		  .append("LONGITUDE: ").append(df4.format(receivedFlightData.get(FlightDataType.LONGITUDE))).append(" DEG ")
-		  .append("G FORCE: ").append(df2.format(receivedFlightData.get(FlightDataType.GFORCE))).append(" G  ");
+		sb.append("AIRSPEED: ").append(df0.format(receivedFlightData.get(FlightDataType.IAS))).append(" KIAS | ")
+		  .append("HEADING: ").append(df0.format(receivedFlightData.get(FlightDataType.HEADING))).append(" DEG | ")
+		  .append("ALTITUDE: ").append(df0.format(receivedFlightData.get(FlightDataType.ALTITUDE))).append(" FT | ")
+		  .append("LATITUDE: ").append(df4.format(receivedFlightData.get(FlightDataType.LATITUDE))).append(" DEG | ")
+		  .append("LONGITUDE: ").append(df4.format(receivedFlightData.get(FlightDataType.LONGITUDE))).append(" DEG | ")
+		  .append("G-FORCE: ").append(df2.format(receivedFlightData.get(FlightDataType.GFORCE))).append(" G ");
 		
 		return sb.toString();
 	}
@@ -288,6 +288,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 			ownshipRotation.y = (float)  -(receivedFlightData.get(FlightDataType.PITCH));
 			ownshipRotation.z = (float)   (receivedFlightData.get(FlightDataType.HEADING)-270); 
 			
+			// Set values for each sound in the simulation that depends on flight data
 			soundValues.put(SoundCategory.RPM_1, receivedFlightData.get(FlightDataType.RPM_1));
 			soundValues.put(SoundCategory.RPM_2, receivedFlightData.get(FlightDataType.RPM_2));
 			soundValues.put(SoundCategory.RPM_3, receivedFlightData.get(FlightDataType.RPM_3));
@@ -297,6 +298,7 @@ public class RunWorld implements Runnable, FlightDataListener {
 			soundValues.put(SoundCategory.GEAR, receivedFlightData.get(FlightDataType.GEAR));
 			soundValues.put(SoundCategory.STALL_HORN, receivedFlightData.get(FlightDataType.AOA));
 			
+			// Record flight data into text string to display on OTW screen 
 			if (texts.get("FlightData") != null && !controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL))
 				texts.get("FlightData").setTextString(setTextInfo(receivedFlightData));
 			

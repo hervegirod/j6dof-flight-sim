@@ -217,10 +217,10 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.THROTTLE_4) <= FlightControlType.THROTTLE_4.getMaximum()) {
 					
 					if(component.getPollData() == 1.0f) {
-						controls.put(FlightControlType.THROTTLE_1,controls.get(FlightControlType.THROTTLE_1)+0.01);
-						controls.put(FlightControlType.THROTTLE_2,controls.get(FlightControlType.THROTTLE_2)+0.01);
-						controls.put(FlightControlType.THROTTLE_3,controls.get(FlightControlType.THROTTLE_3)+0.01);
-						controls.put(FlightControlType.THROTTLE_4,controls.get(FlightControlType.THROTTLE_4)+0.01);
+						controls.put(FlightControlType.THROTTLE_1,controls.get(FlightControlType.THROTTLE_1)+0.005);
+						controls.put(FlightControlType.THROTTLE_2,controls.get(FlightControlType.THROTTLE_2)+0.005);
+						controls.put(FlightControlType.THROTTLE_3,controls.get(FlightControlType.THROTTLE_3)+0.005);
+						controls.put(FlightControlType.THROTTLE_4,controls.get(FlightControlType.THROTTLE_4)+0.005);
 					}
 					
 					continue;
@@ -234,10 +234,10 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.THROTTLE_4) >= FlightControlType.THROTTLE_4.getMinimum()) {
 					
 					if(component.getPollData() == 1.0f) {
-						controls.put(FlightControlType.THROTTLE_1,controls.get(FlightControlType.THROTTLE_1)-0.01);
-						controls.put(FlightControlType.THROTTLE_2,controls.get(FlightControlType.THROTTLE_2)-0.01);
-						controls.put(FlightControlType.THROTTLE_3,controls.get(FlightControlType.THROTTLE_3)-0.01);
-						controls.put(FlightControlType.THROTTLE_4,controls.get(FlightControlType.THROTTLE_4)-0.01);
+						controls.put(FlightControlType.THROTTLE_1,controls.get(FlightControlType.THROTTLE_1)-0.005);
+						controls.put(FlightControlType.THROTTLE_2,controls.get(FlightControlType.THROTTLE_2)-0.005);
+						controls.put(FlightControlType.THROTTLE_3,controls.get(FlightControlType.THROTTLE_3)-0.005);
+						controls.put(FlightControlType.THROTTLE_4,controls.get(FlightControlType.THROTTLE_4)-0.005);
 					}
 					
 					continue;

@@ -13,6 +13,12 @@ import org.lwjgl.opengl.PixelFormat;
 import com.chrisali.javaflightsim.menus.MainFrame;
 import com.chrisali.javaflightsim.menus.SimulationWindow;
 
+/**
+ * Handles the creation, running and closing of the OTW display window 
+ * 
+ * @author Christopher Ali
+ *
+ */
 public class DisplayManager {
 	private static final int FPS_CAP = 60;
 	
@@ -75,6 +81,9 @@ public class DisplayManager {
 		lastFrameTime = getCurrentTime();
 	}
 	
+	/**
+	 * Updates the display by rendering one frame based on the frame rate defined in {@link DisplayManager}
+	 */
 	public static void updateDisplay() {
 		Display.sync(FPS_CAP);
 		Display.update();
