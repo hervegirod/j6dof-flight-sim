@@ -85,10 +85,10 @@ public class CHControls extends AbstractController {
 						// Button index
 						switch(component.getIdentifier().toString()) {
 						case "2":
-							if(trimAileron >= FlightControlType.AILERON.getMinimum()) trimAileron  += 0.000125;
+							if(trimAileron >= FlightControlType.AILERON.getMinimum()) trimAileron  += getDeflectionRate(FlightControlType.ELEVATOR)/10;
 							break;
 						case "3":
-							if(trimAileron <= FlightControlType.AILERON.getMaximum()) trimAileron  -= 0.000125;
+							if(trimAileron <= FlightControlType.AILERON.getMaximum()) trimAileron  -= getDeflectionRate(FlightControlType.ELEVATOR)/10;
 							break;
 						case "4":
 							controls.put(FlightControlType.GEAR, FlightControlType.GEAR.getMinimum()); // Retract landing gear
@@ -97,26 +97,26 @@ public class CHControls extends AbstractController {
 							controls.put(FlightControlType.GEAR, FlightControlType.GEAR.getMaximum()); // Extend landing gear
 							break;
 						case "6":
-							if (flaps >= FlightControlType.FLAPS.getMinimum())	controls.put(FlightControlType.FLAPS, (flaps -= 0.004));
+							if (flaps >= FlightControlType.FLAPS.getMinimum())	controls.put(FlightControlType.FLAPS, (flaps -= getDeflectionRate(FlightControlType.FLAPS)));
 							break;
 						case "7":
-							if (flaps <= FlightControlType.FLAPS.getMaximum()) controls.put(FlightControlType.FLAPS, (flaps += 0.004));
+							if (flaps <= FlightControlType.FLAPS.getMaximum()) controls.put(FlightControlType.FLAPS, (flaps += getDeflectionRate(FlightControlType.FLAPS)));
 							break;
 						case "10":
-							if (trimElevator <= FlightControlType.ELEVATOR.getMaximum()) trimElevator += 0.00025;
+							if (trimElevator <= FlightControlType.ELEVATOR.getMaximum()) trimElevator += getDeflectionRate(FlightControlType.AILERON)/20;
 							break;	
 						case "11":
-							if (trimElevator >= FlightControlType.ELEVATOR.getMinimum()) trimElevator -= 0.00025;
+							if (trimElevator >= FlightControlType.ELEVATOR.getMinimum()) trimElevator -= getDeflectionRate(FlightControlType.AILERON)/20;
 							break;
 						}
 					} else if(component.getPollData() == 1.0f && controller.getName().toLowerCase().compareTo("ch throttle quadrant usb") == 0) {
 						// Button index
 						switch(component.getIdentifier().toString()) {
 						case "0":
-							if (trimElevator <= FlightControlType.ELEVATOR.getMaximum()) trimElevator += 0.000125;
+							if (trimElevator <= FlightControlType.ELEVATOR.getMaximum()) trimElevator += getDeflectionRate(FlightControlType.ELEVATOR)/10;
 							break;
 						case "1":
-							if (trimElevator >= FlightControlType.ELEVATOR.getMinimum()) trimElevator -= 0.000125;
+							if (trimElevator >= FlightControlType.ELEVATOR.getMinimum()) trimElevator -= getDeflectionRate(FlightControlType.ELEVATOR)/10;
 							break;
 						}
 					}

@@ -174,7 +174,7 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.ELEVATOR) <= FlightControlType.ELEVATOR.getMaximum()) {
 					
 					if(component.getPollData() == 1.0f)
-						controls.put(FlightControlType.ELEVATOR,controls.get(FlightControlType.ELEVATOR)+0.001);
+						controls.put(FlightControlType.ELEVATOR, controls.get(FlightControlType.ELEVATOR) + getDeflectionRate(FlightControlType.ELEVATOR));
 					
 					continue;
 				}
@@ -184,7 +184,7 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.ELEVATOR) >= FlightControlType.ELEVATOR.getMinimum()) {
 					
 					if(component.getPollData() == 1.0f)
-						controls.put(FlightControlType.ELEVATOR,controls.get(FlightControlType.ELEVATOR)-0.001);
+						controls.put(FlightControlType.ELEVATOR, controls.get(FlightControlType.ELEVATOR) - getDeflectionRate(FlightControlType.ELEVATOR));
 					
 					continue;
 				}
@@ -194,7 +194,7 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.AILERON) >= FlightControlType.AILERON.getMinimum()) {
 					
 					if(component.getPollData() == 1.0f)
-						controls.put(FlightControlType.AILERON,controls.get(FlightControlType.AILERON)+0.001);
+						controls.put(FlightControlType.AILERON, controls.get(FlightControlType.AILERON) + getDeflectionRate(FlightControlType.AILERON));
 					
 					continue;
 				}
@@ -204,7 +204,7 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.AILERON) <= FlightControlType.AILERON.getMaximum()) {
 					
 					if(component.getPollData() == 1.0f)
-						controls.put(FlightControlType.AILERON,controls.get(FlightControlType.AILERON)-0.001);
+						controls.put(FlightControlType.AILERON, controls.get(FlightControlType.AILERON) - getDeflectionRate(FlightControlType.AILERON));
 					
 					continue;
 				}
@@ -217,10 +217,10 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.THROTTLE_4) <= FlightControlType.THROTTLE_4.getMaximum()) {
 					
 					if(component.getPollData() == 1.0f) {
-						controls.put(FlightControlType.THROTTLE_1,controls.get(FlightControlType.THROTTLE_1)+0.005);
-						controls.put(FlightControlType.THROTTLE_2,controls.get(FlightControlType.THROTTLE_2)+0.005);
-						controls.put(FlightControlType.THROTTLE_3,controls.get(FlightControlType.THROTTLE_3)+0.005);
-						controls.put(FlightControlType.THROTTLE_4,controls.get(FlightControlType.THROTTLE_4)+0.005);
+						controls.put(FlightControlType.THROTTLE_1, controls.get(FlightControlType.THROTTLE_1) + getDeflectionRate(FlightControlType.THROTTLE_1));
+						controls.put(FlightControlType.THROTTLE_2, controls.get(FlightControlType.THROTTLE_2) + getDeflectionRate(FlightControlType.THROTTLE_2));
+						controls.put(FlightControlType.THROTTLE_3, controls.get(FlightControlType.THROTTLE_3) + getDeflectionRate(FlightControlType.THROTTLE_3));
+						controls.put(FlightControlType.THROTTLE_4, controls.get(FlightControlType.THROTTLE_4) + getDeflectionRate(FlightControlType.THROTTLE_4));
 					}
 					
 					continue;
@@ -234,10 +234,10 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.THROTTLE_4) >= FlightControlType.THROTTLE_4.getMinimum()) {
 					
 					if(component.getPollData() == 1.0f) {
-						controls.put(FlightControlType.THROTTLE_1,controls.get(FlightControlType.THROTTLE_1)-0.005);
-						controls.put(FlightControlType.THROTTLE_2,controls.get(FlightControlType.THROTTLE_2)-0.005);
-						controls.put(FlightControlType.THROTTLE_3,controls.get(FlightControlType.THROTTLE_3)-0.005);
-						controls.put(FlightControlType.THROTTLE_4,controls.get(FlightControlType.THROTTLE_4)-0.005);
+						controls.put(FlightControlType.THROTTLE_1, controls.get(FlightControlType.THROTTLE_1) - getDeflectionRate(FlightControlType.THROTTLE_1));
+						controls.put(FlightControlType.THROTTLE_2, controls.get(FlightControlType.THROTTLE_2) - getDeflectionRate(FlightControlType.THROTTLE_2));
+						controls.put(FlightControlType.THROTTLE_3, controls.get(FlightControlType.THROTTLE_3) - getDeflectionRate(FlightControlType.THROTTLE_3));
+						controls.put(FlightControlType.THROTTLE_4, controls.get(FlightControlType.THROTTLE_4) - getDeflectionRate(FlightControlType.THROTTLE_4));
 					}
 					
 					continue;
@@ -249,7 +249,7 @@ public class Keyboard extends AbstractController {
 					controls.get(FlightControlType.FLAPS) <= FlightControlType.FLAPS.getMaximum()) {
 					
 					if(component.getPollData() == 1.0f)
-						controls.put(FlightControlType.FLAPS,controls.get(FlightControlType.FLAPS)+0.005);
+						controls.put(FlightControlType.FLAPS, (flaps += getDeflectionRate(FlightControlType.FLAPS)));
 					
 					continue;
 				}
@@ -259,7 +259,7 @@ public class Keyboard extends AbstractController {
 						controls.get(FlightControlType.FLAPS) >= FlightControlType.FLAPS.getMinimum()) {
 						
 					if(component.getPollData() == 1.0f)
-						controls.put(FlightControlType.FLAPS,controls.get(FlightControlType.FLAPS)-0.005);
+						controls.put(FlightControlType.FLAPS, (flaps -= getDeflectionRate(FlightControlType.FLAPS)));
 					
 					continue;
 				}

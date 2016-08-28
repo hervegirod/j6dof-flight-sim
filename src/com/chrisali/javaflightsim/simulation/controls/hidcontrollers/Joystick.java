@@ -92,10 +92,10 @@ public class Joystick extends AbstractController {
 							controls.put(FlightControlType.GEAR, FlightControlType.GEAR.getMinimum());
 							break;
 						case "6":
-							if (flaps >= FlightControlType.FLAPS.getMinimum())	controls.put(FlightControlType.FLAPS, (flaps -= 0.004));
+							if (flaps >= FlightControlType.FLAPS.getMinimum())	controls.put(FlightControlType.FLAPS, (flaps -= getDeflectionRate(FlightControlType.FLAPS)));
 							break;
 						case "7":
-							if (flaps <= FlightControlType.FLAPS.getMaximum()) controls.put(FlightControlType.FLAPS, (flaps += 0.004));
+							if (flaps <= FlightControlType.FLAPS.getMaximum()) controls.put(FlightControlType.FLAPS, (flaps += getDeflectionRate(FlightControlType.FLAPS)));
 							break;
 						}
 					}
@@ -107,13 +107,13 @@ public class Joystick extends AbstractController {
 					float povValue = component.getPollData();
 					
 					if      (Float.compare(povValue, POV.UP)    == 0 & trimElevator <= FlightControlType.ELEVATOR.getMaximum())
-						trimElevator += 0.001; 
+						trimElevator += getDeflectionRate(FlightControlType.ELEVATOR)/10; 
 					else if (Float.compare(povValue, POV.DOWN)  == 0 & trimElevator >= FlightControlType.ELEVATOR.getMinimum()) 
-						trimElevator -= 0.001;
+						trimElevator -= getDeflectionRate(FlightControlType.ELEVATOR)/10;
 					else if (Float.compare(povValue, POV.LEFT)  == 0 & trimAileron  >= FlightControlType.AILERON.getMinimum()) 
-						trimAileron  += 0.001;
+						trimAileron  += getDeflectionRate(FlightControlType.AILERON)/20;
 					else if (Float.compare(povValue, POV.RIGHT) == 0 & trimAileron  <= FlightControlType.AILERON.getMaximum())
-						trimAileron  -= 0.001;
+						trimAileron  -= getDeflectionRate(FlightControlType.AILERON)/20;
 					
 					continue; // Go to next component
 				}
