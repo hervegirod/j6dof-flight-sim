@@ -10,6 +10,105 @@
 <project name="j6dof-flight-sim" default="default" basedir=".">
     <description>Builds, tests, and runs the project j6dof-flight-sim.</description>
     <import file="nbproject/build-impl.xml"/>
+    
+   <!-- =================================================================== --> 
+   <!-- post NB init --> 
+   <!-- =================================================================== --> 
+   <target name="-post-init" depends="-init-project" > 
+      <!-- general properties definition --> 
+      <property name="archiveName" value="j6dof-flight-sim"/> 
+      <property name="distrib" value="distrib" /> 
+      <property name="libs.dir" value="lib" /> 
+      <property name="javadocEXE" value="${jdk.home}/bin/javadoc.exe"/>           
+   </target>     
+   
+   <!-- =================================================================== -->
+   <!-- Version target -->
+   <!-- =================================================================== -->
+   <target description="fetch version" depends="-post-init" name="version">
+      <loadproperties srcFile="${src.dir}/com/chrisali/javaflightsim/resources/j6dof-flight-sim.properties">
+         <filterchain>
+            <linecontains>
+               <contains value="version"/>
+            </linecontains>
+         </filterchain>
+      </loadproperties>
+   </target>   
+   
+   <!-- =================================================================== -->
+   <!-- zip files -->
+   <!-- =================================================================== -->
+   <!-- zip javadocs Core -->
+   <target depends="version, -post-init" name="-zipjavadoc-core" if="javadoc.exists">
+      <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-docs-${version}.zip">
+         <fileset description="documentation" dir="${dist.javadoc.dir}">
+            <include name="**/*"/>
+         </fileset>
+      </zip>
+   </target>
+   <!-- zip binaries -->
+   <target depends="version, -post-init, -zipjavadoc-core" description="create javadoc zip files" name="zipjavadoc"/>
+   <target depends="version, -post-init" name="-zipbinaries" >
+      <!-- zip binary files -->
+      <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-bin-${version}.zip">
+         <fileset description="docs" dir=".">
+            <include name="README.md"/>
+            <include name="Documentation.docx"/>            
+         </fileset>
+         <fileset description="datas" dir=".">
+            <include name="Aircraft/**/*.*"/>
+            <include name="Resources/**/*.*"/>
+            <include name="SimConfig/**/*.*"/>
+         </fileset>
+         <fileset description="binaries" dir="${dist.dir}">
+            <include name="j6dof-flight-sim.jar"/>
+         </fileset>
+         <fileset description="libs" dir=".">
+            <include name="${libs.dir}/**/*.*"/>
+         </fileset>
+      </zip>
+   </target>
+   <target depends="version, -post-init" name="-zipsources">
+      <!-- zip source files -->
+      <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-src-${version}.zip">
+         <fileset description="source directory" dir="${src.dir}/..">
+            <include name="src/**/*.*"/>
+         </fileset>
+         <fileset description="docs" dir=".">
+            <include name="README.md"/>
+            <include name="Documentation.docx"/>            
+         </fileset>
+         <fileset description="datas" dir=".">
+            <include name="Aircraft/**/*.*"/>
+            <include name="Resources/**/*.*"/>
+            <include name="SimConfig/**/*.*"/>
+         </fileset>
+         <fileset description="binaries" dir="${dist.dir}">
+            <include name="j6dof-flight-sim.jar"/>
+         </fileset>
+         <fileset description="libs" dir=".">
+            <include name="${libs.dir}/**/*.*"/>
+         </fileset>
+         <fileset description="miscellanous" dir=".">
+            <include name="nbproject/**/*.*"/>
+            <include name="build.xml"/>
+         </fileset>
+      </zip>
+   </target>    
+   <target depends="version, -post-init" name="-ziptestsources"> 
+      <!-- zip tests sources --> 
+      <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-tests-${version}.zip"> 
+         <fileset description="test source files" dir="${test.src.dir}/.."> 
+            <include name="test/**/*"/> 
+         </fileset> 
+      </zip> 
+   </target> 
+   <target depends="version, -post-init, -ziptestsources, -zipsources, -zipbinaries" description="create zip files" name="zip"> 
+   </target>    
+    
+   <!-- =================================================================== --> 
+   <!-- Run Targets --> 
+   <!-- =================================================================== -->       
    <target name="Start" description="Start Game" depends="init" >
       <java classname="com.chrisali.javaflightsim.RunJavaFlightSimulator">
          <sysproperty key="java.library.path" path="lib" />
