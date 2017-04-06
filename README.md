@@ -1,4 +1,12 @@
 # j6dof-flight-sim 
+This project is a fork from j6dof-flight-sim by Chris Ali. The aim of the fork is to prototype some ideas I had seeing 
+the excellent work from Chris:
+- to use the simulation if necessary without the GUI (including the world). In fact I would like to decouple completely the GUI from the simulation core. Also I would like to be able to use JavaFX in lieu of LWJGL (making the GUI an interface)
+- to be able to use the simulation directly just as a library with or without its graphics
+- to make the datas directories more configurable
+- maybe go from text configuration files to XML (or even have the two formats possible)
+
+##Origianl project
 JavaFlightSim - A Six Degree of Freedom (6DOF) Flight Simulator Written in Java by Chris Ali
 
 This program was written to apply my knowledge and background in Flight Dynamics to build my Java language skills. It can run as a simple analysis tool for flight dynamics, as well as a real time simulation for pilot-in-the-loop use. When configured as a pilot in the loop simulation, a Swing instrument panel and out-the-window display open, and the user can control the simulation using a joystick.
