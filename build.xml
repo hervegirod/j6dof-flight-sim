@@ -105,6 +105,47 @@
    </target> 
    <target depends="version, -post-init, -ziptestsources, -zipsources, -zipbinaries" description="create zip files" name="zip"> 
    </target>    
+   
+   <!-- =================================================================== -->
+   <!-- NB overwrite targets : javadocs                                     -->
+   <!-- =================================================================== -->
+
+   <target depends="-javadoc-core" name="-javadoc-build" />
+
+   <target depends="init, -post-init" name="-javadoc-core">      
+      <!-- Javadoc -->
+      <javadoc author="${javadoc.author}" charset="UTF-8" destdir="${dist.javadoc.dir}"
+               docencoding="UTF-8" encoding="${javadoc.encoding.used}" failonerror="true"
+               noindex="${javadoc.noindex}" nonavbar="${javadoc.nonavbar}"
+               notree="${javadoc.notree}" private="${javadoc.private}"
+               source="${javac.source}" splitindex="${javadoc.splitindex}"
+               use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}"
+               windowtitle="${javadoc.windowtitle}" executable="${javadocEXE}" 
+               overview="${src.dir}/overview.html" windowTitle="DocJGenerator API">
+         <link offline="true" href="${j2seapi}"
+               packagelistLoc="${javadocDir}"/>
+         <classpath>
+            <path path="${javac.classpath}"/>
+            <path path="${dist.dir}/j6dof-flight-sim.jar"/>
+         </classpath>
+         <!-- the Xdoclint argument avoid to get javadoc errors when the documentation format is not compliant for HTML 4, which was the case before
+         Java 8. It would also not be a good idea, because empty tags like br are very useful -->
+         <arg line="-Xdoclint:none"/>
+         <fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}">
+            <filename name="**/*.java"/>
+         </fileset>
+         <group title="Simulation">
+            <package name="com.chrisali*" />
+         </group>    
+         <group title="Steel Series">
+            <package name="eu.hansolo.steelseries*" />
+         </group>                          
+         <doctitle><![CDATA[<h1>Documentation Generator</h1>]]></doctitle>
+         <bottom>
+            <![CDATA[<i>j6dof-flight-sim forked from chris-ali/j6dof-flight-sim</i>]]>
+         </bottom>
+      </javadoc>
+   </target>         
     
    <!-- =================================================================== --> 
    <!-- Run Targets --> 
