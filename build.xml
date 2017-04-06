@@ -39,7 +39,7 @@
    <!-- zip files -->
    <!-- =================================================================== -->
    <!-- zip javadocs Core -->
-   <target depends="version, -post-init" name="-zipjavadoc-core" if="javadoc.exists">
+   <target depends="version, -post-init" name="-zipjavadoc">
       <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-docs-${version}.zip">
          <fileset description="documentation" dir="${dist.javadoc.dir}">
             <include name="**/*"/>
@@ -47,7 +47,7 @@
       </zip>
    </target>
    <!-- zip binaries -->
-   <target depends="version, -post-init, -zipjavadoc-core" description="create javadoc zip files" name="zipjavadoc"/>
+   <target depends="version, -post-init, -zipjavadoc" description="create javadoc zip files" name="zipjavadoc"/>
    <target depends="version, -post-init" name="-zipbinaries" >
       <!-- zip binary files -->
       <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-bin-${version}.zip">
