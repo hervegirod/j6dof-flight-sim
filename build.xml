@@ -19,14 +19,22 @@
       <property name="archiveName" value="j6dof-flight-sim"/> 
       <property name="distrib" value="distrib" /> 
       <property name="libs.dir" value="lib" /> 
+      <property name="src.flightsim" value="${src.dir}/flightsim" />  
+      <property name="src.steelseries" value="${src.dir}/steelseries" />        
       <property name="javadocEXE" value="${jdk.home}/bin/javadoc.exe"/>           
+      <condition property="distrib.exists">
+         <available file="${distrib}" type="dir"/>
+      </condition>    
+      <condition property="javadoc.exists">
+         <available file="${dist.javadoc.dir}" type="dir"/>
+      </condition>                
    </target>     
    
    <!-- =================================================================== -->
    <!-- Version target -->
    <!-- =================================================================== -->
    <target description="fetch version" depends="-post-init" name="version">
-      <loadproperties srcFile="${src.dir}/com/chrisali/javaflightsim/resources/j6dof-flight-sim.properties">
+      <loadproperties srcFile="${src.flightsim}/com/chrisali/javaflightsim/resources/j6dof-flight-sim.properties">
          <filterchain>
             <linecontains>
                <contains value="version"/>
@@ -39,7 +47,7 @@
    <!-- zip files -->
    <!-- =================================================================== -->
    <!-- zip javadocs Core -->
-   <target depends="version, -post-init" name="-zipjavadoc">
+   <target depends="version, -post-init" name="-zipjavadoc-core" if="javadoc.exists">
       <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-docs-${version}.zip">
          <fileset description="documentation" dir="${dist.javadoc.dir}">
             <include name="**/*"/>
@@ -47,24 +55,17 @@
       </zip>
    </target>
    <!-- zip binaries -->
-   <target depends="version, -post-init, -zipjavadoc" description="create javadoc zip files" name="zipjavadoc"/>
+   <target depends="version, -post-init, -zipjavadoc-core" description="create javadoc zip files" name="zipjavadoc"/>
    <target depends="version, -post-init" name="-zipbinaries" >
       <!-- zip binary files -->
       <zip compress="true" defaultexcludes="true" zipfile="${dist.dir}/${archiveName}-bin-${version}.zip">
          <fileset description="docs" dir=".">
             <include name="README.md"/>
+            <include name="LICENSE.txt"/>
             <include name="Documentation.docx"/>            
          </fileset>
-         <fileset description="datas" dir=".">
-            <include name="Aircraft/**/*.*"/>
-            <include name="Resources/**/*.*"/>
-            <include name="SimConfig/**/*.*"/>
-         </fileset>
-         <fileset description="binaries" dir="${dist.dir}">
-            <include name="j6dof-flight-sim.jar"/>
-         </fileset>
-         <fileset description="libs" dir=".">
-            <include name="${libs.dir}/**/*.*"/>
+         <fileset description="distrib" dir=".">
+            <include name="distrib/**/*.*"/>
          </fileset>
       </zip>
    </target>
@@ -76,6 +77,7 @@
          </fileset>
          <fileset description="docs" dir=".">
             <include name="README.md"/>
+            <include name="LICENSE.txt"/>
             <include name="Documentation.docx"/>            
          </fileset>
          <fileset description="datas" dir=".">
@@ -92,6 +94,7 @@
          <fileset description="miscellanous" dir=".">
             <include name="nbproject/**/*.*"/>
             <include name="build.xml"/>
+            <include name="misc/*.*"/>
          </fileset>
       </zip>
    </target>    
@@ -121,7 +124,7 @@
                source="${javac.source}" splitindex="${javadoc.splitindex}"
                use="${javadoc.use}" useexternalfile="true" version="${javadoc.version}"
                windowtitle="${javadoc.windowtitle}" executable="${javadocEXE}" 
-               overview="${src.dir}/overview.html" windowTitle="DocJGenerator API">
+               overview="${src.dir}/overview.html" windowTitle="j6dof-flight-sim API">
          <link offline="true" href="${j2seapi}"
                packagelistLoc="${javadocDir}"/>
          <classpath>
@@ -140,11 +143,81 @@
          <group title="Steel Series">
             <package name="eu.hansolo.steelseries*" />
          </group>                          
-         <doctitle><![CDATA[<h1>Documentation Generator</h1>]]></doctitle>
+         <doctitle><![CDATA[<h1>j6dof-flight-sim API</h1>]]></doctitle>
          <bottom>
             <![CDATA[<i>j6dof-flight-sim forked from chris-ali/j6dof-flight-sim</i>]]>
          </bottom>
       </javadoc>
+   </target>  
+   
+   <!-- =================================================================== --> 
+   <!-- NB overwrite targets : jar --> 
+   <!-- =================================================================== --> 
+   <target depends="init,compile,-pre-jar,-do-jar-without-manifest,-post-jar" description="Build JAR." name="jar"/> 
+   <target name="-do-jar-without-manifest" depends="-j6dofCore" /> 
+   <target name="-j6dofCore" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" 
+           jarfile="${dist.dir}/j6dof-flight-sim.jar" manifest="${src.dir}/manifest.mf"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
+            <include name="com/**/*.class"/> 
+            <include name="com/**/*.txt"/> 
+            <include name="com/**/*.properties"/>                   
+         </fileset> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
+            <include name="eu/**/*.class"/> 
+            <include name="eu/**/*.png"/> 
+            <include name="eu/**/*.ttf"/>                
+         </fileset>          
+      </jar>   
+   </target> 
+   
+   <!-- =================================================================== -->
+   <!-- Deploy                                                  -->
+   <!-- =================================================================== -->
+
+   <target name="-dist-clean" depends="init, -post-init" if="distrib.exists">
+      <delete dir="${distrib}"/>
+   </target>
+
+   <target name="deploy" description="deploy" depends="init, -dist-clean, -post-init" >
+      <mkdir dir="${distrib}"/>
+      <delete>
+         <fileset defaultexcludes="yes" dir="${distrib}" >
+            <include name="**/*.*"/>
+         </fileset>
+      </delete>
+      <copy todir="${distrib}">
+         <fileset defaultexcludes="yes" dir="./misc" >
+            <include name="start.bat"/>
+            <include name="setenv.bat"/>
+         </fileset>
+      </copy>
+      <copy todir="${distrib}/Aircraft">
+         <fileset defaultexcludes="no" dir="Aircraft">
+            <include name="**/*.*"/>
+         </fileset>
+      </copy>
+      <copy todir="${distrib}/Resources">
+         <fileset defaultexcludes="no" dir="Resources">
+            <include name="**/*.*"/>
+         </fileset>
+      </copy>    
+      <copy todir="${distrib}/SimConfig">
+         <fileset defaultexcludes="no" dir="SimConfig">
+            <include name="**/*.*"/>
+         </fileset>
+      </copy>            
+      <copy todir="${distrib}/lib">
+         <fileset defaultexcludes="yes" dir="lib">
+            <include name="**/*.jar"/>
+            <include name="**/*.dll"/>
+         </fileset>
+      </copy>
+      <copy todir="${distrib}">
+         <fileset defaultexcludes="yes" dir="${dist.dir}" >
+            <include name="j6dof-flight-sim.jar"/>
+         </fileset>
+      </copy>
    </target>         
     
    <!-- =================================================================== --> 

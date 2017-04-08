@@ -5,7 +5,8 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>j6dof-flight-sim</name>
             <source-roots>
-                <root id="src.dir"/>
+                <root id="src.flightsim.dir" name="flightsim"/>
+                <root id="src.steelseries.dir" name="steelseries"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>
