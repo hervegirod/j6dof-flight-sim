@@ -44,6 +44,7 @@ import com.chrisali.javaflightsim.otw.renderengine.OBJLoader;
 import com.chrisali.javaflightsim.otw.terrain.Terrain;
 import com.chrisali.javaflightsim.otw.terrain.TerrainCollection;
 import com.chrisali.javaflightsim.otw.textures.ModelTexture;
+import com.chrisali.javaflightsim.rendering.TerrainProvider;
 import com.chrisali.javaflightsim.rendering.WorldRenderer;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.setup.InitialConditions;
@@ -69,7 +70,7 @@ import org.lwjgl.util.vector.Vector4f;
  * @author Christopher Ali
  *
  */
-public class LWJGLWorldRenderer implements WorldRenderer {
+public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    private Loader loader;
    private MasterRenderer masterRenderer;
    private List<Light> lights;
@@ -293,16 +294,20 @@ public class LWJGLWorldRenderer implements WorldRenderer {
    }
 
    @Override
+   public void setPosition(double x, double y, double z) {
+      // Scale distances from simulation to OTW
+      ownshipPosition.x = (float) (x / 15);
+      ownshipPosition.y = (float) (y / 15);
+      ownshipPosition.z = (float) (z / 15);
+   }
+
+   @Override
    public void onFlightDataReceived(FlightData flightData) {
 
       Map<FlightDataType, Double> receivedFlightData = flightData.getFlightData();
 
       if (!receivedFlightData.containsValue(null) && (ownshipPosition != null || ownshipRotation != null)
          && receivedFlightData != null) {
-         // Scale distances from simulation to OTW
-         ownshipPosition.x = (float) (receivedFlightData.get(FlightDataType.NORTH) / 15);
-         ownshipPosition.y = (float) (receivedFlightData.get(FlightDataType.ALTITUDE) / 15);
-         ownshipPosition.z = (float) (receivedFlightData.get(FlightDataType.EAST) / 15);
 
          // Convert right-handed coordinates from simulation to left-handed coordinates of OTW
          ownshipRotation.x = (float) -(receivedFlightData.get(FlightDataType.ROLL));

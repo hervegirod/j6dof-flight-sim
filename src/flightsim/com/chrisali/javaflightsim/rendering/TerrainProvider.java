@@ -21,24 +21,23 @@ import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 /**
  * The World Renderer interface.
  *
- * @author Herve Girod
  * @since 0.2
  */
-public interface WorldRenderer extends FlightDataListener {
+public interface TerrainProvider extends FlightDataListener {
+
    /**
-    * Return true if the WorldRenderer is currently running.
+    * Set the position in the world.
     *
-    * @return true if the WorldRenderer is currently running
+    * @param x the x coordinate
+    * @param y the y coordinate
+    * @param z the z coordinate
     */
-   public boolean isRunning();
+   public void setPosition(double x, double y, double z);
 
    /**
-    * Request the WorldRenderer to close.
+    * Return the terrain height at the current position
+    *
+    * @return Height of terrain at the ownship's current position
     */
-   public void requestClose();
-
-   /**
-    * Start the world renderer.
-    */
-   public void start();
+   public float getTerrainHeight();
 }

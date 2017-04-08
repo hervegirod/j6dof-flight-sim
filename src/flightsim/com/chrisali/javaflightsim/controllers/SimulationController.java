@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -62,7 +63,8 @@ import java.util.Set;
  * Transmission of environment data to the simulation ({@link EnvironmentData})</p>
  *
  * @author Christopher Ali
- *
+ * @author Herve Girod
+ * @since 0.1
  */
 public class SimulationController {
 
@@ -78,7 +80,6 @@ public class SimulationController {
    private EnumMap<InitialConditions, Double> initialConditions;
    private EnumMap<IntegratorConfig, Double> integratorConfig;
    private EnumMap<FlightControlType, Double> initialControls;
-   private RunWorld runworld = null;
 
    // Simulation
    private FlightControls flightControls;
@@ -330,7 +331,10 @@ public class SimulationController {
          }
 
       } else {
-         outTheWindow = new RunWorld(this, new LWJGLWorldRenderer(this));
+         outTheWindow = new RunWorld(this);
+         LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer(this);
+         outTheWindow.setWorldRenderer(lwjglRenderer);
+         outTheWindow.setTerrainProvider(lwjglRenderer);
          //(Re)initalize simulation window to prevent scaling issues with instrument panel
          getMainFrame().initSimulationWindow();
 
@@ -343,6 +347,7 @@ public class SimulationController {
          flightData = new FlightData(runSim);
          flightData.addFlightDataListener(mainFrame.getInstrumentPanel());
          flightData.addFlightDataListener(outTheWindow.getWorldRenderer());
+         flightData.setTerrainProvider(lwjglRenderer);
 
          flightDataThread = new Thread(flightData);
          flightDataThread.start();

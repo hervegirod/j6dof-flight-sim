@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.datatransfer;
 
+import com.chrisali.javaflightsim.rendering.TerrainProvider;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.integration.SimOuts;
 import com.chrisali.javaflightsim.utilities.FileUtilities;
@@ -26,15 +28,18 @@ import java.util.Map;
 
 /**
  * Interacts with {@link Integrate6DOFEquations} and any registered listeners to pass flight data from the simulation
- * listeners. Uses threading to obtain data from the simulation at a reasonable rate
+ * listeners. Uses threading to obtain data from the simulation at a reasonable rate.
  */
 public class FlightData implements Runnable {
-
    private static boolean running;
-   private Map<FlightDataType, Double> flightData = Collections.synchronizedMap(new EnumMap<FlightDataType, Double>(FlightDataType.class));
+   private Map<FlightDataType, Double> flightData = Collections.synchronizedMap(new EnumMap<>(FlightDataType.class));
 
    private Integrate6DOFEquations runSim;
    private List<FlightDataListener> dataListenerList;
+   private TerrainProvider terrainProvider = null;
+   private double x = 0;
+   private double y = 0;
+   private double z = 0;
 
    /**
     * Creates an instance of {@link FlightData} with a reference to {@link Integrate6DOFEquations} so
@@ -65,7 +70,8 @@ public class FlightData implements Runnable {
 
          flightData.put(FlightDataType.VERT_SPEED, simOut.get(SimOuts.ALT_DOT));
 
-         flightData.put(FlightDataType.ALTITUDE, simOut.get(SimOuts.ALT));
+         z = simOut.get(SimOuts.ALT);
+         flightData.put(FlightDataType.ALTITUDE, z);
 
          flightData.put(FlightDataType.ROLL, Math.toDegrees(simOut.get(SimOuts.PHI)));
          flightData.put(FlightDataType.PITCH, Math.toDegrees(simOut.get(SimOuts.THETA)));
@@ -80,8 +86,10 @@ public class FlightData implements Runnable {
          flightData.put(FlightDataType.LATITUDE, Math.toDegrees(simOut.get(SimOuts.LAT)));
          flightData.put(FlightDataType.LONGITUDE, Math.toDegrees(simOut.get(SimOuts.LON)));
 
-         flightData.put(FlightDataType.NORTH, simOut.get(SimOuts.NORTH));
-         flightData.put(FlightDataType.EAST, simOut.get(SimOuts.EAST));
+         x = simOut.get(SimOuts.NORTH);
+         flightData.put(FlightDataType.NORTH, x);
+         y = simOut.get(SimOuts.EAST);
+         flightData.put(FlightDataType.EAST, y);
 
          flightData.put(FlightDataType.RPM_1, simOut.get(SimOuts.RPM_1));
          flightData.put(FlightDataType.RPM_2, simOut.get(SimOuts.RPM_2));
@@ -118,7 +126,7 @@ public class FlightData implements Runnable {
 
    /**
     * Adds a listener that implements {@link FlightDataListener} to a list of listeners that can listen
-    * to {@link FlightData}
+    * to {@link FlightData}.
     *
     * @param dataListener
     */
@@ -127,10 +135,20 @@ public class FlightData implements Runnable {
    }
 
    /**
+    * Set the terrain provider.
+    *
+    * @param terrainProvider the terrain provider
+    */
+   public void setTerrainProvider(TerrainProvider terrainProvider) {
+      this.terrainProvider = terrainProvider;
+   }
+
+   /**
     * Lets registered listeners know that data has arrived from the {@link Integrate6DOFEquations} thread
-    * so that they can use it as needed
+    * so that they can use it as needed.
     */
    private void fireDataArrived() {
+      terrainProvider.setPosition(x, y, z);
       for (FlightDataListener listener : dataListenerList) {
          if (listener != null) {
             listener.onFlightDataReceived(this);
@@ -162,7 +180,7 @@ public class FlightData implements Runnable {
 
       for (Map.Entry<FlightDataType, Double> entry : flightData.entrySet()) {
          sb.append(entry.getKey().toString()).append(": ").append(entry.getValue())
-                 .append(" ").append(entry.getKey().getUnit()).append("\n");
+            .append(" ").append(entry.getKey().getUnit()).append("\n");
       }
       sb.append("\n");
 

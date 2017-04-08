@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -29,11 +30,13 @@ import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
  * The display runs in a separate thread that receives data from {@link FlightData} via {@link FlightDataListener}
  *
  * @author Christopher Ali
- *
+ * @author Herve Girod
+ * @since 0.1
  */
 public class RunWorld implements Runnable {
    private SimulationController controller;
    private WorldRenderer worldRenderer = null;
+   private TerrainProvider terrainProvider = null;
 
    /**
     * Sets up OTW display with {@link DisplayOptions} and {@link AudioOptions}, as well as a link to
@@ -41,11 +44,45 @@ public class RunWorld implements Runnable {
     * object specified, display will embed itself within {@link SimulationWindow} in {@link MainFrame}
     *
     * @param controller the Simulation Controller
+    */
+   public RunWorld(SimulationController controller) {
+      this.controller = controller;
+   }
+
+   /**
+    * Set the World Renderer.
+    *
     * @param worldRenderer the World Renderer
     */
-   public RunWorld(SimulationController controller, WorldRenderer worldRenderer) {
-      this.controller = controller;
+   public void setWorldRenderer(WorldRenderer worldRenderer) {
       this.worldRenderer = worldRenderer;
+   }
+
+   /**
+    * Set the Terrain Provider.
+    *
+    * @param terrainProvider the Terrain Provider
+    */
+   public void setTerrainProvider(TerrainProvider terrainProvider) {
+      this.terrainProvider = terrainProvider;
+   }
+
+   /**
+    * Return the World Renderer.
+    *
+    * @return the World Renderer
+    */
+   public WorldRenderer getWorldRenderer() {
+      return worldRenderer;
+   }
+
+   /**
+    * Return the Terrain Provider.
+    *
+    * @return the Terrain Provider
+    */
+   public TerrainProvider getTerrainProvider() {
+      return terrainProvider;
    }
 
    /**
@@ -84,15 +121,6 @@ public class RunWorld implements Runnable {
     * @return Height of terrain at the ownship's current position
     */
    public float getTerrainHeight() {
-      return worldRenderer.getTerrainHeight();
-   }
-
-   /**
-    * Return the World Renderer.
-    *
-    * @return the World Renderer
-    */
-   public WorldRenderer getWorldRenderer() {
-      return worldRenderer;
+      return terrainProvider.getTerrainHeight();
    }
 }

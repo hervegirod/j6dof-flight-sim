@@ -18,14 +18,16 @@ package com.chrisali.javaflightsim.tests;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.rendering.RunWorld;
-import com.chrisali.javaflightsim.rendering.WorldRenderer;
 
 public class WorldTest {
 
    public static void main(String[] args) {
       SimulationController controller = new SimulationController();
-      WorldRenderer worldRenderer = new LWJGLWorldRenderer(controller);
-      Thread worldThread = new Thread(new RunWorld(controller, worldRenderer));
+      LWJGLWorldRenderer worldRenderer = new LWJGLWorldRenderer(controller);
+      RunWorld runWorld = new RunWorld(controller);
+      runWorld.setWorldRenderer(worldRenderer);
+      runWorld.setTerrainProvider(worldRenderer);
+      Thread worldThread = new Thread(runWorld);
       worldThread.start();
    }
 
