@@ -17,6 +17,11 @@ package com.chrisali.javaflightsim.datatransfer;
 
 import java.util.EventListener;
 
+/**
+ * The interface for classes which klisten to changes to the flght data.
+ *
+ * @since 0.1
+ */
 public interface FlightDataListener extends EventListener {
    public void onFlightDataReceived(FlightData flightData);
 }
