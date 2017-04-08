@@ -26,12 +26,12 @@ import com.chrisali.javaflightsim.simulation.setup.Options;
  * @author Christopher Ali
  *
  */
-public class FlightControlsTest implements Runnable {
+public class TestFlightControls implements Runnable {
    private FlightControls flightControls;
    private Thread flightControlsThread;
    private SimulationController simController;
 
-   public FlightControlsTest() {
+   public TestFlightControls() {
       this.simController = new SimulationController();
       simController.getSimulationOptions().add(Options.USE_CH_CONTROLS);
       this.flightControls = new FlightControls(simController);
@@ -57,6 +57,6 @@ public class FlightControlsTest implements Runnable {
    }
 
    public static void main(String[] args) {
-      new Thread(new FlightControlsTest()).start();
+      new Thread(new TestFlightControls()).start();
    }
 }

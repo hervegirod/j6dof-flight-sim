@@ -35,7 +35,7 @@ import javax.swing.JFrame;
  * @author Christopher Ali
  *
  */
-public class SimulationTest {
+public class TestSimulation {
 
    private FlightControls flightControls;
    private Thread flightControlsThread;
@@ -47,7 +47,7 @@ public class SimulationTest {
 
    private PlotWindow plots;
 
-   public SimulationTest() {
+   public TestSimulation() {
       this.simController = new SimulationController();
       simController.getSimulationOptions().clear();
       simController.getSimulationOptions().add(Options.ANALYSIS_MODE);
@@ -79,6 +79,6 @@ public class SimulationTest {
    }
 
    public static void main(String[] args) {
-      new SimulationTest();
+      new TestSimulation();
    }
 }

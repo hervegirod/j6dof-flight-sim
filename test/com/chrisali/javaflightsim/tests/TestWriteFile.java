@@ -21,7 +21,7 @@ import com.chrisali.javaflightsim.utilities.FileUtilities;
 import java.io.File;
 import java.util.Map;
 
-public class WriteFileTest {
+public class TestWriteFile {
 
    private static final String FILE_PATH = ".\\SimConfig\\";
    private static final String OLD_CONFIG_FILE_NAME = "IntegratorConfig";

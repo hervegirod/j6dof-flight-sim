@@ -23,9 +23,10 @@ import com.chrisali.javaflightsim.menus.MainFrame;
 import com.chrisali.javaflightsim.menus.SimulationWindow;
 import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
-import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.rendering.RunWorld;
+import com.chrisali.javaflightsim.rendering.TerrainProvider;
+import com.chrisali.javaflightsim.rendering.WorldRenderer;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
@@ -67,7 +68,6 @@ import java.util.Set;
  * @since 0.1
  */
 public class SimulationController {
-
    // Paths
    private static final String SIM_CONFIG_PATH = ".\\SimConfig\\";
    private static final String AIRCRAFT_PATH = ".\\Aircraft\\";
@@ -88,6 +88,10 @@ public class SimulationController {
    private Thread simulationThread;
    private FlightData flightData;
    private Thread flightDataThread;
+
+   // providers
+   private WorldRenderer worldRenderer = null;
+   private TerrainProvider terrainProvider = null;
 
    // Aircraft
    private AircraftBuilder ab;
@@ -300,6 +304,14 @@ public class SimulationController {
       }
    }
 
+   public void setWorldRenderer(WorldRenderer worldRenderer) {
+      this.worldRenderer = worldRenderer;
+   }
+
+   public void setTerrainProvider(TerrainProvider terrainProvider) {
+      this.terrainProvider = terrainProvider;
+   }
+
    /**
     * Initializes, trims and starts the flight controls, simulation (and flight and environment data, if selected) threads.
     * Depending on options specified, a console panel and/or plot window will also be initialized and opened
@@ -332,9 +344,8 @@ public class SimulationController {
 
       } else {
          outTheWindow = new RunWorld(this);
-         LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer(this);
-         outTheWindow.setWorldRenderer(lwjglRenderer);
-         outTheWindow.setTerrainProvider(lwjglRenderer);
+         outTheWindow.setTerrainProvider(terrainProvider);
+         outTheWindow.setWorldRenderer(worldRenderer);
          //(Re)initalize simulation window to prevent scaling issues with instrument panel
          getMainFrame().initSimulationWindow();
 

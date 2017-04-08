@@ -13,40 +13,22 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim;
+package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.menus.MainFrame;
-import javax.swing.SwingUtilities;
+import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
+import com.chrisali.javaflightsim.simulation.setup.Trimming;
 
-/**
- * Runner class to start Java Flight Simulator
- *
- * @author Christopher Ali
- *
- */
-public class RunJavaFlightSimulator {
-
+public class TestTrimming {
    public static void main(String[] args) {
-      SwingUtilities.invokeLater(new Runnable() {
-         @Override
-         public void run() {
-            runApp();
-         }
-      });
+      new TestTrimming("Navion");
+      new TestTrimming("TwinNavion");
    }
 
-   /**
-    * Initializes {@link SimulationController} and {@link MainFrame}; due to cross-referencing
-    * needed with both objects, {@link SimulationController#setMainFrame(MainFrame)} needs to be
-    * called
-    */
-   private static void runApp() {
+   private TestTrimming(String aircraftName) {
       SimulationController controller = new SimulationController();
-      MainFrame mainFrame = new MainFrame(controller);
+      controller.setAircraftBuilder(new AircraftBuilder(aircraftName));
 
-      // Pass in mainFrame reference so that OTW display can get Canvas
-      // reference
-      controller.setMainFrame(mainFrame);
+      Trimming.trimSim(controller, true);
    }
 }

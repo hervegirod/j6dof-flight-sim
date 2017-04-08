@@ -13,13 +13,20 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.tests;
+package com.chrisali.javaflightsim.launcher;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.menus.MainFrame;
+import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import javax.swing.SwingUtilities;
 
-public class GUITest {
+/**
+ * Runner class to start Java Flight Simulator
+ *
+ * @author Christopher Ali
+ *
+ */
+public class RunJavaFlightSimulator {
 
    public static void main(String[] args) {
       SwingUtilities.invokeLater(new Runnable() {
@@ -30,7 +37,20 @@ public class GUITest {
       });
    }
 
+   /**
+    * Initializes {@link SimulationController} and {@link MainFrame}; due to cross-referencing
+    * needed with both objects, {@link SimulationController#setMainFrame(MainFrame)} needs to be
+    * called
+    */
    private static void runApp() {
-      new MainFrame(new SimulationController());
+      SimulationController controller = new SimulationController();
+      LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer(controller);
+      controller.setWorldRenderer(lwjglRenderer);
+      controller.setTerrainProvider(lwjglRenderer);
+      MainFrame mainFrame = new MainFrame(controller);
+
+      // Pass in mainFrame reference so that OTW display can get Canvas
+      // reference
+      controller.setMainFrame(mainFrame);
    }
 }

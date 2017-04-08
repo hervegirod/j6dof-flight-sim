@@ -19,7 +19,7 @@ import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.rendering.RunWorld;
 
-public class WorldTest {
+public class TestWorld {
 
    public static void main(String[] args) {
       SimulationController controller = new SimulationController();

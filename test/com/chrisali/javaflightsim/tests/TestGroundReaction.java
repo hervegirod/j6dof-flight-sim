@@ -22,7 +22,7 @@ import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 
-public class GroundReactionTest {
+public class TestGroundReaction {
 
    private IntegrateGroundReaction groundReaction;
    private AircraftBuilder ab = new AircraftBuilder("Navion");
@@ -42,7 +42,7 @@ public class GroundReactionTest {
    private double[] sixDOFDerivatives = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
    public static void main(String[] args) {
-      GroundReactionTest test = new GroundReactionTest();
+      TestGroundReaction test = new TestGroundReaction();
       test.setup();
       test.run();
    }

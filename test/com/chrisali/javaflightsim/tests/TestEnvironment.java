@@ -31,10 +31,10 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
-public class EnvironmentTest extends ApplicationFrame {
+public class TestEnvironment extends ApplicationFrame {
    private static final long serialVersionUID = 1L;
 
-   public EnvironmentTest() {
+   public TestEnvironment() {
       super("Environment Test");
 
       Map<EnvironmentParameters, Double> envData = new EnumMap<EnvironmentParameters, Double>(EnvironmentParameters.class);
@@ -147,7 +147,7 @@ public class EnvironmentTest extends ApplicationFrame {
    }
 
    public static void main(String[] args) {
-      new EnvironmentTest();
+      new TestEnvironment();
    }
 
 }

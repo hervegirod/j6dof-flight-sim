@@ -22,14 +22,14 @@ import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import java.util.EnumMap;
 
-public class LookupTableTest {
+public class TestLookupTable {
    private EnumMap<FlightControlType, Double> controls = IntegrationSetup.gatherInitialControls("InitialControls");
    private double[] alpha = new double[] { -14, -12, -10, -8, -6, -4, -2, 0, 2, 4, 6, 8, 10, 12, 14, 16 };
    private double[] dFlap = new double[] { 0, 10, 20, 30, 40 };
    AircraftBuilder ab;
    private Aerodynamics aero;
 
-   public LookupTableTest(String aircraftName) {
+   public TestLookupTable(String aircraftName) {
       this.ab = new AircraftBuilder("LookupNavion");
       this.aero = new Aerodynamics(ab.getAircraft());
       double clAlpha = 0.0;
@@ -48,6 +48,6 @@ public class LookupTableTest {
    }
 
    public static void main(String[] args) {
-      new LookupTableTest("LookupNavion");
+      new TestLookupTable("LookupNavion");
    }
 }

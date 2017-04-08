@@ -27,10 +27,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.lwjgl.util.vector.Vector3f;
 
-public class AudioTest {
+public class TestAudio {
 
    public static void main(String[] args) {
-      AudioTest test = new AudioTest();
+      TestAudio test = new TestAudio();
 
       test.AudioTestLoop();
       test.AudioTestMovement();
@@ -55,7 +55,7 @@ public class AudioTest {
    private Map<String, SoundSource> soundSources = new HashMap<>();
    private Map<SoundCategory, Double> soundValues = new EnumMap<>(SoundCategory.class);
 
-   private AudioTest() {
+   private TestAudio() {
       AudioMaster.init();
       AudioMaster.setListenerData(playerPostion, playerVelocity);
 
