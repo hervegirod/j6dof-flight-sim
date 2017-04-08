@@ -20,8 +20,12 @@
       <property name="distrib" value="distrib" /> 
       <property name="libs.dir" value="lib" /> 
       <property name="src.flightsim" value="${src.dir}/flightsim" />  
-      <property name="src.steelseries" value="${src.dir}/steelseries" />        
-      <property name="javadocEXE" value="${jdk.home}/bin/javadoc.exe"/>           
+      <property name="src.steelseries" value="${src.dir}/steelseries" />                 
+      <property name="j6dof-all.jar" value="j6dof-flight-sim-all.jar" />   
+      <property name="j6dof-core.jar" value="j6dof-core.jar" />  
+      <property name="j6dof-lwjgl.jar" value="j6dof-lwjgl.jar" /> 
+      <property name="j6dof-launcher.jar" value="j6dof-launcher.jar" />   
+      <property name="javadocEXE" value="${jdk.home}/bin/javadoc.exe"/>       
       <condition property="distrib.exists">
          <available file="${distrib}" type="dir"/>
       </condition>    
@@ -86,9 +90,11 @@
             <include name="SimConfig/**/*.*"/>
          </fileset>
          <fileset description="binaries" dir="${dist.dir}">
-            <include name="j6dof-flight-sim.jar"/>
-            <include name="steelseries.jar"/>
-            <include name="j6dof-lwjgl.jar"/>            
+            <include name="${j6dof-all.jar}"/>
+            <include name="${j6dof-core.jar}"/>
+            <include name="${j6dof-launcher.jar}"/>
+            <include name="${j6dof-lwjgl.jar}"/>
+            <include name="steelseries.jar"/>           
          </fileset>
          <fileset description="libs" dir=".">
             <include name="${libs.dir}/**/*.*"/>
@@ -131,7 +137,7 @@
                packagelistLoc="${javadocDir}"/>
          <classpath>
             <path path="${javac.classpath}"/>
-            <path path="${dist.dir}/j6dof-flight-sim.jar"/>
+            <path path="${dist.dir}/${j6dof-all.jar}"/>
          </classpath>
          <!-- the Xdoclint argument avoid to get javadoc errors when the documentation format is not compliant for HTML 4, which was the case before
          Java 8. It would also not be a good idea, because empty tags like br are very useful -->
@@ -168,15 +174,35 @@
    <!-- NB overwrite targets : jar --> 
    <!-- =================================================================== --> 
    <target depends="init,compile,-pre-jar,-do-jar-without-manifest,-post-jar" description="Build JAR." name="jar"/> 
-   <target name="-do-jar-without-manifest" depends="-j6dofCore, -steelseries, -lwjgl" /> 
+   <target name="-do-jar-without-manifest" 
+           depends="-j6dofCore, -j6dofAll, -j6dofLauncher, -j6dofCore, -j6dofLWJGL, -steelseries" />
+   <target name="-j6dofAll" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" 
+           jarfile="${dist.dir}/${j6dof-all.jar}" manifest="${src.dir}/manifest-all.mf"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
+            <include name="com/**/*.class"/> 
+            <include name="com/**/*.txt"/> 
+            <include name="com/**/*.properties"/>             
+         </fileset>        
+      </jar>   
+   </target>               
+   <target name="-j6dofLauncher" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" 
+           jarfile="${dist.dir}/${j6dof-launcher.jar}" manifest="${src.dir}/manifest-launcher.mf"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
+            <include name="com/chrisali/javaflightsim/launcher/**/*.class"/>            
+         </fileset>        
+      </jar>   
+   </target>    
    <target name="-j6dofCore" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
       <jar description="jar binary file" compress="true" 
-           jarfile="${dist.dir}/j6dof-flight-sim.jar" manifest="${src.dir}/manifest.mf"> 
+           jarfile="${dist.dir}/${j6dof-core.jar}" manifest="${src.dir}/manifest-core.mf"> 
          <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
             <include name="com/**/*.class"/> 
             <include name="com/**/*.txt"/> 
             <include name="com/**/*.properties"/> 
-            <exclude name="com/chrisali/javaflightsim/otw/**/*.*"/>                   
+            <exclude name="com/chrisali/javaflightsim/otw/**/*.*"/>    
+            <exclude name="com/chrisali/javaflightsim/launcher/**/*.*"/>                 
          </fileset>        
       </jar>   
    </target>
@@ -189,8 +215,8 @@
          </fileset>          
       </jar>
    </target>         
-   <target name="-lwjgl" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
-      <jar description="jar binary file" compress="true" jarfile="${dist.dir}/j6dof-lwjgl.jar"> 
+   <target name="-j6dofLWJGL" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" jarfile="${dist.dir}/${j6dof-lwjgl.jar}"> 
          <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
             <include name="com/chrisali/javaflightsim/otw/**/*.class"/>        
             <include name="com/chrisali/javaflightsim/otw/**/*.txt"/>       
@@ -216,6 +242,7 @@
       <copy todir="${distrib}">
          <fileset defaultexcludes="yes" dir="./misc" >
             <include name="start.bat"/>
+            <include name="start-launcher.bat"/>
             <include name="setenv.bat"/>
          </fileset>
       </copy>
@@ -242,9 +269,11 @@
       </copy>
       <copy todir="${distrib}">
          <fileset defaultexcludes="yes" dir="${dist.dir}" >
-            <include name="j6dof-flight-sim.jar"/>
+            <include name="${j6dof-all.jar}"/>
+            <include name="${j6dof-core.jar}"/>
+            <include name="${j6dof-launcher.jar}"/>
+            <include name="${j6dof-lwjgl.jar}"/>
             <include name="steelseries.jar"/>
-            <include name="j6dof-lwjgl.jar"/>
          </fileset>
       </copy>
    </target>         
@@ -253,10 +282,10 @@
    <!-- Run Targets --> 
    <!-- =================================================================== -->       
    <target name="Start" description="Start Game" depends="init" >
-      <java classname="com.chrisali.javaflightsim.RunJavaFlightSimulator">
+      <java classname="com.chrisali.javaflightsim.launcher.RunJavaFlightSimulator">
          <sysproperty key="java.library.path" path="lib" />
          <classpath>
-            <pathelement path="dist/j6dof-flight-sim.jar"/>
+            <pathelement path="dist/j6dof-flight-sim-all.jar"/>
             <pathelement path="lib/commons-lang3-3.5.jar"/>
             <pathelement path="lib/commons-math3-3.6.1.jar"/>
             <pathelement path="lib/jcommon-1.0.23.jar"/>
