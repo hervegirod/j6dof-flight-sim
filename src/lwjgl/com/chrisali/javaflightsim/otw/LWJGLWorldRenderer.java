@@ -92,6 +92,7 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    private Camera camera;
    private Map<String, GUIText> texts = new HashMap<>();
    private boolean running = false;
+   private boolean isStarted = false;
 
    /**
     * Sets up OTW display with {@link DisplayOptions} and {@link AudioOptions}, as well as a link to
@@ -105,8 +106,14 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    }
 
    @Override
+   public boolean isStarted() {
+      return isStarted;
+   }
+
+   @Override
    public void start() {
 
+      isStarted = true;
       //=================================== Set Up ==========================================================
       // Initializes display window depending on presence of SimulationController's MainFrame object,
       // set in RunJavaFlightSimulator

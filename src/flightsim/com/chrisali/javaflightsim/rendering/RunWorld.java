@@ -96,23 +96,39 @@ public class RunWorld implements Runnable {
 
    @Override
    public void run() {
-      worldRenderer.start();
+      if (worldRenderer != null) {
+         worldRenderer.start();
+      }
+      if (!terrainProvider.isStarted()) {
+         terrainProvider.start();
+      }
+
    }
 
    /**
-    * Return true if the WorldRenderer is currently running.
+    * Return true if the WorldRenderer or the TerrainProvider are currently running.
     *
-    * @return true if the WorldRenderer is currently running
+    * @return true if the WorldRenderer or the TerrainProvider are currently running
     */
    public synchronized boolean isRunning() {
-      return worldRenderer.isRunning();
+      boolean isRunning = false;
+      if (worldRenderer != null) {
+         isRunning = worldRenderer.isRunning();
+      }
+      isRunning = isRunning || terrainProvider.isRunning();
+      return isRunning;
    }
 
    /**
     * Request the WorldRenderer to close.
     */
    public synchronized void requestClose() {
-      worldRenderer.requestClose();
+      if (worldRenderer != null) {
+         worldRenderer.requestClose();
+      }
+      if (terrainProvider.isRunning()) {
+         terrainProvider.requestClose();
+      }
    }
 
    /**

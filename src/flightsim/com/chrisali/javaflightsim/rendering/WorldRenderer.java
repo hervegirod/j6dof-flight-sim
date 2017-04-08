@@ -41,4 +41,11 @@ public interface WorldRenderer extends FlightDataListener {
     * Start the world renderer.
     */
    public void start();
+
+   /**
+    * Return true if the world renderer is started.
+    *
+    * @return true if the world renderer is started
+    */
+   public boolean isStarted();
 }

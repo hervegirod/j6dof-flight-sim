@@ -40,4 +40,28 @@ public interface TerrainProvider extends FlightDataListener {
     * @return Height of terrain at the ownship's current position
     */
    public float getTerrainHeight();
+
+   /**
+    * Return true if the TerrainProvider is currently running.
+    *
+    * @return true if the TerrainProvider is currently running
+    */
+   public boolean isRunning();
+
+   /**
+    * Request the TerrainProvider to close.
+    */
+   public void requestClose();
+
+   /**
+    * Start the TerrainProvider.
+    */
+   public void start();
+
+   /**
+    * Return true if the TerrainProvider is started.
+    *
+    * @return true if the TerrainProvider is started
+    */
+   public boolean isStarted();
 }
