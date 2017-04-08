@@ -1,6 +1,8 @@
 Manifest-Version: 1.0
 Main-Class: com.chrisali.javaflightsim.RunJavaFlightSimulator
-Class-Path: lib/commons-lang3-3.5.jar \
+Class-Path: j6dof-lwjgl.jar \
+            steelseries.jar \
+            lib/commons-lang3-3.5.jar \
             lib/commons-math3-3.6.1.jar \
             lib/jcommon-1.0.23.jar \
             lib/jfreechart-1.0.19.jar \

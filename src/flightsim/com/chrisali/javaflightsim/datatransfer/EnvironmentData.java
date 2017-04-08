@@ -15,7 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.datatransfer;
 
-import com.chrisali.javaflightsim.otw.RunWorld;
+import com.chrisali.javaflightsim.rendering.RunWorld;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import java.util.ArrayList;
 import java.util.Collections;

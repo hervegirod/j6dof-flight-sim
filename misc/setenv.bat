@@ -1,1 +1,1 @@
-set JAVAHOME=L:\WRK\Java\tools\jdk1.8.0_92\jre
+set JAVAHOME=C:\Program Files\Java\jre1.8.0_102\

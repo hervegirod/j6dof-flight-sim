@@ -17,16 +17,17 @@ package com.chrisali.javaflightsim.otw.shaders;
 
 import com.chrisali.javaflightsim.otw.entities.Camera;
 import com.chrisali.javaflightsim.otw.entities.Light;
-import com.chrisali.javaflightsim.utilities.RenderingUtilities;
+import com.chrisali.javaflightsim.otw.utilities.RenderingUtilities;
 import java.util.List;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
-public class TerrainShader extends ShaderProgram {
+public class StaticShader extends ShaderProgram {
 
-   private static final String VERTEX_FILE = SHADER_ROOT_PATH + "terrainVertexShader.txt";
-   private static final String FRAGMENT_FILE = SHADER_ROOT_PATH + "terrainFragmentShader.txt";
+   private static final String VERTEX_FILE = SHADER_ROOT_PATH + "staticVertexShader.txt";
+   private static final String FRAGMENT_FILE = SHADER_ROOT_PATH + "staticFragmentShader.txt";
 
    private int location_transformationMatrix;
    private int location_projectionMatrix;
@@ -36,17 +37,15 @@ public class TerrainShader extends ShaderProgram {
    private int location_lightAttenuation[];
    private int location_shineDamper;
    private int location_reflectivity;
+   private int location_useFakeLighting;
    private int location_skyColor;
-   private int location_backgroundTexture;
-   private int location_rTexture;
-   private int location_gTexture;
-   private int location_bTexture;
-   private int location_blendMap;
+   private int location_numberOfRows;
+   private int location_offset;
    private int location_density;
    private int location_gradient;
    private int location_clippingPlane;
 
-   public TerrainShader() {
+   public StaticShader() {
       super(VERTEX_FILE, FRAGMENT_FILE);
    }
 
@@ -64,12 +63,10 @@ public class TerrainShader extends ShaderProgram {
       location_viewMatrix = super.getUniformLocation("viewMatrix");
       location_shineDamper = super.getUniformLocation("shineDamper");
       location_reflectivity = super.getUniformLocation("reflectivity");
+      location_useFakeLighting = super.getUniformLocation("useFakeLighting");
       location_skyColor = super.getUniformLocation("skyColor");
-      location_backgroundTexture = super.getUniformLocation("backgroundTexture");
-      location_rTexture = super.getUniformLocation("rTexture");
-      location_gTexture = super.getUniformLocation("gTexture");
-      location_bTexture = super.getUniformLocation("bTexture");
-      location_blendMap = super.getUniformLocation("blendMap");
+      location_numberOfRows = super.getUniformLocation("numberOfRows");
+      location_offset = super.getUniformLocation("offset");
       location_density = super.getUniformLocation("density");
       location_gradient = super.getUniformLocation("gradient");
       location_clippingPlane = super.getUniformLocation("clippingPlane");
@@ -85,14 +82,6 @@ public class TerrainShader extends ShaderProgram {
       }
    }
 
-   public void connectTextureUnits() {
-      super.loadInt(location_backgroundTexture, 0);
-      super.loadInt(location_rTexture, 1);
-      super.loadInt(location_gTexture, 2);
-      super.loadInt(location_bTexture, 3);
-      super.loadInt(location_blendMap, 4);
-   }
-
    public void loadClippingPlane(Vector4f clippingPlane) {
       super.loadVector(location_clippingPlane, clippingPlane);
    }
@@ -102,8 +91,20 @@ public class TerrainShader extends ShaderProgram {
       super.loadFloat(location_gradient, gradient);
    }
 
+   public void loadNumberOfRows(int numberOfRows) {
+      super.loadFloat(location_numberOfRows, numberOfRows);
+   }
+
+   public void loadOffset(float x, float y) {
+      super.loadVector(location_offset, new Vector2f(x, y));
+   }
+
    public void loadSkyColor(float r, float g, float b) {
       super.loadVector(location_skyColor, new Vector3f(r, g, b));
+   }
+
+   public void loadFakeLightingVariable(boolean useFake) {
+      super.loadBoolean(location_useFakeLighting, useFake);
    }
 
    public void loadShineVariables(float damper, float reflectivity) {

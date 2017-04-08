@@ -1,7 +1,7 @@
 package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.otw.RunWorld;
+import com.chrisali.javaflightsim.rendering.RunWorld;
 
 public class WorldTest {
 	

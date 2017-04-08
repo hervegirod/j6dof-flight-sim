@@ -6,6 +6,7 @@
             <name>j6dof-flight-sim</name>
             <source-roots>
                 <root id="src.flightsim.dir" name="flightsim"/>
+                <root id="src.lwjgl.dir" name="lwjgl"/>
                 <root id="src.steelseries.dir" name="steelseries"/>
             </source-roots>
             <test-roots>

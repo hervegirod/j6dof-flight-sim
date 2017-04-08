@@ -18,7 +18,7 @@ package com.chrisali.javaflightsim.otw.renderengine;
 import com.chrisali.javaflightsim.otw.interfaces.ui.InterfaceTexture;
 import com.chrisali.javaflightsim.otw.models.RawModel;
 import com.chrisali.javaflightsim.otw.shaders.InterfaceShader;
-import com.chrisali.javaflightsim.utilities.RenderingUtilities;
+import com.chrisali.javaflightsim.otw.utilities.RenderingUtilities;
 import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;

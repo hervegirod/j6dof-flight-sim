@@ -20,7 +20,7 @@ import com.chrisali.javaflightsim.otw.models.RawModel;
 import com.chrisali.javaflightsim.otw.shaders.WaterShader;
 import com.chrisali.javaflightsim.otw.water.WaterFrameBuffers;
 import com.chrisali.javaflightsim.otw.water.WaterTile;
-import com.chrisali.javaflightsim.utilities.RenderingUtilities;
+import com.chrisali.javaflightsim.otw.utilities.RenderingUtilities;
 import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;

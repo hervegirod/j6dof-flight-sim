@@ -13,7 +13,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.utilities;
+package com.chrisali.javaflightsim.otw.utilities;
 
 import com.chrisali.javaflightsim.otw.entities.Camera;
 import org.lwjgl.util.vector.Matrix4f;

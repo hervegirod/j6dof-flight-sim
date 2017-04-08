@@ -87,6 +87,8 @@
          </fileset>
          <fileset description="binaries" dir="${dist.dir}">
             <include name="j6dof-flight-sim.jar"/>
+            <include name="steelseries.jar"/>
+            <include name="j6dof-lwjgl.jar"/>            
          </fileset>
          <fileset description="libs" dir=".">
             <include name="${libs.dir}/**/*.*"/>
@@ -154,21 +156,34 @@
    <!-- NB overwrite targets : jar --> 
    <!-- =================================================================== --> 
    <target depends="init,compile,-pre-jar,-do-jar-without-manifest,-post-jar" description="Build JAR." name="jar"/> 
-   <target name="-do-jar-without-manifest" depends="-j6dofCore" /> 
+   <target name="-do-jar-without-manifest" depends="-j6dofCore, -steelseries, -lwjgl" /> 
    <target name="-j6dofCore" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
       <jar description="jar binary file" compress="true" 
            jarfile="${dist.dir}/j6dof-flight-sim.jar" manifest="${src.dir}/manifest.mf"> 
          <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
             <include name="com/**/*.class"/> 
             <include name="com/**/*.txt"/> 
-            <include name="com/**/*.properties"/>                   
-         </fileset> 
+            <include name="com/**/*.properties"/> 
+            <exclude name="com/chrisali/javaflightsim/otw/**/*.*"/>                   
+         </fileset>        
+      </jar>   
+   </target>
+   <target name="-steelseries" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" jarfile="${dist.dir}/steelseries.jar"> 
          <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
             <include name="eu/**/*.class"/> 
             <include name="eu/**/*.png"/> 
             <include name="eu/**/*.ttf"/>                
          </fileset>          
-      </jar>   
+      </jar>
+   </target>         
+   <target name="-lwjgl" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" jarfile="${dist.dir}/j6dof-lwjgl.jar"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
+            <include name="com/chrisali/javaflightsim/otw/**/*.class"/>        
+            <include name="com/chrisali/javaflightsim/otw/**/*.txt"/>       
+         </fileset>          
+      </jar>          
    </target> 
    
    <!-- =================================================================== -->
@@ -216,6 +231,8 @@
       <copy todir="${distrib}">
          <fileset defaultexcludes="yes" dir="${dist.dir}" >
             <include name="j6dof-flight-sim.jar"/>
+            <include name="steelseries.jar"/>
+            <include name="j6dof-lwjgl.jar"/>
          </fileset>
       </copy>
    </target>         
