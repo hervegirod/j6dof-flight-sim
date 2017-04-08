@@ -140,8 +140,20 @@
             <filename name="**/*.java"/>
          </fileset>
          <group title="Simulation">
-            <package name="com.chrisali*" />
+            <package name="com.chrisali.javaflightsim" />
+            <package name="com.chrisali.javaflightsim.consoletable*" />
+            <package name="com.chrisali.javaflightsim.controllers*" />
+            <package name="com.chrisali.javaflightsim.datatransfer*" />
+            <package name="com.chrisali.javaflightsim.instrumentpanel*" />
+            <package name="com.chrisali.javaflightsim.menus*" />
+            <package name="com.chrisali.javaflightsim.plotting*" />
+            <package name="com.chrisali.javaflightsim.rendering*" />
+            <package name="com.chrisali.javaflightsim.simulation*" />
+            <package name="com.chrisali.javaflightsim.utilities*" />
          </group>    
+         <group title="LWJGL rendering library">
+            <package name="com.chrisali.javaflightsim.otw*" />
+         </group>                
          <group title="Steel Series">
             <package name="eu.hansolo.steelseries*" />
          </group>                          
