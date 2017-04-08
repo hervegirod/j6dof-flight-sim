@@ -40,13 +40,19 @@ public class RunWorld implements Runnable {
     * {@link AircraftBuilder} to determine if multiple engines in aircraft. If {@link SimulationController}
     * object specified, display will embed itself within {@link SimulationWindow} in {@link MainFrame}
     *
-    * @param controller
+    * @param controller the Simulation Controller
+    * @param worldRenderer the World Renderer
     */
    public RunWorld(SimulationController controller, WorldRenderer worldRenderer) {
       this.controller = controller;
       this.worldRenderer = worldRenderer;
    }
 
+   /**
+    * Return the Simulation Controller.
+    *
+    * @return the Simulation Controller
+    */
    public SimulationController getSimulationController() {
       return controller;
    }
@@ -57,23 +63,35 @@ public class RunWorld implements Runnable {
    }
 
    /**
-    * @return If out the window display is running
+    * Return true if the WorldRenderer is currently running.
+    *
+    * @return true if the WorldRenderer is currently running
     */
    public synchronized boolean isRunning() {
       return worldRenderer.isRunning();
    }
 
    /**
-    * Sets running boolean in {@link RunLWJGLWorld} to false to begin the display clean up process
+    * Request the WorldRenderer to close.
     */
    public synchronized void requestClose() {
       worldRenderer.requestClose();
    }
 
+   /**
+    * Return the terrain height.
+    *
+    * @return Height of terrain at the ownship's current position
+    */
    public float getTerrainHeight() {
       return worldRenderer.getTerrainHeight();
    }
 
+   /**
+    * Return the World Renderer.
+    *
+    * @return the World Renderer
+    */
    public WorldRenderer getWorldRenderer() {
       return worldRenderer;
    }
