@@ -93,6 +93,9 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    private Map<String, GUIText> texts = new HashMap<>();
    private boolean running = false;
    private boolean isStarted = false;
+   private double x = 0;
+   private double y = 0;
+   private double z = 0;
 
    /**
     * Sets up OTW display with {@link DisplayOptions} and {@link AudioOptions}, as well as a link to
@@ -301,25 +304,29 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    }
 
    @Override
-   public void setPosition(double x, double y, double z) {
-      // Scale distances from simulation to OTW
-      ownshipPosition.x = (float) (x / 15);
-      ownshipPosition.y = (float) (y / 15);
-      ownshipPosition.z = (float) (z / 15);
-   }
-
-   @Override
    public void onFlightDataReceived(FlightData flightData) {
-
       Map<FlightDataType, Double> receivedFlightData = flightData.getFlightData();
 
       if (!receivedFlightData.containsValue(null) && (ownshipPosition != null || ownshipRotation != null)
          && receivedFlightData != null) {
 
+         x = receivedFlightData.get(FlightDataType.NORTH);
+         z = receivedFlightData.get(FlightDataType.EAST);
+         y = receivedFlightData.get(FlightDataType.ALTITUDE);
+
+         ownshipPosition.x = (float) (x / 15);
+         ownshipPosition.y = (float) (y / 15);
+         ownshipPosition.z = (float) (z / 15);
+
          // Convert right-handed coordinates from simulation to left-handed coordinates of OTW
          ownshipRotation.x = (float) -(receivedFlightData.get(FlightDataType.ROLL));
          ownshipRotation.y = (float) -(receivedFlightData.get(FlightDataType.PITCH));
          ownshipRotation.z = (float) (receivedFlightData.get(FlightDataType.HEADING) - 270);
+
+         // Scale distances from simulation to OTW
+         ownshipPosition.x = (float) (x / 15);
+         ownshipPosition.y = (float) (y / 15);
+         ownshipPosition.z = (float) (z / 15);
 
          // Set values for each sound in the simulation that depends on flight data
          soundValues.put(SoundCategory.RPM_1, receivedFlightData.get(FlightDataType.RPM_1));

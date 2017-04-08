@@ -26,15 +26,6 @@ import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 public interface TerrainProvider extends FlightDataListener {
 
    /**
-    * Set the position in the world.
-    *
-    * @param x the x coordinate
-    * @param y the y coordinate
-    * @param z the z coordinate
-    */
-   public void setPosition(double x, double y, double z);
-
-   /**
     * Return the terrain height at the current position
     *
     * @return Height of terrain at the ownship's current position

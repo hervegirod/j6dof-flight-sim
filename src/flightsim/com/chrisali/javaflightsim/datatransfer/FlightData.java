@@ -16,15 +16,16 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.datatransfer;
 
-import com.chrisali.javaflightsim.rendering.TerrainProvider;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.integration.SimOuts;
 import com.chrisali.javaflightsim.utilities.FileUtilities;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Interacts with {@link Integrate6DOFEquations} and any registered listeners to pass flight data from the simulation
@@ -36,10 +37,7 @@ public class FlightData implements Runnable {
 
    private Integrate6DOFEquations runSim;
    private List<FlightDataListener> dataListenerList;
-   private TerrainProvider terrainProvider = null;
-   private double x = 0;
-   private double y = 0;
-   private double z = 0;
+   private Set<FlightDataListener> dataListeners;
 
    /**
     * Creates an instance of {@link FlightData} with a reference to {@link Integrate6DOFEquations} so
@@ -50,6 +48,7 @@ public class FlightData implements Runnable {
    public FlightData(Integrate6DOFEquations runSim) {
       this.runSim = runSim;
       this.dataListenerList = new ArrayList<>();
+      this.dataListeners = new HashSet<>();
    }
 
    public Map<FlightDataType, Double> getFlightData() {
@@ -70,8 +69,7 @@ public class FlightData implements Runnable {
 
          flightData.put(FlightDataType.VERT_SPEED, simOut.get(SimOuts.ALT_DOT));
 
-         z = simOut.get(SimOuts.ALT);
-         flightData.put(FlightDataType.ALTITUDE, z);
+         flightData.put(FlightDataType.ALTITUDE, simOut.get(SimOuts.ALT));
 
          flightData.put(FlightDataType.ROLL, Math.toDegrees(simOut.get(SimOuts.PHI)));
          flightData.put(FlightDataType.PITCH, Math.toDegrees(simOut.get(SimOuts.THETA)));
@@ -86,10 +84,8 @@ public class FlightData implements Runnable {
          flightData.put(FlightDataType.LATITUDE, Math.toDegrees(simOut.get(SimOuts.LAT)));
          flightData.put(FlightDataType.LONGITUDE, Math.toDegrees(simOut.get(SimOuts.LON)));
 
-         x = simOut.get(SimOuts.NORTH);
-         flightData.put(FlightDataType.NORTH, x);
-         y = simOut.get(SimOuts.EAST);
-         flightData.put(FlightDataType.EAST, y);
+         flightData.put(FlightDataType.NORTH, simOut.get(SimOuts.NORTH));
+         flightData.put(FlightDataType.EAST, simOut.get(SimOuts.EAST));
 
          flightData.put(FlightDataType.RPM_1, simOut.get(SimOuts.RPM_1));
          flightData.put(FlightDataType.RPM_2, simOut.get(SimOuts.RPM_2));
@@ -131,16 +127,9 @@ public class FlightData implements Runnable {
     * @param dataListener
     */
    public void addFlightDataListener(FlightDataListener dataListener) {
-      dataListenerList.add(dataListener);
-   }
-
-   /**
-    * Set the terrain provider.
-    *
-    * @param terrainProvider the terrain provider
-    */
-   public void setTerrainProvider(TerrainProvider terrainProvider) {
-      this.terrainProvider = terrainProvider;
+      if (!dataListeners.contains(dataListener)) {
+         dataListenerList.add(dataListener);
+      }
    }
 
    /**
@@ -148,7 +137,6 @@ public class FlightData implements Runnable {
     * so that they can use it as needed.
     */
    private void fireDataArrived() {
-      terrainProvider.setPosition(x, y, z);
       for (FlightDataListener listener : dataListenerList) {
          if (listener != null) {
             listener.onFlightDataReceived(this);

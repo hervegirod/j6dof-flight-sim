@@ -347,7 +347,7 @@ public class SimulationController {
          flightData = new FlightData(runSim);
          flightData.addFlightDataListener(mainFrame.getInstrumentPanel());
          flightData.addFlightDataListener(outTheWindow.getWorldRenderer());
-         flightData.setTerrainProvider(lwjglRenderer);
+         flightData.addFlightDataListener(outTheWindow.getTerrainProvider());
 
          flightDataThread = new Thread(flightData);
          flightDataThread.start();
