@@ -22,9 +22,9 @@ import com.chrisali.javaflightsim.menus.MainFrame;
 import com.chrisali.javaflightsim.menus.SimulationWindow;
 import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
-import com.chrisali.javaflightsim.rendering.RunWorld;
-import com.chrisali.javaflightsim.otw.renderengine.DisplayManager;
+import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
+import com.chrisali.javaflightsim.rendering.RunWorld;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
@@ -78,6 +78,7 @@ public class SimulationController {
    private EnumMap<InitialConditions, Double> initialConditions;
    private EnumMap<IntegratorConfig, Double> integratorConfig;
    private EnumMap<FlightControlType, Double> initialControls;
+   private RunWorld runworld = null;
 
    // Simulation
    private FlightControls flightControls;
@@ -156,7 +157,7 @@ public class SimulationController {
     * @param newAudioOptions the new audio options
     */
    public void updateOptions(EnumSet<Options> newOptions, EnumMap<DisplayOptions, Integer> newDisplayOptions,
-           EnumMap<AudioOptions, Float> newAudioOptions) {
+      EnumMap<AudioOptions, Float> newAudioOptions) {
       simulationOptions = EnumSet.copyOf(newOptions);
       displayOptions = newDisplayOptions;
       audioOptions = newAudioOptions;
@@ -329,7 +330,7 @@ public class SimulationController {
          }
 
       } else {
-         outTheWindow = new RunWorld(this);
+         outTheWindow = new RunWorld(this, new LWJGLWorldRenderer(this));
          //(Re)initalize simulation window to prevent scaling issues with instrument panel
          getMainFrame().initSimulationWindow();
 
@@ -341,7 +342,7 @@ public class SimulationController {
 
          flightData = new FlightData(runSim);
          flightData.addFlightDataListener(mainFrame.getInstrumentPanel());
-         flightData.addFlightDataListener(outTheWindow);
+         flightData.addFlightDataListener(outTheWindow.getWorldRenderer());
 
          flightDataThread = new Thread(flightData);
          flightDataThread.start();
@@ -477,7 +478,7 @@ public class SimulationController {
     * http://stackoverflow.com/questions/26199534/how-to-attach-opengl-display-to-a-jframe-and-dispose-of-it-properly</p>
     */
    public void stopOTWThread() {
-      RunWorld.requestClose(); // sets running boolean in RunWorld to false to begin the clean up process
+      outTheWindow.requestClose(); // sets running boolean in RunWorld to false to begin the clean up process
 
       try {
          outTheWindowThread.join();

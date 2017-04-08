@@ -67,7 +67,7 @@ public class EnvironmentData implements Runnable {
       running = true;
 
       try {
-         while (!RunWorld.isRunning()) {
+         while (!outTheWindow.isRunning()) {
             Thread.sleep(25);
          }
 
@@ -130,7 +130,7 @@ public class EnvironmentData implements Runnable {
 
       for (Map.Entry<EnvironmentDataType, Double> entry : environmentData.entrySet()) {
          sb.append(entry.getKey().toString()).append(": ").append(entry.getValue())
-                 .append(" ").append(entry.getKey().getUnit()).append("\n");
+            .append(" ").append(entry.getKey().getUnit()).append("\n");
       }
       sb.append("\n");
 

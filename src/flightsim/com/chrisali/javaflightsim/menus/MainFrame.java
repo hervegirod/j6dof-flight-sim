@@ -29,7 +29,6 @@ import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.menus.optionspanel.OptionsConfigurationListener;
 import com.chrisali.javaflightsim.menus.optionspanel.OptionsPanel;
 import com.chrisali.javaflightsim.rendering.RunWorld;
-import com.chrisali.javaflightsim.otw.renderengine.DisplayManager;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import com.chrisali.javaflightsim.utilities.FileUtilities;
@@ -121,8 +120,8 @@ public class MainFrame extends JFrame {
       optionsPanel.setOptionsConfigurationListener(new OptionsConfigurationListener() {
          @Override
          public void simulationOptionsConfigured(EnumSet<Options> options, int stepSize,
-                 EnumMap<DisplayOptions, Integer> displayOptions,
-                 EnumMap<AudioOptions, Float> audioOptions) {
+            EnumMap<DisplayOptions, Integer> displayOptions,
+            EnumMap<AudioOptions, Float> audioOptions) {
             buttonPanel.setOptionsLabel(options, stepSize);
             simulationController.updateIntegratorConfig(stepSize);
             simulationController.updateOptions(options, displayOptions, audioOptions);
@@ -209,7 +208,7 @@ public class MainFrame extends JFrame {
          @Override
          public void windowClosing(WindowEvent e) {
             int closeDialog = JOptionPane.showConfirmDialog(MainFrame.this, "Are you sure you wish to quit?",
-                    "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+               "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (closeDialog == JOptionPane.YES_OPTION) {
                System.gc();
                System.exit(0);
@@ -231,12 +230,12 @@ public class MainFrame extends JFrame {
    private void setOptionsAndText() {
       try {
          simulationController.updateOptions(FileUtilities.parseSimulationSetup(),
-                 FileUtilities.parseDisplaySetup(),
-                 FileUtilities.parseAudioSetup());
+            FileUtilities.parseDisplaySetup(),
+            FileUtilities.parseAudioSetup());
          simulationController.updateAircraft(FileUtilities.parseSimulationSetupForAircraft());
       } catch (IllegalArgumentException e) {
          JOptionPane.showMessageDialog(this, "Unable to read SimulationSetup.txt!",
-                 "Error Reading File", JOptionPane.ERROR_MESSAGE);
+            "Error Reading File", JOptionPane.ERROR_MESSAGE);
       }
 
       int stepSize = (int) (1 / simulationController.getIntegratorConfig().get(IntegratorConfig.DT));
@@ -247,8 +246,8 @@ public class MainFrame extends JFrame {
 
       aircraftPanel.setAircraftPanel(aircraftName);
       optionsPanel.setAllOptions(simulationController.getSimulationOptions(), stepSize,
-              simulationController.getDisplayOptions(),
-              simulationController.getAudioOptions());
+         simulationController.getDisplayOptions(),
+         simulationController.getAudioOptions());
    }
 
    //=============================== Simulation Window ==============================================
