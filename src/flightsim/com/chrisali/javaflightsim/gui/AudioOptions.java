@@ -14,10 +14,23 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.menus.initialconditionspanel;
+package com.chrisali.javaflightsim.gui;
 
-import java.util.EventListener;
+/**
+ * Used by the audioOptions EnumSet to set volume settings for different types of sounds
+ */
+public enum AudioOptions {
+   ENGINE_VOLUME("engine_volume"),
+   SYSTEMS_VOLUME("systems_volume"),
+   ENVIRONMENT_VOLUME("environment_volume");
 
-public interface InitialConditionsConfigurationListener extends EventListener {
-   public void initialConditionsConfigured(double[] coordinates, double heading, double altitude, double airspeed);
+   private String option;
+
+   private AudioOptions(String option) {
+      this.option = option;
+   }
+
+   public String toString() {
+      return option;
+   }
 }

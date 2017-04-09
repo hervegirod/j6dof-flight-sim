@@ -14,21 +14,24 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.menus;
+package com.chrisali.javaflightsim.launcher.menus;
 
+import com.chrisali.javaflightsim.gui.SimulationWindow;
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
+import com.chrisali.javaflightsim.gui.GUIManager;
 import com.chrisali.javaflightsim.instrumentpanel.ClosePanelListener;
 import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
-import com.chrisali.javaflightsim.menus.aircraftpanel.AircraftConfigurationListener;
-import com.chrisali.javaflightsim.menus.aircraftpanel.AircraftPanel;
-import com.chrisali.javaflightsim.menus.aircraftpanel.WeightConfiguredListener;
-import com.chrisali.javaflightsim.menus.initialconditionspanel.InitialConditionsConfigurationListener;
-import com.chrisali.javaflightsim.menus.initialconditionspanel.InitialConditionsPanel;
-import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
-import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
-import com.chrisali.javaflightsim.menus.optionspanel.OptionsConfigurationListener;
-import com.chrisali.javaflightsim.menus.optionspanel.OptionsPanel;
+import com.chrisali.javaflightsim.launcher.menus.aircraftpanel.AircraftConfigurationListener;
+import com.chrisali.javaflightsim.launcher.menus.aircraftpanel.AircraftPanel;
+import com.chrisali.javaflightsim.launcher.menus.aircraftpanel.WeightConfiguredListener;
+import com.chrisali.javaflightsim.launcher.menus.initialconditionspanel.InitialConditionsConfigurationListener;
+import com.chrisali.javaflightsim.launcher.menus.initialconditionspanel.InitialConditionsPanel;
+import com.chrisali.javaflightsim.gui.AudioOptions;
+import com.chrisali.javaflightsim.gui.DisplayOptions;
+import com.chrisali.javaflightsim.launcher.menus.optionspanel.OptionsConfigurationListener;
+import com.chrisali.javaflightsim.launcher.menus.optionspanel.OptionsPanel;
 import com.chrisali.javaflightsim.rendering.RunWorld;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
@@ -50,12 +53,9 @@ import javax.swing.JPanel;
  *
  * @author Christopher Ali
  */
-public class MainFrame extends JFrame {
-
+public class MainFrame extends JFrame implements GUIManager {
    private static final long serialVersionUID = -1803264930661591606L;
-
    private SimulationController simulationController;
-
    private ButtonPanel buttonPanel;
    private AircraftPanel aircraftPanel;
    private OptionsPanel optionsPanel;
@@ -255,6 +255,7 @@ public class MainFrame extends JFrame {
     * (Re)initializes simulationWindow object so that instrument panel and OTW view are scaled correctly depending
     * on if the instrument panel is shown or not
     */
+   @Override
    public void initSimulationWindow() {
       simulationWindow = new SimulationWindow(simulationController);
       simulationWindow.setClosePanelListener(new ClosePanelListener() {
@@ -272,8 +273,20 @@ public class MainFrame extends JFrame {
     *
     * @return {@link SimulationWindow} object for {@link RunWorld}.
     */
+   @Override
    public SimulationWindow getSimulationWindow() {
       return simulationWindow;
+   }
+
+   @Override
+   public void disposeSimulationWindow() {
+      simulationWindow.dispose();
+      this.setVisible(true);
+   }   
+
+   @Override
+   public void addFlightDataListeners(FlightData flightData) {
+      flightData.addFlightDataListener(getInstrumentPanel());
    }
 
    /**

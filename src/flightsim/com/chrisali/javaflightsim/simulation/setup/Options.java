@@ -16,7 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.simulation.setup;
 
 import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
-import com.chrisali.javaflightsim.menus.SimulationWindow;
+import com.chrisali.javaflightsim.gui.SimulationWindow;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Joystick;
 import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Mouse;

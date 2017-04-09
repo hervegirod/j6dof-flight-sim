@@ -19,7 +19,7 @@ import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
-import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
+import com.chrisali.javaflightsim.gui.AudioOptions;
 import com.chrisali.javaflightsim.rendering.RunWorld;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.propulsion.Engine;

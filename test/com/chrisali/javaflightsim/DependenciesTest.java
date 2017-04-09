@@ -34,6 +34,7 @@ import org.junit.Test;
 public class DependenciesTest {
    private static final String CORE = "j6dof-core.jar";
    private static final String LWJGL = "j6dof-lwjgl.jar";
+   private static final String LAUNCHER = "j6dof-launcher.jar";
    private static final String LWJGL_LIB = "lwjgl.jar";
    private static final String LWJGLUTIL_LIB = "lwjgl_util.jar";
    private static final String PLOTS = "j6dof-plots.jar";
@@ -46,6 +47,7 @@ public class DependenciesTest {
    private static JarDependencies plotsDepend = null;
    private static JarDependencies plotsLib1Depend = null;
    private static JarDependencies plotsLib2Depend = null;
+   private static JarDependencies launcherDepend = null;
 
    public DependenciesTest() {
    }
@@ -85,6 +87,11 @@ public class DependenciesTest {
       jarFile = new File(lib, PLOTS_LIB2);
       plotsLib2Depend = new JarDependencies();
       plotsLib2Depend.setFile(jarFile);
+
+      // launcher
+      jarFile = new File(dist, LAUNCHER);
+      launcherDepend = new JarDependencies();
+      launcherDepend.setFile(jarFile);
    }
 
    @AfterClass
@@ -96,6 +103,7 @@ public class DependenciesTest {
       plotsDepend = null;
       plotsLib1Depend = null;
       plotsLib2Depend = null;
+      launcherDepend = null;
    }
 
    @Before
@@ -107,7 +115,7 @@ public class DependenciesTest {
    }
 
    /**
-    * Test that the core jar file don't depend on itext or the pdfWriter.
+    * Test that the core jar file don't depend on the lwjgl or the lwjgl library.
     */
    @Test
    public void testDependenciesOnLWJGL() {
@@ -126,7 +134,7 @@ public class DependenciesTest {
    }
 
    /**
-    * Test that the core jar file don't depend on itext or the pdfWriter.
+    * Test that the core jar file don't depend on the plotting library or jFreecharts.
     */
    @Test
    public void testDependenciesOnJFreeChart() {
@@ -142,5 +150,16 @@ public class DependenciesTest {
       isDepending = coreDepend.isDependingOn(plotsLib2Depend);
       DependencyPrinter.printDependencies(coreDepend, plotsLib2Depend);
       assertFalse(CORE + " must not depend on " + PLOTS_LIB2, isDepending);
+   }
+
+   /**
+    * Test that the core jar file don't depend on the launcher.
+    */
+   @Test
+   public void testDependenciesOnLauncher() {
+      System.out.println("DependenciesTest : testDependenciesOnLauncher");
+      boolean isDepending = coreDepend.isDependingOn(launcherDepend);
+      DependencyPrinter.printDependencies(coreDepend, launcherDepend);
+      assertFalse(CORE + " must not depend on " + LAUNCHER, isDepending);
    }
 }

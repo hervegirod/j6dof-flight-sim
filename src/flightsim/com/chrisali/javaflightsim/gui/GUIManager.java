@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,23 +14,26 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.menus.optionspanel;
+package com.chrisali.javaflightsim.gui;
+
+import com.chrisali.javaflightsim.datatransfer.FlightData;
 
 /**
- * Used by the audioOptions EnumSet to set volume settings for different types of sounds
+ *
+ * @author Herve
  */
-public enum AudioOptions {
-   ENGINE_VOLUME("engine_volume"),
-   SYSTEMS_VOLUME("systems_volume"),
-   ENVIRONMENT_VOLUME("environment_volume");
+public interface GUIManager {
+   public void initSimulationWindow();
 
-   private String option;
+   /**
+    * Return the SimulationWindow object.
+    *
+    * @return {@link SimulationWindow} object for {@link RunWorld}.
+    */
+   public SimulationWindow getSimulationWindow();
 
-   private AudioOptions(String option) {
-      this.option = option;
+   public default void addFlightDataListeners(FlightData flightData) {
    }
 
-   public String toString() {
-      return option;
-   }
+   public void disposeSimulationWindow();
 }

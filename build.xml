@@ -308,7 +308,7 @@
    <target name="Start configured" description="Start configed Game" depends="init" >
       <java classname="com.chrisali.javaflightsim.launcher.RunJavaFlightSimulator">
          <sysproperty key="java.library.path" path="lib" />   
-         <arg value="hasWorld=false"/>    
+         <arg value="hasMenus=false"/>    
          <classpath>
             <pathelement path="distrib/j6dof-launcher.jar"/>
          </classpath>         

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,24 +14,23 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.tests;
+package com.chrisali.javaflightsim.gui;
 
-import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.launcher.menus.MainFrame;
-import javax.swing.SwingUtilities;
+/**
+ * Used by the displayOptions EnumSet to set options for the out the window display
+ */
+public enum DisplayOptions {
+   DISPLAY_WIDTH("display_width"),
+   DISPLAY_HEIGHT("display_height"),
+   ANTI_ALIASING("anti_aliasing");
 
-public class TestGUI {
+   private String option;
 
-   public static void main(String[] args) {
-      SwingUtilities.invokeLater(new Runnable() {
-         @Override
-         public void run() {
-            runApp();
-         }
-      });
+   private DisplayOptions(String option) {
+      this.option = option;
    }
 
-   private static void runApp() {
-      new MainFrame(new SimulationController());
+   public String toString() {
+      return option;
    }
 }

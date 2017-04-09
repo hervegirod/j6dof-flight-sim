@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -13,13 +14,12 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.menus;
+package com.chrisali.javaflightsim.gui;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 import com.chrisali.javaflightsim.instrumentpanel.ClosePanelListener;
 import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
-import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.rendering.RunWorld;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import java.awt.Canvas;
@@ -51,9 +51,9 @@ public class SimulationWindow extends JFrame {
 
    /**
     * Constructor for simulation window; takes {@link SimulationController} argument to gain access to
-    * starting and stopping threads for {@link RunWorld} on this thread
+    * starting and stopping threads for {@link RunWorld} on this thread.
     *
-    * @param controller
+    * @param controller the SimulationController
     */
    public SimulationWindow(SimulationController controller) {
       super("Java Flight Simulator");
@@ -108,7 +108,7 @@ public class SimulationWindow extends JFrame {
       });
 
       Dimension windowSize = new Dimension(controller.getDisplayOptions().get(DisplayOptions.DISPLAY_WIDTH),
-              controller.getDisplayOptions().get(DisplayOptions.DISPLAY_HEIGHT));
+         controller.getDisplayOptions().get(DisplayOptions.DISPLAY_HEIGHT));
       setSize(windowSize.width, windowSize.height);
       setResizable(false);
       setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

@@ -19,10 +19,11 @@ package com.chrisali.javaflightsim.controllers;
 import com.chrisali.javaflightsim.consoletable.ConsoleTablePanel;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
-import com.chrisali.javaflightsim.menus.MainFrame;
-import com.chrisali.javaflightsim.menus.SimulationWindow;
-import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
-import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
+import com.chrisali.javaflightsim.gui.GUIManager;
+import com.chrisali.javaflightsim.launcher.menus.MainFrame;
+import com.chrisali.javaflightsim.gui.SimulationWindow;
+import com.chrisali.javaflightsim.gui.AudioOptions;
+import com.chrisali.javaflightsim.gui.DisplayOptions;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.rendering.DataAnalyzer;
 import com.chrisali.javaflightsim.rendering.RunWorld;
@@ -91,7 +92,7 @@ public class SimulationController {
    private EnumMap<MassProperties, Double> massProperties;
 
    // Menus and Integrated Simulation Window
-   private MainFrame mainFrame;
+   private GUIManager guiManager;
 
    // Raw Data Console
    private ConsoleTablePanel consoleTablePanel;
@@ -363,7 +364,7 @@ public class SimulationController {
          outTheWindow.setTerrainProvider(terrainProvider);
          outTheWindow.setWorldRenderer(worldRenderer);
          //(Re)initalize simulation window to prevent scaling issues with instrument panel
-         getMainFrame().initSimulationWindow();
+         guiManager.initSimulationWindow();
 
          environmentData = new EnvironmentData(outTheWindow);
          environmentData.addEnvironmentDataListener(runSim);
@@ -372,7 +373,7 @@ public class SimulationController {
          environmentDataThread.start();
 
          flightData = new FlightData(runSim);
-         flightData.addFlightDataListener(mainFrame.getInstrumentPanel());
+         guiManager.addFlightDataListeners(flightData);
          flightData.addFlightDataListener(outTheWindow.getWorldRenderer());
          flightData.addFlightDataListener(outTheWindow.getTerrainProvider());
 
@@ -399,8 +400,7 @@ public class SimulationController {
          EnvironmentData.setRunning(false);
       }
 
-      getMainFrame().getSimulationWindow().dispose();
-      getMainFrame().setVisible(true);
+      guiManager.disposeSimulationWindow();
    }
 
    //=============================== Plotting =============================================================
@@ -458,19 +458,19 @@ public class SimulationController {
 
    //========================== Main Frame Menus =========================================================
    /**
-    * Sets {@link MainFrame} reference for {@link RunWorld}.
+    * Sets the MainFrame.
     *
-    * @param mainFrame the MainFrame
+    * @param guiManager the MainFrame
     */
-   public void setMainFrame(MainFrame mainFrame) {
-      this.mainFrame = mainFrame;
+   public void setGUIManager(GUIManager guiManager) {
+      this.guiManager = guiManager;
    }
 
    /**
     * @return reference to {@link MainFrame} object in {@link SimulationController}
     */
-   public MainFrame getMainFrame() {
-      return mainFrame;
+   public GUIManager getGUIManager() {
+      return guiManager;
    }
 
    //=========================== OTW Threading ==========================================================

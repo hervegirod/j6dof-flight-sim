@@ -13,23 +13,10 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.menus.optionspanel;
+package com.chrisali.javaflightsim.launcher.menus;
 
-/**
- * Used by the displayOptions EnumSet to set options for the out the window display
- */
-public enum DisplayOptions {
-   DISPLAY_WIDTH("display_width"),
-   DISPLAY_HEIGHT("display_height"),
-   ANTI_ALIASING("anti_aliasing");
+import java.util.EventListener;
 
-   private String option;
-
-   private DisplayOptions(String option) {
-      this.option = option;
-   }
-
-   public String toString() {
-      return option;
-   }
+public interface AircraftButtonListener extends EventListener {
+   public void buttonEventOccurred();
 }

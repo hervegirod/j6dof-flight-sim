@@ -20,10 +20,10 @@ import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 import com.chrisali.javaflightsim.datatransfer.FlightDataType;
-import com.chrisali.javaflightsim.menus.MainFrame;
-import com.chrisali.javaflightsim.menus.SimulationWindow;
-import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
-import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
+import com.chrisali.javaflightsim.launcher.menus.MainFrame;
+import com.chrisali.javaflightsim.gui.SimulationWindow;
+import com.chrisali.javaflightsim.gui.AudioOptions;
+import com.chrisali.javaflightsim.gui.DisplayOptions;
 import com.chrisali.javaflightsim.otw.audio.AudioMaster;
 import com.chrisali.javaflightsim.otw.audio.SoundCollection;
 import com.chrisali.javaflightsim.otw.audio.SoundCollection.SoundCategory;
@@ -135,8 +135,8 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
       //=================================== Set Up ==========================================================
       // Initializes display window depending on presence of SimulationController's MainFrame object,
       // set in RunJavaFlightSimulator
-      if (controller.getMainFrame() != null) {
-         DisplayManager.createDisplay(controller.getMainFrame().getSimulationWindow());
+      if (controller.getGUIManager() != null) {
+         DisplayManager.createDisplay(controller.getGUIManager().getSimulationWindow());
       } else {
          DisplayManager.createDisplay();
       }

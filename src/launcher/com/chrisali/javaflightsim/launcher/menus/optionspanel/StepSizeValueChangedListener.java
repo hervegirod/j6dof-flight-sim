@@ -13,10 +13,10 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.menus.aircraftpanel;
+package com.chrisali.javaflightsim.launcher.menus.optionspanel;
 
 import java.util.EventListener;
 
-public interface WeightConfiguredListener extends EventListener {
-   public void weightConfigured(String aircraftName, double fuelWeight, double payloadWeight);
+public interface StepSizeValueChangedListener extends EventListener {
+   public void valueChanged(int newStepValue);
 }

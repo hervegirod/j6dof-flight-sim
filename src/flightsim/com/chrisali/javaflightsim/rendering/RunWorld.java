@@ -19,10 +19,10 @@ package com.chrisali.javaflightsim.rendering;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
-import com.chrisali.javaflightsim.menus.MainFrame;
-import com.chrisali.javaflightsim.menus.SimulationWindow;
-import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
-import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
+import com.chrisali.javaflightsim.launcher.menus.MainFrame;
+import com.chrisali.javaflightsim.gui.SimulationWindow;
+import com.chrisali.javaflightsim.gui.AudioOptions;
+import com.chrisali.javaflightsim.gui.DisplayOptions;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 
 /**

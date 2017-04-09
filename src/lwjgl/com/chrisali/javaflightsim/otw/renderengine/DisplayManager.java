@@ -15,8 +15,8 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.otw.renderengine;
 
-import com.chrisali.javaflightsim.menus.MainFrame;
-import com.chrisali.javaflightsim.menus.SimulationWindow;
+import com.chrisali.javaflightsim.launcher.menus.MainFrame;
+import com.chrisali.javaflightsim.gui.SimulationWindow;
 import java.awt.Canvas;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;

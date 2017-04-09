@@ -13,10 +13,17 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.menus;
+package com.chrisali.javaflightsim.launcher.menus.optionspanel;
 
+import com.chrisali.javaflightsim.gui.AudioOptions;
+import com.chrisali.javaflightsim.gui.DisplayOptions;
+import com.chrisali.javaflightsim.simulation.setup.Options;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.EventListener;
 
-public interface StartSimulationButtonListener extends EventListener {
-   public void buttonEventOccurred();
+public interface OptionsConfigurationListener extends EventListener {
+   public void simulationOptionsConfigured(EnumSet<Options> options, int stepSize,
+           EnumMap<DisplayOptions, Integer> displayOptions,
+           EnumMap<AudioOptions, Float> audioOptions);
 }

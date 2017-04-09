@@ -18,7 +18,8 @@ package com.chrisali.javaflightsim.launcher;
 
 import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.menus.MainFrame;
+import com.chrisali.javaflightsim.gui.SimulationWindowManager;
+import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.rendering.terrain.DefaultTerrainProvider;
@@ -37,6 +38,7 @@ public class RunJavaFlightSimulator {
    private volatile String aircraftName = null;
    private volatile boolean hasMenus = true;
    private volatile boolean hasInstruments = true;
+   private volatile boolean hasPlot = true;
    private volatile boolean hasWorld = true;
 
    private static boolean isTrue(String valueS) {
@@ -57,6 +59,8 @@ public class RunJavaFlightSimulator {
             hasInstruments = isTrue(entry.getValue());
          } else if (entry.getKey().equals("hasWorld")) {
             hasWorld = isTrue(entry.getValue());
+         } else if (entry.getKey().equals("hasPlot")) {
+            hasPlot = isTrue(entry.getValue());
          } else if (entry.getKey().equals("aircraftName")) {
             aircraftName = entry.getValue();
          }
@@ -98,14 +102,23 @@ public class RunJavaFlightSimulator {
          controller.setTerrainProvider(terrainProvider);
          terrainProvider.setSimulationController(controller);
       }
-      PlotWindow plotWindow = new PlotWindow();
-      plotWindow.setSimulationController(controller);
+      if (hasPlot) {
+         PlotWindow plotWindow = new PlotWindow();
+         plotWindow.setSimulationController(controller);
+         controller.setDataAnalyzer(plotWindow);
+      }
 
-      controller.setDataAnalyzer(plotWindow);
-      MainFrame mainFrame = new MainFrame(controller);
-
-      // Pass in mainFrame reference so that OTW display can get Canvas
-      // reference
-      controller.setMainFrame(mainFrame);
+      if (hasMenus) {
+         MainFrame mainFrame = new MainFrame(controller);
+         // Pass in mainFrame reference so that OTW display can get Canvas
+         // reference
+         controller.setGUIManager(mainFrame);
+      } else {
+         SimulationWindowManager guiManager = new SimulationWindowManager();
+         guiManager.setSimulationController(controller);
+         controller.setGUIManager(guiManager);
+         guiManager.initSimulationWindow();
+         guiManager.startSimulation();
+      }
    }
 }
