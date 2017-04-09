@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.utilities;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
@@ -43,69 +45,31 @@ public class FileUtilities {
    //										File Reading
    //===================================================================================================
    /**
-    * Splits a config file called "fileContents".txt located in the folder
-    * specified by filePath whose general syntax on each line is:
-    * <code>*parameter name* = *double value*</code>
-    * into an ArrayList of string arrays resembling:
-    * <code>{*parameter name*,*double value*}</code>.
-    *
-    * @param aircraftName the aircraft name
-    * @param filePath the file path
-    * @param fileContents the file content
-    * @return An ArrayList of String arrays of length 2
-    */
-   public static ArrayList<String[]> readFileAndSplit(String aircraftName, String filePath, String fileContents) {
-      StringBuilder sb = new StringBuilder();
-      sb.append(filePath).append(aircraftName).append("\\").append(fileContents).append(".txt");
-      ArrayList<String[]> readAndSplit = new ArrayList<>();
-      String readLine = null;
-
-      try (BufferedReader br = new BufferedReader(new FileReader(sb.toString()))) {
-         while ((readLine = br.readLine()) != null) {
-            readAndSplit.add(readLine.split(" = "));
-         }
-      } catch (FileNotFoundException e) {
-         System.err.println("Could not find: " + fileContents + ".txt!");
-      } catch (IOException e) {
-         System.err.println("Could not read: " + fileContents + ".txt!");
-      } catch (NullPointerException e) {
-         System.err.println("Bad reference when reading: " + fileContents + ".txt!");
-      } catch (NumberFormatException e) {
-         System.err.println("Error parsing data from " + fileContents + ".txt!");
-      }
-
-      return readAndSplit;
-   }
-
-   /**
     * Splits a config file called "fileName".txt located in the folder
     * specified by filePath whose general syntax on each line is:
     * <code>*parameter name* = *double value*</code>
     * into an ArrayList of string arrays resembling:
     * <code>{*parameter name*,*double value*}</code>.
     *
-    * @param fileName the file name
-    * @param filePath the file path
+    * @param file the file name
     * @return An ArrayList of String arrays of length 2
     */
-   public static ArrayList<String[]> readFileAndSplit(String fileName, String filePath) {
-      StringBuilder sb = new StringBuilder();
-      sb.append(filePath).append(fileName).append(".txt");
+   public static ArrayList<String[]> readFileAndSplit(File file) {
       ArrayList<String[]> readAndSplit = new ArrayList<>();
       String readLine = null;
 
-      try (BufferedReader br = new BufferedReader(new FileReader(sb.toString()))) {
+      try (BufferedReader br = new BufferedReader(new FileReader(file))) {
          while ((readLine = br.readLine()) != null) {
             readAndSplit.add(readLine.split(" = "));
          }
       } catch (FileNotFoundException e) {
-         System.err.println("Could not find: " + fileName + ".txt!");
+         System.err.println("Could not find: " + file.getPath());
       } catch (IOException e) {
-         System.err.println("Could not read: " + fileName + ".txt!");
+         System.err.println("Could not read: " + file.getPath());
       } catch (NullPointerException e) {
-         System.err.println("Bad reference when reading: " + fileName + ".txt!");
+         System.err.println("Bad reference when reading: " + file.getPath());
       } catch (NumberFormatException e) {
-         System.err.println("Error parsing data from " + fileName + ".txt!");
+         System.err.println("Error parsing data from " + file.getPath());
       }
 
       return readAndSplit;
@@ -120,12 +84,15 @@ public class FileUtilities {
     * @return EnumSet of selected options
     */
    public static EnumSet<Options> parseSimulationSetup() throws IllegalArgumentException {
-      ArrayList<String[]> readSimSetupFile = readFileAndSplit("SimulationSetup", ".\\SimConfig\\");
       EnumSet<Options> options = EnumSet.noneOf(Options.class);
+      Configuration conf = Configuration.getInstance();
+      if (conf.hasSimulationConfig()) {
+         ArrayList<String[]> readSimSetupFile = readFileAndSplit(conf.getSimulationSetupConfig());
 
-      for (String[] readLine : readSimSetupFile) {
-         if (readLine[1].compareTo("true") == 0) {
-            options.add(Options.valueOf(readLine[0]));
+         for (String[] readLine : readSimSetupFile) {
+            if (readLine[1].compareTo("true") == 0) {
+               options.add(Options.valueOf(readLine[0]));
+            }
          }
       }
 
@@ -141,12 +108,15 @@ public class FileUtilities {
     * @return selectedAircraft
     */
    public static String parseSimulationSetupForAircraft() throws IllegalArgumentException {
-      ArrayList<String[]> readSimSetupFile = readFileAndSplit("SimulationSetup", ".\\SimConfig\\");
       String selectedAircraft = "";
+      Configuration conf = Configuration.getInstance();
+      if (conf.hasSimulationConfig()) {
+         ArrayList<String[]> readSimSetupFile = readFileAndSplit(conf.getSimulationSetupConfig());
 
-      for (String[] readLine : readSimSetupFile) {
-         if (readLine[0].compareTo("selectedAircraft") == 0) {
-            selectedAircraft = readLine[1];
+         for (String[] readLine : readSimSetupFile) {
+            if (readLine[0].compareTo("selectedAircraft") == 0) {
+               selectedAircraft = readLine[1];
+            }
          }
       }
 
@@ -160,15 +130,18 @@ public class FileUtilities {
     * @return displayOptions EnumMap
     */
    public static EnumMap<DisplayOptions, Integer> parseDisplaySetup() {
-      EnumMap<DisplayOptions, Integer> displayOptions = new EnumMap<DisplayOptions, Integer>(DisplayOptions.class);
+      EnumMap<DisplayOptions, Integer> displayOptions = new EnumMap<>(DisplayOptions.class);
 
-      // Display options
-      ArrayList<String[]> readDisplaySetupFile = readFileAndSplit("DisplaySetup", ".\\SimConfig\\");
+      Configuration conf = Configuration.getInstance();
+      if (conf.hasSimulationConfig()) {
+         // Display options
+         ArrayList<String[]> readDisplaySetupFile = readFileAndSplit(conf.getDisplaySetupConfig());
 
-      for (DisplayOptions displayOptionsKey : DisplayOptions.values()) {
-         for (String[] readLine : readDisplaySetupFile) {
-            if (displayOptionsKey.toString().equals(readLine[0])) {
-               displayOptions.put(displayOptionsKey, Integer.decode(readLine[1]));
+         for (DisplayOptions displayOptionsKey : DisplayOptions.values()) {
+            for (String[] readLine : readDisplaySetupFile) {
+               if (displayOptionsKey.toString().equals(readLine[0])) {
+                  displayOptions.put(displayOptionsKey, Integer.decode(readLine[1]));
+               }
             }
          }
       }
@@ -183,15 +156,18 @@ public class FileUtilities {
     * @return audioOptions EnumMap
     */
    public static EnumMap<AudioOptions, Float> parseAudioSetup() {
-      EnumMap<AudioOptions, Float> audioOptions = new EnumMap<AudioOptions, Float>(AudioOptions.class);
+      EnumMap<AudioOptions, Float> audioOptions = new EnumMap<>(AudioOptions.class);
 
-      // Display options
-      ArrayList<String[]> readAudioSetupFile = readFileAndSplit("AudioSetup", ".\\SimConfig\\");
+      Configuration conf = Configuration.getInstance();
+      if (conf.hasSimulationConfig()) {
+         // Display options
+         ArrayList<String[]> readAudioSetupFile = readFileAndSplit(conf.getAudioSetupConfig());
 
-      for (AudioOptions audioOptionsKey : AudioOptions.values()) {
-         for (String[] readLine : readAudioSetupFile) {
-            if (audioOptionsKey.toString().equals(readLine[0])) {
-               audioOptions.put(audioOptionsKey, Float.valueOf(readLine[1]));
+         for (AudioOptions audioOptionsKey : AudioOptions.values()) {
+            for (String[] readLine : readAudioSetupFile) {
+               if (audioOptionsKey.toString().equals(readLine[0])) {
+                  audioOptions.put(audioOptionsKey, Float.valueOf(readLine[1]));
+               }
             }
          }
       }
@@ -207,10 +183,11 @@ public class FileUtilities {
     * @return massProperties EnumMap
     */
    public static EnumMap<MassProperties, Double> parseMassProperties(String aircraftName) {
-      EnumMap<MassProperties, Double> massProperties = new EnumMap<MassProperties, Double>(MassProperties.class);
+      EnumMap<MassProperties, Double> massProperties = new EnumMap<>(MassProperties.class);
 
       // Mass Properties
-      ArrayList<String[]> readMassPropFile = readFileAndSplit(aircraftName, ".//Aircraft//", "MassProperties");
+      Configuration conf = Configuration.getInstance();
+      ArrayList<String[]> readMassPropFile = readFileAndSplit(conf.getAircraftMassProperties());
 
       for (MassProperties massPropKey : MassProperties.values()) {
          for (String[] readLine : readMassPropFile) {
@@ -247,27 +224,23 @@ public class FileUtilities {
     * specified by filePath using an EnumMap where each line is written as:
     * <code>"*parameter name* = *double value*\n"</code>.
     *
-    * @param filePath the file path
-    * @param fileName the file name
+    * @param file the file
     * @param enumMap the EnumMap
     */
-   public static void writeConfigFile(String filePath, String fileName, Map<?, ?> enumMap) {
-      StringBuilder sb = new StringBuilder();
-      sb.append(filePath).append(fileName).append(".txt");
-
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(sb.toString()))) {
+   public static void writeConfigFile(File file, Map<?, ?> enumMap) {
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
          for (Map.Entry<?, ?> entry : enumMap.entrySet()) {
             bw.write(entry.getKey().toString() + " = " + entry.getValue());
             bw.newLine();
          }
       } catch (FileNotFoundException e) {
-         System.err.println("Could not find: " + fileName + ".txt!");
+         System.err.println("Could not find: " + file.getName());
       } catch (IOException e) {
-         System.err.println("Could not read: " + fileName + ".txt!");
+         System.err.println("Could not read: " + file.getName());
       } catch (NullPointerException e) {
-         System.err.println("Bad reference when reading: " + fileName + ".txt!");
+         System.err.println("Bad reference when reading: " + file.getName());
       } catch (NumberFormatException e) {
-         System.err.println("Error parsing data from " + fileName + ".txt!");
+         System.err.println("Error parsing data from: " + file.getName());
       }
    }
 
@@ -276,16 +249,12 @@ public class FileUtilities {
     * using the optionsSet EnumSet of selected options and the selected aircraft's name,
     * where each line is written as <code>"*parameter* = *value*\n"</code>.
     *
-    * @param filePath the file path
-    * @param fileName the file name
+    * @param file the file
     * @param optionsSet the optionsSet
     * @param selectedAircraft the aircraft
     */
-   public static void writeConfigFile(String filePath, String fileName, Set<Options> optionsSet, String selectedAircraft) {
-      StringBuilder sb = new StringBuilder();
-      sb.append(filePath).append(fileName).append(".txt");
-
-      try (BufferedWriter bw = new BufferedWriter(new FileWriter(sb.toString()))) {
+   public static void writeConfigFile(File file, Set<Options> optionsSet, String selectedAircraft) {
+      try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
          for (Options option : Options.values()) {
             bw.write(option.name() + " = " + optionsSet.contains(option));
             bw.newLine();
@@ -293,11 +262,11 @@ public class FileUtilities {
          bw.write("selectedAircraft = " + selectedAircraft);
          bw.newLine();
       } catch (FileNotFoundException e) {
-         System.err.println("Could not find: SimulationSetup.txt!");
+         System.err.println("Could not find: " + file.getName());
       } catch (IOException e) {
-         System.err.println("Could not read: SimulationSetup.txt!");
+         System.err.println("Could not read: " + file.getName());
       } catch (NullPointerException e) {
-         System.err.println("Bad reference to: SimulationSetup.txt!");
+         System.err.println("Bad reference: " + file.getName());
       }
    }
 
@@ -309,7 +278,6 @@ public class FileUtilities {
     * @throws IOException
     */
    public static void saveToCSVFile(File file, List<Map<SimOuts, Double>> logsOut) throws IOException {
-
       BufferedWriter bw = new BufferedWriter(new FileWriter(file.getPath()));
 
       // First line of CSV file should have the names of each parameter

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.setup;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
 import com.chrisali.javaflightsim.simulation.aero.StabilityDerivatives;
@@ -77,14 +79,14 @@ public class Trimming {
       initialConditions = controller.getInitialConditions();
       initialControls = controller.getInitialControls();
 
-      environmentParams = Environment.getAndUpdateEnvironmentParams(new double[]{ 0, 0, initialConditions.get(InitialConditions.INITD) });
+      environmentParams = Environment.getAndUpdateEnvironmentParams(new double[] { 0, 0, initialConditions.get(InitialConditions.INITD) });
 
       double alphaMin = -0.18, alphaMax = 0.18, throttleMin = 0.0, throttleMax = 1.0,
-              alphaTrim = 0.0, thetaTrim = 0.0, elevTrim = 0.0, throttleTrim = 0.0, wVelocityTrim = 0.0,
-              lift = 0.0, drag = 0.0, totalThrust = 0.0, zForce = 100.0;
+         alphaTrim = 0.0, thetaTrim = 0.0, elevTrim = 0.0, throttleTrim = 0.0, wVelocityTrim = 0.0,
+         lift = 0.0, drag = 0.0, totalThrust = 0.0, zForce = 100.0;
 
       double trueAirspeed = Math.sqrt(Math.pow(initialConditions.get(InitialConditions.INITU), 2)
-              + Math.pow(initialConditions.get(InitialConditions.INITW), 2));
+         + Math.pow(initialConditions.get(InitialConditions.INITW), 2));
 
       double weight = aircraft.getMassProperty(MassProperties.TOTAL_MASS) * Environment.getGravity();
       double q = environmentParams.get(EnvironmentParameters.RHO) * Math.pow(trueAirspeed, 2) / 2;
@@ -105,7 +107,7 @@ public class Trimming {
          // Calculate trim pitch by using (theta = alpha + FPA)
          thetaTrim = alphaTrim + 0; // Zero for level flight
 
-         double[] windParameters = new double[]{ trueAirspeed, 0, alphaTrim };
+         double[] windParameters = new double[] { trueAirspeed, 0, alphaTrim };
 
          double CL_alpha = aero.calculateInterpStabDer(windParameters, initialControls, StabilityDerivatives.CL_ALPHA);
          double CL_0 = aero.calculateInterpStabDer(windParameters, initialControls, StabilityDerivatives.CL_0);
@@ -137,7 +139,7 @@ public class Trimming {
 
          elevTrim = (CM_0 + (CM_alpha * alphaTrim)) / CM_d_elev;
          elevTrim = elevTrim > FlightControlType.ELEVATOR.getMaximum() ? FlightControlType.ELEVATOR.getMaximum()
-                 : elevTrim < FlightControlType.ELEVATOR.getMinimum() ? FlightControlType.ELEVATOR.getMinimum() : elevTrim;
+            : elevTrim < FlightControlType.ELEVATOR.getMinimum() ? FlightControlType.ELEVATOR.getMinimum() : elevTrim;
 
          counter++;
 
@@ -167,7 +169,7 @@ public class Trimming {
          // Get total thrust, equate it with drag of aircraft to find trim throttle
          totalThrust = 0.0;
          for (Engine engine : engines) {
-            engine.updateEngineState(initialControls, environmentParams, new double[]{ trueAirspeed, 0, 0 });
+            engine.updateEngineState(initialControls, environmentParams, new double[] { trueAirspeed, 0, 0 });
             totalThrust += engine.getThrust()[0];
          }
 
@@ -191,8 +193,11 @@ public class Trimming {
 
       // In test mode do not write any config settings to files
       if (!testMode) {
-         FileUtilities.writeConfigFile(SimulationController.getSimConfigPath(), "InitialConditions", initialConditions);
-         FileUtilities.writeConfigFile(SimulationController.getSimConfigPath(), "InitialControls", initialControls);
+         Configuration conf = Configuration.getInstance();
+         if (conf.hasSimulationConfig()) {
+            FileUtilities.writeConfigFile(conf.getInitialConditionsConfig(), initialConditions);
+            FileUtilities.writeConfigFile(conf.getInitialControlsConfig(), initialControls);
+         }
       } else {
          System.out.println(Trimming.outputTrimValues());
       }

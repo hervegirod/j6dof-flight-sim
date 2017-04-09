@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.menus;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.setup.InitialConditions;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import com.chrisali.javaflightsim.simulation.setup.Options;
@@ -178,21 +180,22 @@ public class ButtonPanel extends JPanel {
       StringBuilder sb = new StringBuilder();
 
       sb.append(parOpen).append("<b>Selected Aircraft:</b> ").append(parClose)
-              .append(parOpen).append(text).append(parClose);
+         .append(parOpen).append(text).append(parClose);
 
       aircraftLabel.setText(htmlBodyOpen + sb.toString() + htmlBodyClose);
    }
 
    public void setInitialConditionsLabel() {
-      Map<InitialConditions, Double> initialConditions = IntegrationSetup.gatherInitialConditions("InitialConditions");
+      Configuration conf = Configuration.getInstance();
+      Map<InitialConditions, Double> initialConditions = IntegrationSetup.gatherInitialConditions(conf.getInitialConditionsConfig());
 
       StringBuilder sb = new StringBuilder();
 
       sb.append(parOpen).append("Latitude: ").append(Math.toDegrees(initialConditions.get(InitialConditions.INITLAT))).append(" deg").append(parClose)
-              .append(parOpen).append("Longitude: ").append(Math.toDegrees(initialConditions.get(InitialConditions.INITLON))).append(" deg").append(parClose)
-              .append(parOpen).append("Heading: ").append(Math.toDegrees(initialConditions.get(InitialConditions.INITPSI))).append(" deg").append(parClose)
-              .append(parOpen).append("Altitude: ").append(initialConditions.get(InitialConditions.INITD)).append(" ft").append(parClose)
-              .append(parOpen).append("Airspeed: ").append(FileUtilities.toKnots(initialConditions.get(InitialConditions.INITU))).append(" kts").append(parClose);
+         .append(parOpen).append("Longitude: ").append(Math.toDegrees(initialConditions.get(InitialConditions.INITLON))).append(" deg").append(parClose)
+         .append(parOpen).append("Heading: ").append(Math.toDegrees(initialConditions.get(InitialConditions.INITPSI))).append(" deg").append(parClose)
+         .append(parOpen).append("Altitude: ").append(initialConditions.get(InitialConditions.INITD)).append(" ft").append(parClose)
+         .append(parOpen).append("Airspeed: ").append(FileUtilities.toKnots(initialConditions.get(InitialConditions.INITU))).append(" kts").append(parClose);
 
       initialConditonsLabel.setText(htmlBodyOpen + "<b>Starting Condtions:</b> " + sb.toString() + htmlBodyClose);
    }
@@ -201,10 +204,10 @@ public class ButtonPanel extends JPanel {
       StringBuilder sb = new StringBuilder();
 
       sb.append(parOpen).append("Latitude: ").append(coordinates[0]).append(" deg").append(parClose)
-              .append(parOpen).append("Longitude: ").append(coordinates[1]).append(" deg").append(parClose)
-              .append(parOpen).append("Heading: ").append(heading).append(" deg").append(parClose)
-              .append(parOpen).append("Altitude: ").append(altitude).append(" ft").append(parClose)
-              .append(parOpen).append("Airspeed: ").append(airspeed).append(" kts").append(parClose);
+         .append(parOpen).append("Longitude: ").append(coordinates[1]).append(" deg").append(parClose)
+         .append(parOpen).append("Heading: ").append(heading).append(" deg").append(parClose)
+         .append(parOpen).append("Altitude: ").append(altitude).append(" ft").append(parClose)
+         .append(parOpen).append("Airspeed: ").append(airspeed).append(" kts").append(parClose);
 
       initialConditonsLabel.setText(htmlBodyOpen + "<b>Starting Condtions:</b> " + sb.toString() + htmlBodyClose);
    }

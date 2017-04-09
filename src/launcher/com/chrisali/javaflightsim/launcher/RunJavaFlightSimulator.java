@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.launcher;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.menus.MainFrame;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
@@ -44,6 +45,9 @@ public class RunJavaFlightSimulator {
     * called
     */
    private static void runApp() {
+      Configuration conf = Configuration.getInstance();
+      conf.setDefaultConfiguration();
+
       SimulationController controller = new SimulationController();
       LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
       PlotWindow plotWindow = new PlotWindow();

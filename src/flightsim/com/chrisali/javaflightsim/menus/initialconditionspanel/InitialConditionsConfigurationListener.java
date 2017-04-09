@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,5 +19,5 @@ package com.chrisali.javaflightsim.menus.initialconditionspanel;
 import java.util.EventListener;
 
 public interface InitialConditionsConfigurationListener extends EventListener {
-   public void initialConditonsConfigured(double[] coordinates, double heading, double altitude, double airspeed);
+   public void initialConditionsConfigured(double[] coordinates, double heading, double altitude, double airspeed);
 }

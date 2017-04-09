@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
 import com.chrisali.javaflightsim.simulation.aero.StabilityDerivatives;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
@@ -23,14 +24,19 @@ import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import java.util.EnumMap;
 
 public class TestLookupTable {
-   private EnumMap<FlightControlType, Double> controls = IntegrationSetup.gatherInitialControls("InitialControls");
+   private EnumMap<FlightControlType, Double> controls = null;
    private double[] alpha = new double[] { -14, -12, -10, -8, -6, -4, -2, 0, 2, 4, 6, 8, 10, 12, 14, 16 };
    private double[] dFlap = new double[] { 0, 10, 20, 30, 40 };
    AircraftBuilder ab;
    private Aerodynamics aero;
 
    public TestLookupTable(String aircraftName) {
-      this.ab = new AircraftBuilder("LookupNavion");
+      Configuration conf = Configuration.getInstance();
+      conf.setDefaultConfiguration();
+      conf.setAircraft("LookupNavion");
+      controls = IntegrationSetup.gatherInitialControls(conf.getInitialControlsConfig());
+
+      this.ab = new AircraftBuilder(conf.getAircraftName());
       this.aero = new Aerodynamics(ab.getAircraft());
       double clAlpha = 0.0;
 

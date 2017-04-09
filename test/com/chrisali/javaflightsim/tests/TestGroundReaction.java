@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.integration.IntegrateGroundReaction;
@@ -23,14 +24,12 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 
 public class TestGroundReaction {
-
    private IntegrateGroundReaction groundReaction;
-   private AircraftBuilder ab = new AircraftBuilder("Navion");
+   private AircraftBuilder ab;
    private double terrainHeight;
-   double[] integratorConfig = ArrayUtils.toPrimitive(IntegrationSetup.gatherInitialConditions("IntegratorConfig").values()
-      .toArray(new Double[3]));
+   double[] integratorConfig = null;
    private double t;
-   private Map<FlightControlType, Double> controls = IntegrationSetup.gatherInitialControls("InitialControls");
+   private Map<FlightControlType, Double> controls = null;
 
    // 6DOF Integration Results
    private double[] linearVelocities = new double[] { 5, 0, 0 };
@@ -40,6 +39,17 @@ public class TestGroundReaction {
    private double[] windParameters = new double[] { 0, 0, 0 };
 
    private double[] sixDOFDerivatives = new double[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+   public TestGroundReaction() {
+      Configuration conf = Configuration.getInstance();
+      conf.setDefaultConfiguration();
+      conf.setAircraft("Navion");
+      ab = new AircraftBuilder(conf.getAircraftName());
+
+      controls = IntegrationSetup.gatherInitialControls(conf.getInitialControlsConfig());
+      integratorConfig = ArrayUtils.toPrimitive(IntegrationSetup.gatherInitialConditions(conf.getIntegratorConfig()).values()
+         .toArray(new Double[3]));
+   }
 
    public static void main(String[] args) {
       TestGroundReaction test = new TestGroundReaction();

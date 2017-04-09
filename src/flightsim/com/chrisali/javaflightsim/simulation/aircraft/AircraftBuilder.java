@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.aircraft;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
 import com.chrisali.javaflightsim.simulation.aero.StabilityDerivatives;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
@@ -66,8 +67,9 @@ public class AircraftBuilder {
     */
    public AircraftBuilder(String aircraftName) {
       this.aircraft = new Aircraft(aircraftName);
+      Configuration conf = Configuration.getInstance();
 
-      List<String[]> readPropulsionFile = FileUtilities.readFileAndSplit(aircraftName, FILE_PATH, "Propulsion");
+      List<String[]> readPropulsionFile = FileUtilities.readFileAndSplit(conf.getAircraftPropulsion());
 
       // Gets the number of engines on the aircraft from the first line of the
       // String[] ArrayList
@@ -88,7 +90,7 @@ public class AircraftBuilder {
                }
             }
 
-            double[] enginePosition = new double[]{ Double.parseDouble(engineParams.get(EngineParameters.POS_X)),
+            double[] enginePosition = new double[] { Double.parseDouble(engineParams.get(EngineParameters.POS_X)),
                Double.parseDouble(engineParams.get(EngineParameters.POS_Y)),
                Double.parseDouble(engineParams.get(EngineParameters.POS_Z)) };
 
@@ -97,11 +99,11 @@ public class AircraftBuilder {
                case "fixedPitchPropEngine":
                default:
                   this.engineList.add(new FixedPitchPropEngine(engineParams.get(EngineParameters.NAME),
-                          Double.parseDouble(engineParams.get(EngineParameters.MAX_BHP)),
-                          Double.parseDouble(engineParams.get(EngineParameters.MAX_RPM)),
-                          Double.parseDouble(engineParams.get(EngineParameters.PROP_DIAMETER)),
-                          enginePosition,
-                          i));
+                     Double.parseDouble(engineParams.get(EngineParameters.MAX_BHP)),
+                     Double.parseDouble(engineParams.get(EngineParameters.MAX_RPM)),
+                     Double.parseDouble(engineParams.get(EngineParameters.PROP_DIAMETER)),
+                     enginePosition,
+                     i));
                   break;
             }
 

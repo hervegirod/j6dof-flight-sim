@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -222,9 +223,9 @@ public class InitialConditionsPanel extends JPanel {
          @Override
          public void actionPerformed(ActionEvent e) {
             if (initialConditionsConfigurationListener != null) {
-               initialConditionsConfigurationListener.initialConditonsConfigured(
-                       new double[]{ Double.parseDouble(latitudeArea.getText()), Double.parseDouble(longitudeArea.getText()) },
-                       (double) headingSpinner.getValue(), (double) altitudeSpinner.getValue(), (double) airspeedSpinner.getValue());
+               initialConditionsConfigurationListener.initialConditionsConfigured(
+                  new double[] { Double.parseDouble(latitudeArea.getText()), Double.parseDouble(longitudeArea.getText()) },
+                  (double) headingSpinner.getValue(), (double) altitudeSpinner.getValue(), (double) airspeedSpinner.getValue());
             }
          }
       });

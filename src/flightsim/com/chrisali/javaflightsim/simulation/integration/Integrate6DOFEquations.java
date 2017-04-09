@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.integration;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentDataListener;
@@ -118,9 +120,9 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 
       // Use Apache Commons Lang to convert EnumMap values into primitive double[]
       initialConditions = ArrayUtils.toPrimitive(simController.getInitialConditions().values()
-              .toArray(new Double[initialConditions.length]));
+         .toArray(new Double[initialConditions.length]));
       integratorConfig = ArrayUtils.toPrimitive(simController.getIntegratorConfig().values()
-              .toArray(new Double[integratorConfig.length]));
+         .toArray(new Double[integratorConfig.length]));
 
       // Allows simulation to run forever in pilot in the loop simulation if ANALYSIS_MODE not enabled
       if (!options.contains(Options.ANALYSIS_MODE) && options.contains(Options.UNLIMITED_FLIGHT)) {
@@ -135,14 +137,14 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 
       // Set up ground reaction integration
       groundReaction = new IntegrateGroundReaction(linearVelocities,
-              NEDPosition,
-              eulerAngles,
-              angularRates,
-              windParameters,
-              sixDOFDerivatives,
-              integratorConfig,
-              aircraft,
-              controls);
+         NEDPosition,
+         eulerAngles,
+         angularRates,
+         windParameters,
+         sixDOFDerivatives,
+         integratorConfig,
+         aircraft,
+         controls);
 
       // Initialize accelerations and moments, and calculate initial data members' values
       AccelAndMoments.init(aircraft);
@@ -179,10 +181,10 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
     * @see Source: <i>Small Unmanned Aircraft: Theory and Practice by Beard, R.W. and McLain, T.W.</i>
     */
    private void updateDerivatives(double[] y) {
-      double[][] dirCosMat = SixDOFUtilities.body2Ned(new double[]{ y[6], y[7], y[8] });      // create DCM for NED equations ([column][row])
+      double[][] dirCosMat = SixDOFUtilities.body2Ned(new double[] { y[6], y[7], y[8] });      // create DCM for NED equations ([column][row])
       double[] inertiaCoeffs = SixDOFUtilities.calculateInertiaCoeffs(aircraft.getInertiaValues());
       double[] ned2LLA = SixDOFUtilities.ned2LLA(y);
-      double[] windSpdNED = new double[]{ environmentParameters.get(EnvironmentParameters.WIND_SPEED_N),
+      double[] windSpdNED = new double[] { environmentParameters.get(EnvironmentParameters.WIND_SPEED_N),
          environmentParameters.get(EnvironmentParameters.WIND_SPEED_E),
          environmentParameters.get(EnvironmentParameters.WIND_SPEED_D) };
 
@@ -251,24 +253,24 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
       //System.out.println(groundReaction);
       // Update accelerations
       linearAccelerations = AccelAndMoments.calculateLinearAccelerations(windParameters,
-              angularRates,
-              environmentParameters,
-              controls,
-              alphaDot,
-              engineList,
-              aircraft,
-              groundReaction,
-              heightAGL);
+         angularRates,
+         environmentParameters,
+         controls,
+         alphaDot,
+         engineList,
+         aircraft,
+         groundReaction,
+         heightAGL);
       // Update moments
       totalMoments = AccelAndMoments.calculateTotalMoments(windParameters,
-              angularRates,
-              environmentParameters,
-              controls,
-              alphaDot,
-              engineList,
-              aircraft,
-              groundReaction,
-              heightAGL);
+         angularRates,
+         environmentParameters,
+         controls,
+         alphaDot,
+         engineList,
+         aircraft,
+         groundReaction,
+         heightAGL);
 
       // Recalculates derivatives for next step
       updateDerivatives(y);
@@ -412,17 +414,18 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
          while (t < integratorConfig[2] && running) {
             // If paused and reset selected, reset initialConditions using IntegrationSetup's method
             if (options.contains(Options.PAUSED) & options.contains(Options.RESET)) {
-               initialConditions = ArrayUtils.toPrimitive(IntegrationSetup.gatherInitialConditions("InitialConditions").values()
-                       .toArray(new Double[initialConditions.length]));
+               Configuration conf = Configuration.getInstance();
+               initialConditions = ArrayUtils.toPrimitive(IntegrationSetup.gatherInitialConditions(conf.getInitialConditionsConfig()).values()
+                  .toArray(new Double[initialConditions.length]));
             }
 
             // If paused, skip the integration and update process
             if (!options.contains(Options.PAUSED)) {
                // Run a single step of integration each step of the loop
                y = integrator.singleStep(new SixDOFEquations(), // derivatives
-                       t, // start time
-                       initialConditions, // initial conditions
-                       t + integratorConfig[1]);     // end time (t+dt)
+                  t, // start time
+                  initialConditions, // initial conditions
+                  t + integratorConfig[1]);     // end time (t+dt)
 
                // Update data members' values
                updateDataMembers();

@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.enviroment.Environment;
 import com.chrisali.javaflightsim.simulation.enviroment.EnvironmentParameters;
@@ -41,7 +42,10 @@ public class TestEngine extends ApplicationFrame {
    public TestEngine(String testType) {
       super("Engine Test");
 
-      EnumMap<FlightControlType, Double> controls = IntegrationSetup.gatherInitialControls("InitialControls");
+      Configuration conf = Configuration.getInstance();
+      conf.setDefaultConfiguration();
+
+      EnumMap<FlightControlType, Double> controls = IntegrationSetup.gatherInitialControls(conf.getInitialControlsConfig());
       Map<EnvironmentParameters, Double> environmentParameters = Environment.getAndUpdateEnvironmentParams(new double[] { 0, 0, 0 });
       StringBuilder constraint = new StringBuilder();
 

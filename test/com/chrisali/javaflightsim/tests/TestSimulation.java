@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
@@ -47,6 +48,10 @@ public class TestSimulation {
    private PlotWindow plots;
 
    public TestSimulation() {
+      Configuration conf = Configuration.getInstance();
+      conf.setDefaultConfiguration();
+      conf.setAircraft("TwinNavion");
+
       this.simController = new SimulationController();
       SimulationController controller = new SimulationController();
       LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();

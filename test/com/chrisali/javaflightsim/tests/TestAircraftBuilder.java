@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.propulsion.Engine;
 
@@ -38,7 +39,6 @@ public class TestAircraftBuilder {
    }
 
    public TestAircraftBuilder(String aircraftName) {
-
       System.out.println("============================");
       System.out.println("============================");
       System.out.println(aircraftName + " Builder Test");
@@ -59,6 +59,9 @@ public class TestAircraftBuilder {
       //new TestAircraftBuilder();
       //new TestAircraftBuilder("Navion");
       //new TestAircraftBuilder("TwinNavion");
-      new TestAircraftBuilder("LookupNavion");
+      Configuration conf = Configuration.getInstance();
+      conf.setDefaultConfiguration();
+      conf.setAircraft("LookupNavion");
+      new TestAircraftBuilder(conf.getAircraftName());
    }
 }

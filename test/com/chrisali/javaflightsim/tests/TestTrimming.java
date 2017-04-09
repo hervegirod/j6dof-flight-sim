@@ -15,19 +15,26 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.setup.Trimming;
 
 public class TestTrimming {
+
    public static void main(String[] args) {
-      new TestTrimming("Navion");
-      new TestTrimming("TwinNavion");
+      Configuration conf = Configuration.getInstance();
+      conf.setDefaultConfiguration();
+      conf.setAircraft("Navion");
+      new TestTrimming();
+      conf.setAircraft("TwinNavion");
+      new TestTrimming();
    }
 
-   private TestTrimming(String aircraftName) {
+   private TestTrimming() {
+      Configuration conf = Configuration.getInstance();
       SimulationController controller = new SimulationController();
-      controller.setAircraftBuilder(new AircraftBuilder(aircraftName));
+      controller.setAircraftBuilder(new AircraftBuilder(conf.getAircraftName()));
 
       Trimming.trimSim(controller, true);
    }

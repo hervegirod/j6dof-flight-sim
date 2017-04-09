@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,7 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.controls.hidcontrollers;
 
-import net.java.games.input.Controller;
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
@@ -24,6 +25,7 @@ import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import java.util.ArrayList;
 import java.util.Map;
+import net.java.games.input.Controller;
 
 /**
  * Contains methods implemented {@link Joystick}, {@link Keyboard} and {@link Mouse} to take controller inputs
@@ -34,7 +36,7 @@ public abstract class AbstractController {
    protected ArrayList<Controller> controllerList;
 
    // Gets the frame time DT from IntegratorConfig.txt
-   protected double dt = IntegrationSetup.gatherIntegratorConfig("IntegratorConfig").get(IntegratorConfig.DT);
+   protected double dt = 0;
 
    // Add these trim values to getControlDeflection method call to emulate trim deflections
    protected static double trimElevator = 0.0;
@@ -47,6 +49,11 @@ public abstract class AbstractController {
    protected abstract void searchForControllers();
 
    protected abstract Map<FlightControlType, Double> calculateControllerValues(Map<FlightControlType, Double> controls);
+
+   public AbstractController() {
+      Configuration conf = Configuration.getInstance();
+      dt = IntegrationSetup.gatherIntegratorConfig(conf.getIntegratorConfig()).get(IntegratorConfig.DT);
+   }
 
    /**
     * Standardizes rate of control deflection of keyboard and joystick button inputs regardless of the

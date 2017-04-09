@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.controls;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import java.util.Map;
@@ -35,7 +37,8 @@ public class FlightControlsUtilities {
     * initial conditions are changed so that new trim values can be read from InitialControls.txt
     */
    public static void init() {
-      trimControls = IntegrationSetup.gatherInitialControls("InitialControls");
+      Configuration conf = Configuration.getInstance();
+      trimControls = IntegrationSetup.gatherInitialControls(conf.getInitialControlsConfig());
    }
 
    /**
@@ -53,11 +56,11 @@ public class FlightControlsUtilities {
     * @return flightControls EnumMap
     */
    public static Map<FlightControlType, Double> makeDoublet(Map<FlightControlType, Double> controls,
-           double t,
-           double startTime,
-           double duration,
-           double amplitude,
-           FlightControlType controlType) {
+      double t,
+      double startTime,
+      double duration,
+      double amplitude,
+      FlightControlType controlType) {
 
       if (t > startTime && t < (startTime + duration)) {
          controls.put(controlType, trimControls.get(controlType) + amplitude);
@@ -82,25 +85,25 @@ public class FlightControlsUtilities {
    public static Map<FlightControlType, Double> doubletSeries(Map<FlightControlType, Double> controls, double t) {
       // Update controls with an aileron doublet
       controls = makeDoublet(controls,
-              t,
-              10.0,
-              0.5,
-              0.035,
-              FlightControlType.AILERON);
+         t,
+         10.0,
+         0.5,
+         0.035,
+         FlightControlType.AILERON);
       // Update controls with a rudder doublet
       controls = makeDoublet(controls,
-              t,
-              13.0,
-              0.5,
-              0.035,
-              FlightControlType.RUDDER);
+         t,
+         13.0,
+         0.5,
+         0.035,
+         FlightControlType.RUDDER);
       // Update controls with an elevator doublet
       controls = makeDoublet(controls,
-              t,
-              50.0,
-              0.5,
-              0.035,
-              FlightControlType.ELEVATOR);
+         t,
+         50.0,
+         0.5,
+         0.035,
+         FlightControlType.ELEVATOR);
       return controls;
    }
 

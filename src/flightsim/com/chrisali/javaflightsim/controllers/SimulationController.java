@@ -65,11 +65,6 @@ import java.util.Map;
  * @since 0.1
  */
 public class SimulationController {
-   // Paths
-   private static final String SIM_CONFIG_PATH = ".\\SimConfig\\";
-   private static final String AIRCRAFT_PATH = ".\\Aircraft\\";
-   private static final String RESOURCES_PATH = ".\\Resources\\";
-
    // Configuration
    private EnumMap<DisplayOptions, Integer> displayOptions;
    private EnumMap<AudioOptions, Float> audioOptions;
@@ -116,11 +111,13 @@ public class SimulationController {
       displayOptions = FileUtilities.parseDisplaySetup();
       audioOptions = FileUtilities.parseAudioSetup();
 
-      initialConditions = IntegrationSetup.gatherInitialConditions("InitialConditions");
-      integratorConfig = IntegrationSetup.gatherIntegratorConfig("IntegratorConfig");
-      initialControls = IntegrationSetup.gatherInitialControls("InitialControls");
+      Configuration conf = Configuration.getInstance();
+      initialConditions = IntegrationSetup.gatherInitialConditions(conf.getInitialConditionsConfig());
+      integratorConfig = IntegrationSetup.gatherIntegratorConfig(conf.getIntegratorConfig());
+      initialControls = IntegrationSetup.gatherInitialControls(conf.getInitialControlsConfig());
 
       String aircraftName = FileUtilities.parseSimulationSetupForAircraft();
+      Configuration.getInstance().setAircraft(aircraftName);
       ab = new AircraftBuilder(aircraftName);
    }
 
@@ -157,13 +154,19 @@ public class SimulationController {
     */
    public void updateOptions(EnumSet<Options> newOptions, EnumMap<DisplayOptions, Integer> newDisplayOptions,
       EnumMap<AudioOptions, Float> newAudioOptions) {
-      simulationOptions = EnumSet.copyOf(newOptions);
-      displayOptions = newDisplayOptions;
-      audioOptions = newAudioOptions;
+      Configuration conf = Configuration.getInstance();
+      if (conf.hasSimulationConfig()) {
+         File simulSetup = conf.getSimulationSetupConfig();
+         File displaySetup = conf.getDisplaySetupConfig();
+         File audioSetup = conf.getAudioSetupConfig();
+         simulationOptions = EnumSet.copyOf(newOptions);
+         displayOptions = newDisplayOptions;
+         audioOptions = newAudioOptions;
 
-      FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "SimulationSetup", simulationOptions, ab.getAircraft().getName());
-      FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "DisplaySetup", newDisplayOptions);
-      FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "AudioSetup", newAudioOptions);
+         FileUtilities.writeConfigFile(simulSetup, simulationOptions, ab.getAircraft().getName());
+         FileUtilities.writeConfigFile(displaySetup, newDisplayOptions);
+         FileUtilities.writeConfigFile(audioSetup, newAudioOptions);
+      }
    }
 
    /**
@@ -173,8 +176,13 @@ public class SimulationController {
     * @param aircraftName the aircraft name
     */
    public void updateAircraft(String aircraftName) {
+      Configuration conf = Configuration.getInstance();
+      conf.setAircraft(aircraftName);
       ab = new AircraftBuilder(aircraftName);
-      FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "SimulationSetup", simulationOptions, aircraftName);
+      if (conf.hasSimulationConfig()) {
+         File simulSetup = conf.getSimulationSetupConfig();
+         FileUtilities.writeConfigFile(simulSetup, simulationOptions, aircraftName);
+      }
    }
 
    /**
@@ -189,8 +197,9 @@ public class SimulationController {
 
       massProperties.put(MassProperties.WEIGHT_FUEL, fuelWeight);
       massProperties.put(MassProperties.WEIGHT_PAYLOAD, payloadWeight);
-
-      FileUtilities.writeConfigFile(AIRCRAFT_PATH, aircraftName + "\\MassProperties", massProperties);
+      Configuration conf = Configuration.getInstance();
+      File massProps = conf.getAircraftMassProperties();
+      FileUtilities.writeConfigFile(massProps, massProperties);
    }
 
    /**
@@ -207,8 +216,10 @@ public class SimulationController {
     */
    public void updateIntegratorConfig(int stepSize) {
       integratorConfig.put(IntegratorConfig.DT, (1 / ((double) stepSize)));
-
-      FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "IntegratorConfig", integratorConfig);
+      Configuration conf = Configuration.getInstance();
+      if (conf.hasSimulationConfig()) {
+         FileUtilities.writeConfigFile(conf.getIntegratorConfig(), integratorConfig);
+      }
    }
 
    /**
@@ -233,18 +244,24 @@ public class SimulationController {
       initialConditions.put(InitialConditions.INITU, FileUtilities.toFtPerSec(airspeed));
       initialConditions.put(InitialConditions.INITD, altitude);
 
-      // Temporary method to calcuate north/east position from lat/lon position
+      // Temporary method to calculate north/east position from lat/lon position
       initialConditions.put(InitialConditions.INITN, (Math.sin(Math.toRadians(coordinates[0])) * 20903520));
       initialConditions.put(InitialConditions.INITE, (Math.sin(Math.toRadians(coordinates[1])) * 20903520));
 
-      FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "InitialConditions", initialConditions);
+      Configuration conf = Configuration.getInstance();
+      if (conf.hasSimulationConfig()) {
+         FileUtilities.writeConfigFile(conf.getInitialConditionsConfig(), initialConditions);
+      }
    }
 
    /**
     * Updates the InitialControls config file.
     */
    public void updateIninitialControls() {
-      FileUtilities.writeConfigFile(SIM_CONFIG_PATH, "InitialControls", initialControls);
+      Configuration conf = Configuration.getInstance();
+      if (conf.hasSimulationConfig()) {
+         FileUtilities.writeConfigFile(conf.getInitialControlsConfig(), initialConditions);
+      }
    }
 
    /**
@@ -437,19 +454,6 @@ public class SimulationController {
     */
    public void saveConsoleOutput(File file) throws IOException {
       FileUtilities.saveToCSVFile(file, runSim.getLogsOut());
-   }
-
-   //================================ Paths ==============================================================
-   public static String getSimConfigPath() {
-      return SIM_CONFIG_PATH;
-   }
-
-   public static String getAircraftPath() {
-      return AIRCRAFT_PATH;
-   }
-
-   public static String getResourcesPath() {
-      return RESOURCES_PATH;
    }
 
    //========================== Main Frame Menus =========================================================

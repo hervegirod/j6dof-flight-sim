@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.aircraft;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.simulation.aero.AccelAndMoments;
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
 import com.chrisali.javaflightsim.simulation.aero.StabilityDerivatives;
@@ -139,8 +140,8 @@ public class Aircraft {
       massProps.put(MassProperties.MAX_WEIGHT_PAYLOAD, 610.0);
       massProps.put(MassProperties.WEIGHT_PAYLOAD, 1.0);
       massProps.put(MassProperties.TOTAL_MASS, ((massProps.get(MassProperties.MAX_WEIGHT_PAYLOAD) * massProps.get(MassProperties.WEIGHT_PAYLOAD))
-              + (massProps.get(MassProperties.MAX_WEIGHT_FUEL) * massProps.get(MassProperties.WEIGHT_FUEL))
-              + massProps.get(MassProperties.WEIGHT_EMPTY)) / Environment.getGravity());
+         + (massProps.get(MassProperties.MAX_WEIGHT_FUEL) * massProps.get(MassProperties.WEIGHT_FUEL))
+         + massProps.get(MassProperties.WEIGHT_EMPTY)) / Environment.getGravity());
 
       // =======================================
       // Default ground reaction (Navion)
@@ -208,9 +209,10 @@ public class Aircraft {
       this.wingGeometry = new EnumMap<>(WingGeometry.class);
       this.massProps = new EnumMap<>(MassProperties.class);
       this.groundReaction = new EnumMap<>(GroundReaction.class);
+      Configuration conf = Configuration.getInstance();
 
       // Aerodynamics
-      ArrayList<String[]> readAeroFile = FileUtilities.readFileAndSplit(aircraftName, AircraftBuilder.FILE_PATH, "Aero");
+      ArrayList<String[]> readAeroFile = FileUtilities.readFileAndSplit(conf.getAircraftAero());
 
       // Override constant stability derivative values with the keyword "lookup" in Aero.txt; need to then
       // supply text file with lookup table and break points
@@ -227,7 +229,7 @@ public class Aircraft {
       }
 
       // Mass Properties
-      ArrayList<String[]> readMassPropFile = FileUtilities.readFileAndSplit(aircraftName, AircraftBuilder.FILE_PATH, "MassProperties");
+      ArrayList<String[]> readMassPropFile = FileUtilities.readFileAndSplit(conf.getAircraftMassProperties());
 
       for (MassProperties massPropKey : MassProperties.values()) {
          for (String[] readLine : readMassPropFile) {
@@ -238,11 +240,11 @@ public class Aircraft {
       }
       // Sum up empty, fuel and payload weights divided by gravity to get total mass
       massProps.put(MassProperties.TOTAL_MASS, ((massProps.get(MassProperties.MAX_WEIGHT_PAYLOAD) * massProps.get(MassProperties.WEIGHT_PAYLOAD))
-              + (massProps.get(MassProperties.MAX_WEIGHT_FUEL) * massProps.get(MassProperties.WEIGHT_FUEL))
-              + massProps.get(MassProperties.WEIGHT_EMPTY)) / Environment.getGravity());
+         + (massProps.get(MassProperties.MAX_WEIGHT_FUEL) * massProps.get(MassProperties.WEIGHT_FUEL))
+         + massProps.get(MassProperties.WEIGHT_EMPTY)) / Environment.getGravity());
 
       // Wing Geometry
-      ArrayList<String[]> readWingGeomFile = FileUtilities.readFileAndSplit(aircraftName, AircraftBuilder.FILE_PATH, "WingGeometry");
+      ArrayList<String[]> readWingGeomFile = FileUtilities.readFileAndSplit(conf.getAircraftWingGeometry());
 
       for (WingGeometry wingGeoKey : WingGeometry.values()) {
          for (String[] readLine : readWingGeomFile) {
@@ -253,7 +255,7 @@ public class Aircraft {
       }
 
       // Ground Reaction
-      ArrayList<String[]> readGndReactFile = FileUtilities.readFileAndSplit(aircraftName, AircraftBuilder.FILE_PATH, "GroundReaction");
+      ArrayList<String[]> readGndReactFile = FileUtilities.readFileAndSplit(conf.getAircraftGroundReaction());
 
       for (GroundReaction gndReactKey : GroundReaction.values()) {
          for (String[] readLine : readGndReactFile) {
@@ -271,7 +273,7 @@ public class Aircraft {
     * @return centerOfGravity
     */
    public double[] getCenterOfGravity() {
-      return new double[]{ massProps.get(MassProperties.CG_X),
+      return new double[] { massProps.get(MassProperties.CG_X),
          massProps.get(MassProperties.CG_Y),
          massProps.get(MassProperties.CG_Z) };
    }
@@ -284,7 +286,7 @@ public class Aircraft {
     * @return the centerOfGravity
     */
    public double[] getAerodynamicCenter() {
-      return new double[]{ wingGeometry.get(WingGeometry.AC_X),
+      return new double[] { wingGeometry.get(WingGeometry.AC_X),
          wingGeometry.get(WingGeometry.AC_Y),
          wingGeometry.get(WingGeometry.AC_Z) };
    }
@@ -296,7 +298,7 @@ public class Aircraft {
     * @return centerOfGravity
     */
    public double[] getInertiaValues() {
-      return new double[]{ massProps.get(MassProperties.J_X),
+      return new double[] { massProps.get(MassProperties.J_X),
          massProps.get(MassProperties.J_Y),
          massProps.get(MassProperties.J_Z),
          massProps.get(MassProperties.J_XZ) };
