@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -36,21 +37,29 @@ public class IntegrationSetup {
     * @return EnumMap of initial conditions for the integration
     */
    public static EnumMap<InitialConditions, Double> gatherInitialConditions(File file) {
-      ArrayList<String[]> initConditionsFile = FileUtilities.readFileAndSplit(file);
       EnumMap<InitialConditions, Double> initialConditions = new EnumMap<>(InitialConditions.class);
+      if (file == null) {
+         setDefaultInitialConditions(initialConditions);
+         return initialConditions;
+      }
+      ArrayList<String[]> initConditionsFile = FileUtilities.readFileAndSplit(file);
 
       if (!verifyICFileIntegrity(initConditionsFile)) {
          System.err.println("Error in initial conditions file! Generating default initial conditions...");
-         Double[] defaultIC = new Double[] { 210.0, 0.0, -3.99, 0.0, 0.0, 5000.0, 0.0, -0.025, 1.57, 0.0, 0.0, 0.0 };
-         for (int i = 0; i < defaultIC.length; i++) {
-            initialConditions.put(InitialConditions.values()[i], defaultIC[i]);
-         }
+         setDefaultInitialConditions(initialConditions);
          return initialConditions;
       } else {
          for (int i = 0; i < initConditionsFile.size(); i++) {
             initialConditions.put(InitialConditions.values()[i], Double.parseDouble(initConditionsFile.get(i)[1]));
          }
          return initialConditions;
+      }
+   }
+
+   private static void setDefaultInitialConditions(EnumMap<InitialConditions, Double> initialConditions) {
+      Double[] defaultIC = new Double[] { 210.0, 0.0, -3.99, 0.0, 0.0, 5000.0, 0.0, -0.025, 1.57, 0.0, 0.0, 0.0 };
+      for (int i = 0; i < defaultIC.length; i++) {
+         initialConditions.put(InitialConditions.values()[i], defaultIC[i]);
       }
    }
 
@@ -62,21 +71,29 @@ public class IntegrationSetup {
     * @return EnumMap of integration configuration options
     */
    public static EnumMap<IntegratorConfig, Double> gatherIntegratorConfig(File file) {
+      EnumMap<IntegratorConfig, Double> integratorConfig = new EnumMap<>(IntegratorConfig.class);
+      if (file == null) {
+         setDefaultIntegratorConfig(integratorConfig);
+         return integratorConfig;
+      }
       ArrayList<String[]> intConfigFile = FileUtilities.readFileAndSplit(file);
-      EnumMap<IntegratorConfig, Double> integratorConfig = new EnumMap<IntegratorConfig, Double>(IntegratorConfig.class);
 
       if (!verifyIntConfigFileIntegrity(intConfigFile)) {
          System.err.println("Error in integration configuration file! Generating default integration configuration...");
-         double[] defaultIntConfig = new double[] { 0.0, 0.05, 100.0 };
-         for (int i = 0; i < defaultIntConfig.length; i++) {
-            integratorConfig.put(IntegratorConfig.values()[i], defaultIntConfig[i]);
-         }
+         setDefaultIntegratorConfig(integratorConfig);
          return integratorConfig;
       } else {
          for (int i = 0; i < intConfigFile.size(); i++) {
             integratorConfig.put(IntegratorConfig.values()[i], Double.parseDouble(intConfigFile.get(i)[1]));
          }
          return integratorConfig;
+      }
+   }
+
+   private static void setDefaultIntegratorConfig(EnumMap<IntegratorConfig, Double> integratorConfig) {
+      double[] defaultIntConfig = new double[] { 0.0, 0.05, 100.0 };
+      for (int i = 0; i < defaultIntConfig.length; i++) {
+         integratorConfig.put(IntegratorConfig.values()[i], defaultIntConfig[i]);
       }
    }
 
@@ -88,21 +105,29 @@ public class IntegrationSetup {
     * @return EnumMap of initial controls for the integration
     */
    public static EnumMap<FlightControlType, Double> gatherInitialControls(File file) {
+      EnumMap<FlightControlType, Double> initControl = new EnumMap<>(FlightControlType.class);
+      if (file == null) {
+         setDefaultInitialControls(initControl);
+         return initControl;
+      }
       ArrayList<String[]> initControlFile = FileUtilities.readFileAndSplit(file);
-      EnumMap<FlightControlType, Double> initControl = new EnumMap<FlightControlType, Double>(FlightControlType.class);
 
       if (!verifyControlFileIntegrity(initControlFile)) {
          System.err.println("Error in controls file! Generating default control deflections...");
-         double[] defaultControl = new double[] { 0.036, 0, 0, 0.65, 0.65, 0.65, 0.65, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0, 0 };
-         for (int i = 0; i < defaultControl.length; i++) {
-            initControl.put(FlightControlType.values()[i], defaultControl[i]);
-         }
+         setDefaultInitialControls(initControl);
          return initControl;
       } else {
          for (int i = 0; i < initControlFile.size(); i++) {
             initControl.put(FlightControlType.values()[i], Double.parseDouble(initControlFile.get(i)[1]));
          }
          return initControl;
+      }
+   }
+
+   private static void setDefaultInitialControls(EnumMap<FlightControlType, Double> initControl) {
+      double[] defaultControl = new double[] { 0.036, 0, 0, 0.65, 0.65, 0.65, 0.65, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0, 0 };
+      for (int i = 0; i < defaultControl.length; i++) {
+         initControl.put(FlightControlType.values()[i], defaultControl[i]);
       }
    }
 

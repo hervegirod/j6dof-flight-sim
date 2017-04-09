@@ -29,6 +29,8 @@ public class Configuration {
    private File simconfigDir = null;
    private String aircraftName = null;
    private File aircraftDir = null;
+   private File aircraftLookupTables = null;
+   private boolean aircraftNameSet = false;
 
    private Configuration() {
    }
@@ -72,6 +74,7 @@ public class Configuration {
       } else {
          this.aircraftListDir = null;
          this.aircraftDir = null;
+         this.aircraftLookupTables = null;
          return false;
       }
    }
@@ -284,6 +287,11 @@ public class Configuration {
       }
    }
 
+   public void forceAircraftName(String aircraftName) {
+      setAircraft(aircraftName);
+      aircraftNameSet = true;
+   }
+
    /**
     * Sets the selected aircraft name and return its associated configuration.
     *
@@ -291,14 +299,34 @@ public class Configuration {
     * @return the selected aircraft configuration
     */
    public File setAircraft(String aircraftName) {
-      this.aircraftName = aircraftName;
-      if (aircraftListDir != null) {
-         aircraftDir = new File(aircraftListDir, aircraftName);
-         if (!aircraftDir.exists() || !aircraftDir.isDirectory()) {
-            aircraftDir = null;
+      if (!aircraftNameSet) {
+         this.aircraftName = aircraftName;
+         aircraftLookupTables = null;
+         if (aircraftListDir != null) {
+            aircraftDir = new File(aircraftListDir, aircraftName);
+            if (!aircraftDir.exists() || !aircraftDir.isDirectory()) {
+               aircraftDir = null;
+            } else {
+               aircraftLookupTables = new File(aircraftDir, "LookupTables");
+            }
          }
       }
       return aircraftDir;
+   }
+
+   /**
+    * Return the aircraft configuration for an aircraft name.
+    *
+    * @param aircraftName the aircraft Name
+    * @return the aircraft configuration
+    */
+   public File getAircraftConfig(String aircraftName) {
+      if (aircraftListDir != null) {
+         File _aircraftDir = new File(aircraftListDir, aircraftName);
+         return _aircraftDir;
+      } else {
+         return null;
+      }
    }
 
    /**
@@ -308,6 +336,15 @@ public class Configuration {
     */
    public File getAircraftConfig() {
       return aircraftDir;
+   }
+
+   /**
+    * Return the selected aircraft Lookup tables.
+    *
+    * @return the selected aircraft Lookup tables
+    */
+   public File getAircraftLookupTables() {
+      return aircraftLookupTables;
    }
 
    /**

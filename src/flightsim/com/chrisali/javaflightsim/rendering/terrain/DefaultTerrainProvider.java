@@ -34,8 +34,8 @@ public class DefaultTerrainProvider implements TerrainProvider {
    private boolean isStarted = false;
    private boolean isRunning = false;
    private SimulationController controller = null;
-   private DefaultTerrainCollection terrainCollection = null;
-   private Vector3D.Float ownship = null;
+   private volatile DefaultTerrainCollection terrainCollection = null;
+   private volatile Vector3D.Float ownship = null;
 
    public DefaultTerrainProvider() {
    }
@@ -54,7 +54,8 @@ public class DefaultTerrainProvider implements TerrainProvider {
       ownship = new Vector3D.Float((float) initialConditions.get(InitialConditions.INITN).doubleValue() / 15,
          (float) initialConditions.get(InitialConditions.INITD).doubleValue() / 15,
          (float) initialConditions.get(InitialConditions.INITE).doubleValue() / 15); //(800, 150, 800)
-      terrainCollection = new DefaultTerrainCollection(10, ownship);
+      terrainCollection = new DefaultTerrainCollection();
+      terrainCollection.setup(10, ownship);
    }
 
    @Override

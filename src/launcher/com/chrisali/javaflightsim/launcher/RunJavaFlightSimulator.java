@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -20,6 +21,10 @@ import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.menus.MainFrame;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
+import com.chrisali.javaflightsim.rendering.terrain.DefaultTerrainProvider;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import javax.swing.SwingUtilities;
 
 /**
@@ -29,8 +34,34 @@ import javax.swing.SwingUtilities;
  *
  */
 public class RunJavaFlightSimulator {
+   private volatile String aircraftName = null;
+   private volatile boolean hasMenus = true;
+   private volatile boolean hasInstruments = true;
+   private volatile boolean hasWorld = true;
 
-   public static void main(String[] args) {
+   private static boolean isTrue(String valueS) {
+      return valueS.equalsIgnoreCase("true");
+   }
+
+   public RunJavaFlightSimulator() {
+   }
+
+   private void launch(String[] args) {
+      Map<String, String> props = LauncherUtils.getLaunchProperties(args);
+      Iterator<Entry<String, String>> it = props.entrySet().iterator();
+      while (it.hasNext()) {
+         Entry<String, String> entry = it.next();
+         if (entry.getKey().equals("hasMenus")) {
+            hasMenus = isTrue(entry.getValue());
+         } else if (entry.getKey().equals("hasInstruments")) {
+            hasInstruments = isTrue(entry.getValue());
+         } else if (entry.getKey().equals("hasWorld")) {
+            hasWorld = isTrue(entry.getValue());
+         } else if (entry.getKey().equals("aircraftName")) {
+            aircraftName = entry.getValue();
+         }
+      }
+
       SwingUtilities.invokeLater(new Runnable() {
          @Override
          public void run() {
@@ -39,23 +70,38 @@ public class RunJavaFlightSimulator {
       });
    }
 
+   public static void main(String[] args) {
+      RunJavaFlightSimulator flightSim = new RunJavaFlightSimulator();
+      flightSim.launch(args);
+   }
+
    /**
     * Initializes {@link SimulationController} and {@link MainFrame}; due to cross-referencing
     * needed with both objects, {@link SimulationController#setMainFrame(MainFrame)} needs to be
     * called
     */
-   private static void runApp() {
+   private void runApp() {
       Configuration conf = Configuration.getInstance();
       conf.setDefaultConfiguration();
+      if (aircraftName != null) {
+         conf.forceAircraftName(aircraftName);
+      }
 
       SimulationController controller = new SimulationController();
-      LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+      if (hasWorld) {
+         LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+         controller.setWorldRenderer(lwjglRenderer);
+         controller.setTerrainProvider(lwjglRenderer);
+         lwjglRenderer.setSimulationController(controller);
+      } else {
+         DefaultTerrainProvider terrainProvider = new DefaultTerrainProvider();
+         controller.setTerrainProvider(terrainProvider);
+         terrainProvider.setSimulationController(controller);
+      }
       PlotWindow plotWindow = new PlotWindow();
       plotWindow.setSimulationController(controller);
-      lwjglRenderer.setSimulationController(controller);
+
       controller.setDataAnalyzer(plotWindow);
-      controller.setWorldRenderer(lwjglRenderer);
-      controller.setTerrainProvider(lwjglRenderer);
       MainFrame mainFrame = new MainFrame(controller);
 
       // Pass in mainFrame reference so that OTW display can get Canvas

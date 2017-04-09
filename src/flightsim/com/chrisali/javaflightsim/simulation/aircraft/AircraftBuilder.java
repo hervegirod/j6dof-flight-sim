@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -24,6 +25,7 @@ import com.chrisali.javaflightsim.simulation.propulsion.EngineParameters;
 import com.chrisali.javaflightsim.simulation.propulsion.FixedPitchPropEngine;
 import com.chrisali.javaflightsim.utilities.FileUtilities;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -46,8 +48,6 @@ import org.apache.commons.math3.exception.NullArgumentException;
 public class AircraftBuilder {
    private Set<Engine> engineList = new LinkedHashSet<>();
    private Aircraft aircraft;
-
-   protected static final String FILE_PATH = ".\\Aircraft\\";
 
    /**
     * Default AircraftBuilder constructor, using the default constructors of {@link Aircraft} and {@link FixedPitchPropEngine}
@@ -126,14 +126,14 @@ public class AircraftBuilder {
     * @return Lookup table of the type PiecewiseBicubicSplineInterpolatingFunction
     */
    protected static PiecewiseBicubicSplineInterpolatingFunction createLookupTable(Aircraft aircraft, String fileName) {
-      StringBuilder sb = new StringBuilder();
-      sb.append(FILE_PATH).append(aircraft.getName()).append("\\LookupTables\\").append(fileName).append(".txt");
+      Configuration conf = Configuration.getInstance();
+      File file = new File(conf.getAircraftLookupTables(), fileName + ".txt");
 
       List<Double[]> readAndSplit = new LinkedList<>();
       PiecewiseBicubicSplineInterpolatingFunction pbsif = null;
       String readLine = null;
 
-      try (BufferedReader br = new BufferedReader(new FileReader(sb.toString()))) {
+      try (BufferedReader br = new BufferedReader(new FileReader(file))) {
          // Read each line of file, split it into String array, convert it to a double array and add to double list
          while ((readLine = br.readLine()) != null) {
             String[] tempLineString = readLine.split(",\t");
@@ -205,7 +205,7 @@ public class AircraftBuilder {
     * lookup table of constant values equal to the stability derivative in question. This prevents any errors
     * down the line with attempting to access an erroneous {@link PiecewiseBicubicSplineInterpolatingFunction}
     *
-    * @param fileName
+    * @param fileName the file name
     * @return Lookup table of the type PiecewiseBicubicSplineInterpolatingFunction
     */
    private static PiecewiseBicubicSplineInterpolatingFunction createDefaultLookup(String fileName) {
@@ -249,12 +249,5 @@ public class AircraftBuilder {
 
    public Set<Engine> getEngineList() {
       return this.engineList;
-   }
-
-   /**
-    * @return File path where all aircraft template files and folders are located
-    */
-   public static String getFilePath() {
-      return FILE_PATH;
    }
 }

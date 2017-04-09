@@ -32,19 +32,25 @@ public class DefaultTerrainCollection {
 
    /**
     * Creates a TreeMap of {@link DefaultTerrain} objects, with texture blending and height maps. Each key to the tree map consists of
-    * the string "xGrid-zGrid", which represents the terrain object's position relative to other terrains in an array fashion
-    *
-    * @param numTerrains
-    * @param ownship
+    * the string "xGrid-zGrid", which represents the terrain object's position relative to other terrains in an array fashion.
     */
-   public DefaultTerrainCollection(int numTerrains, Vector3D ownship) {
+   public DefaultTerrainCollection() {
       terrainTree = new TreeMap<>();
       Configuration conf = Configuration.getInstance();
       terrainDir = conf.getTerrain();
+   }
 
+   /**
+    * Setup the DefaultTerrainCollection.
+    *
+    * @param numTerrains the number of terrains
+    * @param ownship the aircraft
+    */
+   public void setup(int numTerrains, Vector3D ownship) {
       for (int i = 0; i < numTerrains; i++) {
          for (int j = 0; j < numTerrains; j++) {
-            terrainTree.put(i + "-" + j, new DefaultTerrain(i, j, "heightMap", terrainDir, ownship));
+            DefaultTerrain terrain = new DefaultTerrain(i, j, "heightMap", terrainDir, ownship);
+            terrainTree.put(i + "-" + j, terrain);
          }
       }
    }

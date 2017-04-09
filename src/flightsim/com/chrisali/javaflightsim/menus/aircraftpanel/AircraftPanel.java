@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -15,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.menus.aircraftpanel;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.menus.CancelButtonListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -243,20 +245,20 @@ public class AircraftPanel extends JPanel {
          image = new ImageIcon(imageFile.toURI().toURL());
       } catch (MalformedURLException e) {
          JOptionPane.showMessageDialog(AircraftPanel.this, "Unable to load image: " + fileName,
-                 "Error Loading Message", JOptionPane.ERROR_MESSAGE);
+            "Error Loading Message", JOptionPane.ERROR_MESSAGE);
       }
 
       return image;
    }
 
    private String createDescriptionText(String aircraftName, String fileName) {
-      StringBuilder sb = new StringBuilder();
-      sb.append("Aircraft//").append(aircraftName).append("//").append(fileName);
+      Configuration conf = Configuration.getInstance();
+      File file = new File(conf.getAircraftConfig(aircraftName), fileName);
 
       String readLine = null;
       StringBuilder readFile = new StringBuilder();
 
-      try (BufferedReader br = new BufferedReader(new FileReader(sb.toString()))) {
+      try (BufferedReader br = new BufferedReader(new FileReader(file))) {
          while ((readLine = br.readLine()) != null) {
             readFile.append(readLine).append("\n");
          }
