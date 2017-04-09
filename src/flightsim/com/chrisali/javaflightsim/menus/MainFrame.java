@@ -267,8 +267,9 @@ public class MainFrame extends JFrame {
    }
 
    /**
-    * @return {@link SimulationWindow} object for {@link RunWorld} to set its display parent
-    * within {@link DisplayManager}
+    * Return the SimulationWindow object.
+    *
+    * @return {@link SimulationWindow} object for {@link RunWorld}.
     */
    public SimulationWindow getSimulationWindow() {
       return simulationWindow;

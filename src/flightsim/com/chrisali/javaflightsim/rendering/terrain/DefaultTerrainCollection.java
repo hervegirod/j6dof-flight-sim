@@ -28,11 +28,10 @@ public class DefaultTerrainCollection {
    private TreeMap<String, DefaultTerrain> terrainTree;
 
    /**
-    * Creates a TreeMao of {@link DefaultTerrain} objects, with texture blending and height maps. Each key to the tree map consists of
+    * Creates a TreeMap of {@link DefaultTerrain} objects, with texture blending and height maps. Each key to the tree map consists of
     * the string "xGrid-zGrid", which represents the terrain object's position relative to other terrains in an array fashion
     *
     * @param numTerrains
-    * @param loader
     * @param ownship
     */
    public DefaultTerrainCollection(int numTerrains, Vector3D ownship) {

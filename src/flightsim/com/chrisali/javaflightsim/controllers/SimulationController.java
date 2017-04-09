@@ -40,7 +40,6 @@ import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import com.chrisali.javaflightsim.simulation.setup.Trimming;
 import com.chrisali.javaflightsim.utilities.FileUtilities;
-import java.awt.Canvas;
 import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
@@ -455,10 +454,9 @@ public class SimulationController {
 
    //========================== Main Frame Menus =========================================================
    /**
-    * Sets {@link MainFrame} reference for {@link RunWorld}, which needs it to
-    * set the parent {@link Canvas} in {@link DisplayManager}
+    * Sets {@link MainFrame} reference for {@link RunWorld}.
     *
-    * @param mainFrame
+    * @param mainFrame the MainFrame
     */
    public void setMainFrame(MainFrame mainFrame) {
       this.mainFrame = mainFrame;

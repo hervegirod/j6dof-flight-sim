@@ -39,27 +39,14 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
 
    /**
     * <p>
-    * Constructor for Terrain object; uses {@link TerrainTexturePack} and {@link TerrainTexture} to
-    * generate a terrain texture blend map </p>
+    * Constructor for Terrain object.
+    * Uses a reference to the aircraft to calculate the distance the midpoint of this terrain instance is from
+    * the ownship. This is used to compare to other Terrain objects in compareTo()</p>
     *
-    * <p>
-    * gridX and gridZ correspond to indices in the terrain array that this object resides</p>
-    *
-    * <p>
-    * fileName and Directory point to a height map .png file to give the terrain vertical modeling</p>
-    *
-    * <p>
-    * Uses {@link EntityCollections#createAutogenImageEntities(com.chrisali.javaflightsim.otw.terrain.Terrain, java.lang.String, java.lang.String)} to generate populate this object's lists of entities
-    * using an autogen image file in ./Resources/Terrain/</p>
-    *
-    * <p>
-    * Uses a reference to {@link Ownship} to calculate the distance the midpoint of this terrain instance is from
-    * the ownship; this is used to compare to other Terrain objects in compareTo()</p>
-    *
-    * @param gridX
-    * @param gridZ
-    * @param fileName
-    * @param directory
+    * @param gridX gridX index in the terrain array that this object resides
+    * @param gridZ gridZ index in the terrain array that this object resides
+    * @param fileName point to a height map .png file to give the terrain vertical modeling
+    * @param directory point to a height map .png file to give the terrain vertical modeling
     * @param ownship the aircraft
     */
    public DefaultTerrain(int gridX, int gridZ, String fileName, String directory, Vector3D ownship) {
@@ -74,8 +61,6 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
     *
     * @param fileName
     * @param directory (usually "DefaultTerrain" or can specify sub-directories such as "DefaultTerrain\\1-1")
-    * @param loader
-    * @return terrain model
     */
    private void generateTerrain(String fileName, String directory) {
       BufferedImage image = null;
@@ -94,26 +79,6 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
             heightArray[j][i] = height;
          }
       }
-   }
-
-   /**
-    * Calculates normal of a terrain vertex for use with lighting or specular calculations
-    *
-    * @param x
-    * @param z
-    * @param image
-    * @return normal vector
-    */
-   private Vector3D.Float calculateNormal(int x, int z, BufferedImage image) {
-      float heightL = getHeightFromImage(x - 1, z, image);
-      float heightR = getHeightFromImage(x + 1, z, image);
-      float heightD = getHeightFromImage(x, z - 1, image);
-      float heightU = getHeightFromImage(x, z + 1, image);
-
-      Vector3D.Float normal = new Vector3D.Float(heightL - heightR, 2f, heightD - heightU);
-      normal.normalize();
-
-      return normal;
    }
 
    /**
@@ -141,11 +106,11 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
    }
 
    /**
-    * Uses Barycentric interpolation to calculate the height of terrain for a given X and Z position
+    * Uses Barycentric interpolation to calculate the height of terrain for a given X and Z position.
     *
-    * @param worldX
-    * @param worldZ
-    * @return terrain height
+    * @param worldX the x position
+    * @param worldZ the Z position
+    * @return the terrain height
     */
    public float getTerrainHeight(float worldX, float worldZ) {
       // Convert absolute world position to position relative to terrain square
@@ -188,10 +153,10 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
    /**
     * Returns the DefaultTerrain object from a DefaultTerrain map that the player is currently standing on
     *
-    * @param terrainTree
-    * @param worldX
-    * @param worldZ
-    * @return terrain object that the player is standing on
+    * @param terrainTree the terrain tree
+    * @param worldX the x position
+    * @param worldZ the Z position
+    * @return the terrain object that the player is standing on
     */
    public static DefaultTerrain getCurrentTerrain(TreeMap<String, DefaultTerrain> terrainTree, float worldX, float worldZ) {
       // Floor divide player's absolute (world) x and z coordinates to get the grid indices that this terrain object lies in
@@ -219,8 +184,11 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
    }
 
    /**
+    * Return the magnitude of the distance from the center of theDefaultTerrain absolute postion
+    * to the aircraft objects absolute position.
+    *
     * @return the magnitude of the distance from the center of the {@link DefaultTerrain} object's absolute postion
-    * to the {@link Ownship} objects absolute postion
+    * to the aircraft objects absolute position.
     */
    public float getDistanceFromAircraft() {
       float terrainMidpointX = x + (MAX_HEIGHT / 2);
@@ -231,9 +199,9 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
    }
 
    /**
-    * Compares using absolute distance between this {@link DefaultTerrain} and the {@link Ownship} versus another {@link DefaultTerrain}
+    * Compares using absolute distance between this {@link DefaultTerrain} and the aircraft versus another {@link DefaultTerrain}.
     *
-    * @param terrain
+    * @param terrain the DefaultTerrain
     * @return 1 if this is further away, -1 if this is closer, 0 if they are equal
     */
    @Override
