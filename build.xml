@@ -300,18 +300,18 @@
       <java classname="com.chrisali.javaflightsim.launcher.RunJavaFlightSimulator">
          <sysproperty key="java.library.path" path="lib" />
          <classpath>
-            <pathelement path="dist/j6dof-flight-sim-all.jar"/>
-            <pathelement path="lib/commons-lang3-3.5.jar"/>
-            <pathelement path="lib/commons-math3-3.6.1.jar"/>
-            <pathelement path="lib/jcommon-1.0.23.jar"/>
-            <pathelement path="lib/jfreechart-1.0.19.jar"/>
-            <pathelement path="lib/jinput.jar"/>
-            <pathelement path="lib/lwjgl.jar"/>
-            <pathelement path="lib/lwjgl_util.jar"/>
-            <pathelement path="lib/lzma.jar"/>
-            <pathelement path="lib/slick.jar"/>
-            <pathelement path="lib/trident-7.2.1.jar"/>
+            <pathelement path="distrib/j6dof-launcher.jar"/>
          </classpath>         
       </java>
    </target> 
+   
+   <target name="Start configured" description="Start configed Game" depends="init" >
+      <java classname="com.chrisali.javaflightsim.launcher.RunJavaFlightSimulator">
+         <sysproperty key="java.library.path" path="lib" />   
+         <arg value="hasWorld=false"/>    
+         <classpath>
+            <pathelement path="distrib/j6dof-launcher.jar"/>
+         </classpath>         
+      </java>
+   </target>   
 </project>
