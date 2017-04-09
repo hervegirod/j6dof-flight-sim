@@ -15,10 +15,12 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.otw.terrain;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.otw.entities.Ownship;
 import com.chrisali.javaflightsim.otw.renderengine.Loader;
 import com.chrisali.javaflightsim.otw.textures.TerrainTexture;
 import com.chrisali.javaflightsim.otw.textures.TerrainTexturePack;
+import java.io.File;
 import java.util.TreeMap;
 
 /**
@@ -28,8 +30,8 @@ import java.util.TreeMap;
  *
  */
 public class TerrainCollection {
-
    private TreeMap<String, Terrain> terrainTree;
+   private File terrainDir = null;
 
    /**
     * Creates a TreeMao of {@link Terrain} objects, with texture blending and height maps. Each key to the tree map consists of
@@ -41,13 +43,15 @@ public class TerrainCollection {
     */
    public TerrainCollection(int numTerrains, Loader loader, Ownship ownship) {
       terrainTree = new TreeMap<>();
+      Configuration conf = Configuration.getInstance();
+      terrainDir = conf.getTerrain();
 
       TerrainTexturePack texturePack = createTexturePack("fields", "town", "forest", "water", loader);
-      TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap", "Terrain"));
+      TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap", terrainDir));
 
       for (int i = 0; i < numTerrains; i++) {
          for (int j = 0; j < numTerrains; j++) {
-            terrainTree.put(i + "-" + j, new Terrain(i, j, "heightMap", "Terrain", loader, texturePack, blendMap, ownship));
+            terrainTree.put(i + "-" + j, new Terrain(i, j, "heightMap", terrainDir, loader, texturePack, blendMap, ownship));
          }
       }
    }
@@ -64,11 +68,11 @@ public class TerrainCollection {
     * @return
     */
    private TerrainTexturePack createTexturePack(String backgroundTextureName,
-           String rTextureName, String gTextureName, String bTextureName, Loader loader) {
-      TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(backgroundTextureName, "Terrain"));
-      TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(rTextureName, "Terrain"));
-      TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(gTextureName, "Terrain"));
-      TerrainTexture bTexture = new TerrainTexture(loader.loadTexture(bTextureName, "Terrain"));
+      String rTextureName, String gTextureName, String bTextureName, Loader loader) {
+      TerrainTexture backgroundTexture = new TerrainTexture(loader.loadTexture(backgroundTextureName, terrainDir));
+      TerrainTexture rTexture = new TerrainTexture(loader.loadTexture(rTextureName, terrainDir));
+      TerrainTexture gTexture = new TerrainTexture(loader.loadTexture(gTextureName, terrainDir));
+      TerrainTexture bTexture = new TerrainTexture(loader.loadTexture(bTextureName, terrainDir));
 
       return new TerrainTexturePack(backgroundTexture, rTexture, gTexture, bTexture);
    }

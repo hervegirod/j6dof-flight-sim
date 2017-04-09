@@ -16,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.otw.audio;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ import org.lwjgl.util.WaveData;
 import org.lwjgl.util.vector.Vector3f;
 
 public class AudioMaster {
-
    private static List<Integer> buffers = new ArrayList<Integer>();
 
    public static void init() {
@@ -43,12 +43,13 @@ public class AudioMaster {
       AL10.alListener3f(AL10.AL_VELOCITY, velocity.x, velocity.y, velocity.z);
    }
 
-   public static int loadSound(String directory, String fileName) {
+   public static int loadSound(File directory, String fileName) {
       int buffer = AL10.alGenBuffers();
       buffers.add(buffer);
+      File wavfile = new File(directory, fileName + ".wav");
 
       try {
-         WaveData waveFile = WaveData.create(new BufferedInputStream(new FileInputStream("Resources\\" + directory + "\\" + fileName + ".wav")));
+         WaveData waveFile = WaveData.create(new BufferedInputStream(new FileInputStream(wavfile)));
          AL10.alBufferData(buffer, waveFile.format, waveFile.data, waveFile.samplerate);
          waveFile.dispose();
       } catch (IOException | NullPointerException e) {

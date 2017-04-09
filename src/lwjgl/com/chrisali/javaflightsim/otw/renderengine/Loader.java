@@ -16,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.otw.renderengine;
 
 import com.chrisali.javaflightsim.otw.models.RawModel;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -118,7 +119,7 @@ public class Loader {
    }
 
    public void addInstancedAttribute(int vao, int vbo, int attribute, int dataSize, int instancedDataLength,
-           int offset) {
+      int offset) {
       GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
       GL30.glBindVertexArray(vao);
       GL20.glVertexAttribPointer(attribute, dataSize, GL11.GL_FLOAT, false, instancedDataLength * 4, offset * 4);
@@ -133,15 +134,14 @@ public class Loader {
     * directory. Sets anisotropic filtering for textures as well in this method
     *
     * @param fileName the file name
-    * @param directory the directory name
+    * @param directory the directory
     * @return the texture ID
     */
-   public int loadTexture(String fileName, String directory) {
+   public int loadTexture(String fileName, File directory) {
       Texture texture = null;
-
+      File file = new File(directory, fileName + ".png");
       try {
-         texture = TextureLoader.getTexture("PNG",
-                 new FileInputStream("Resources\\" + directory + "\\" + fileName + ".png"));
+         texture = TextureLoader.getTexture("PNG", new FileInputStream(file));
          GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
          GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
 

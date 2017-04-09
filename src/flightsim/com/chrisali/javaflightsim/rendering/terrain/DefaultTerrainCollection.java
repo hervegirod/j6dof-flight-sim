@@ -16,7 +16,9 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.rendering.terrain;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.utilities.Vector3D;
+import java.io.File;
 import java.util.TreeMap;
 
 /**
@@ -26,6 +28,7 @@ import java.util.TreeMap;
  */
 public class DefaultTerrainCollection {
    private TreeMap<String, DefaultTerrain> terrainTree;
+   private File terrainDir = null;
 
    /**
     * Creates a TreeMap of {@link DefaultTerrain} objects, with texture blending and height maps. Each key to the tree map consists of
@@ -36,10 +39,12 @@ public class DefaultTerrainCollection {
     */
    public DefaultTerrainCollection(int numTerrains, Vector3D ownship) {
       terrainTree = new TreeMap<>();
+      Configuration conf = Configuration.getInstance();
+      terrainDir = conf.getTerrain();
 
       for (int i = 0; i < numTerrains; i++) {
          for (int j = 0; j < numTerrains; j++) {
-            terrainTree.put(i + "-" + j, new DefaultTerrain(i, j, "heightMap", "Terrain", ownship));
+            terrainTree.put(i + "-" + j, new DefaultTerrain(i, j, "heightMap", terrainDir, ownship));
          }
       }
    }

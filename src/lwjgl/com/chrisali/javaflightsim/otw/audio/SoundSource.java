@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.otw.audio;
 
+import java.io.File;
 import org.lwjgl.openal.AL10;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -22,7 +23,7 @@ public class SoundSource {
    private int sourceId;
    private int bufferId;
 
-   public SoundSource(String directory, String fileName) {
+   public SoundSource(File directory, String fileName) {
       sourceId = AL10.alGenSources();
       bufferId = AudioMaster.loadSound(directory, fileName);
    }

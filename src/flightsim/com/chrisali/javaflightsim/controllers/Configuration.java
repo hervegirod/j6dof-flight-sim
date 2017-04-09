@@ -112,6 +112,66 @@ public class Configuration {
    }
 
    /**
+    * Return the sound resources directory.
+    *
+    * @return the sound resources directory
+    */
+   public File getSoundResources() {
+      File audio = new File(resourcesDir, "Audio");
+      return audio;
+   }
+
+   /**
+    * Return the terrain resources directory.
+    *
+    * @return the terrain resources directory
+    */
+   public File getTerrain() {
+      File audio = new File(resourcesDir, "Terrain");
+      return audio;
+   }
+
+   /**
+    * Return the fonts resources directory.
+    *
+    * @return the fonts resources directory
+    */
+   public File getFonts() {
+      File fonts = new File(resourcesDir, "Fonts");
+      return fonts;
+   }
+
+   /**
+    * Return the entities resources directory.
+    *
+    * @return the entities resources directory
+    */
+   public File getEntities() {
+      File entities = new File(resourcesDir, "Entities");
+      return entities;
+   }
+
+   /**
+    * Return the particles resources directory.
+    *
+    * @return the particles resources directory
+    */
+   public File getParticles() {
+      File entities = new File(resourcesDir, "Particles");
+      return entities;
+   }
+
+   /**
+    * Return the water resources directory.
+    *
+    * @return the water resources directory
+    */
+   public File getWater() {
+      File entities = new File(resourcesDir, "Water");
+      return entities;
+   }
+
+   /**
     * Sets the simulation configuration directory. The default directory will have the "SimConfig" name and
     * be a child of the user directory.
     *

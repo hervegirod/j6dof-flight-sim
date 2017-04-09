@@ -15,12 +15,13 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.otw.renderengine;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.otw.entities.Camera;
 import com.chrisali.javaflightsim.otw.models.RawModel;
 import com.chrisali.javaflightsim.otw.shaders.WaterShader;
+import com.chrisali.javaflightsim.otw.utilities.RenderingUtilities;
 import com.chrisali.javaflightsim.otw.water.WaterFrameBuffers;
 import com.chrisali.javaflightsim.otw.water.WaterTile;
-import com.chrisali.javaflightsim.otw.utilities.RenderingUtilities;
 import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -30,9 +31,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class WaterRenderer {
-
    private static final String DUDV_MAP = "waterDUDV";
-
    private static float fogDensity = MasterRenderer.getFogDensity();
    private static float fogGradient = MasterRenderer.getFogGradient();
 
@@ -48,7 +47,8 @@ public class WaterRenderer {
    public WaterRenderer(Loader loader, WaterShader shader, Matrix4f projectionMatrix, WaterFrameBuffers waterFrameBuffers) {
       this.shader = shader;
       this.waterFrameBuffers = waterFrameBuffers;
-      dudvTexture = loader.loadTexture(DUDV_MAP, "water");
+      Configuration conf = Configuration.getInstance();
+      dudvTexture = loader.loadTexture(DUDV_MAP, conf.getWater());
       shader.start();
       shader.loadProjectionMatrix(projectionMatrix);
       shader.stop();
@@ -59,13 +59,13 @@ public class WaterRenderer {
       prepareRender(camera);
       for (WaterTile tile : water) {
          Matrix4f modelMatrix = RenderingUtilities.createTransformationMatrix(
-                 new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
-                 WaterTile.TILE_SIZE);
+            new Vector3f(tile.getX(), tile.getHeight(), tile.getZ()), 0, 0, 0,
+            WaterTile.TILE_SIZE);
          shader.loadModelMatrix(modelMatrix);
          shader.loadFog(fogDensity, fogGradient);
          shader.loadSkyColor(MasterRenderer.getSkyColor().x,
-                 MasterRenderer.getSkyColor().y,
-                 MasterRenderer.getSkyColor().z);
+            MasterRenderer.getSkyColor().y,
+            MasterRenderer.getSkyColor().z);
          shader.connectTextures();
          GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, quad.getVertexCount());
       }

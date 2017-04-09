@@ -15,12 +15,14 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.otw.audio.AudioMaster;
 import com.chrisali.javaflightsim.otw.audio.SoundCollection;
 import com.chrisali.javaflightsim.otw.audio.SoundCollection.SoundCategory;
 import com.chrisali.javaflightsim.otw.audio.SoundCollection.SoundEvent;
 import com.chrisali.javaflightsim.otw.audio.SoundSource;
+import java.io.File;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -56,13 +58,17 @@ public class TestAudio {
    private Map<SoundCategory, Double> soundValues = new EnumMap<>(SoundCategory.class);
 
    private TestAudio() {
+      Configuration conf = Configuration.getInstance();
+      conf.setDefaultConfiguration();
+      File audioDir = conf.getSoundResources();
+
       AudioMaster.init();
       AudioMaster.setListenerData(playerPostion, playerVelocity);
 
-      soundSources.put("wind", new SoundSource("Audio", "wind"));
+      soundSources.put("wind", new SoundSource(audioDir, "wind"));
       soundSources.get("wind").setLooping(true);
 
-      soundSources.put("windHigh", new SoundSource("Audio", "wind"));
+      soundSources.put("windHigh", new SoundSource(audioDir, "wind"));
       soundSources.get("windHigh").setPitch(2);
 
       soundValues.put(SoundCategory.FLAPS, 0.0);

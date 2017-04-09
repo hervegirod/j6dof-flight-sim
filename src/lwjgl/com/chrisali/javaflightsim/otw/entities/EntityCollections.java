@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.otw.entities;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.otw.models.TexturedModel;
 import com.chrisali.javaflightsim.otw.renderengine.Loader;
 import com.chrisali.javaflightsim.otw.renderengine.OBJLoader;
@@ -41,7 +42,6 @@ import org.lwjgl.util.vector.Vector3f;
  *
  */
 public class EntityCollections {
-
    private List<Entity> miscStaticEntities = new ArrayList<>();
    private List<Entity> miscLitEntities = new ArrayList<>();
    private List<Light> lights;
@@ -54,9 +54,10 @@ public class EntityCollections {
    private static TexturedModel planatusForest;
    private static TexturedModel pineForest;
    private static TexturedModel oakForest;
-
    // Lit
    private static TexturedModel lamp;
+   private Configuration conf = Configuration.getInstance();
+   private File entitiesDir = conf.getEntities();
 
    /**
     * Creates {@link EntityCollections} object with list of lights, loader to load entities, and
@@ -82,15 +83,17 @@ public class EntityCollections {
    private void initializeEntities() {
       // Create models
       // Static
-      planatusForest = new TexturedModel(OBJLoader.loadObjModel("grassModel", "Entities", loader),
-              new ModelTexture(loader.loadTexture("platanusforest", "Entities")));
-      pineForest = new TexturedModel(OBJLoader.loadObjModel("grassModel", "Entities", loader),
-              new ModelTexture(loader.loadTexture("pineforest", "Entities")));
-      oakForest = new TexturedModel(OBJLoader.loadObjModel("grassModel", "Entities", loader),
-              new ModelTexture(loader.loadTexture("oakforest", "Entities")));
+      Configuration conf = Configuration.getInstance();
+      File entitiesDir = conf.getEntities();
+      planatusForest = new TexturedModel(OBJLoader.loadObjModel("grassModel", entitiesDir, loader),
+         new ModelTexture(loader.loadTexture("platanusforest", entitiesDir)));
+      pineForest = new TexturedModel(OBJLoader.loadObjModel("grassModel", entitiesDir, loader),
+         new ModelTexture(loader.loadTexture("pineforest", entitiesDir)));
+      oakForest = new TexturedModel(OBJLoader.loadObjModel("grassModel", entitiesDir, loader),
+         new ModelTexture(loader.loadTexture("oakforest", entitiesDir)));
       // Lit
-      lamp = new TexturedModel(OBJLoader.loadObjModel("lamp", "Entities", loader),
-              new ModelTexture(loader.loadTexture("lamp", "Entities")));
+      lamp = new TexturedModel(OBJLoader.loadObjModel("lamp", entitiesDir, loader),
+         new ModelTexture(loader.loadTexture("lamp", entitiesDir)));
       // Model settings
       // Static
       planatusForest.getTexture().setHasTransparency(true);
@@ -121,12 +124,12 @@ public class EntityCollections {
     * @param fileName
     * @param directory
     */
-   public static void createAutogenImageEntities(Terrain terrain, String fileName, String directory) {
-
+   public static void createAutogenImageEntities(Terrain terrain, String fileName, File directory) {
       BufferedImage image = null;
 
       try {
-         image = ImageIO.read(new File("Resources\\" + directory + "\\" + fileName + ".png"));
+         File file = new File(directory, fileName + ".png");
+         image = ImageIO.read(file);
       } catch (IOException e) {
          System.err.println("Could not load autogen file: " + fileName + ".png");
       }
@@ -175,20 +178,20 @@ public class EntityCollections {
 
       if (random.nextInt(100) % 3 == 0) {
          staticEntity = new Entity(pineForest, new Vector3f(x, y - 2, z),
-                 0, random.nextFloat() * 360, 0,
-                 random.nextFloat() + 6);
+            0, random.nextFloat() * 360, 0,
+            random.nextFloat() + 6);
 
          terrain.getStaticEntities().add(staticEntity);
       } else if (random.nextInt(100) % 9 == 0) {
          staticEntity = new Entity(oakForest, new Vector3f(x, y - 2, z),
-                 0, random.nextFloat() * 360, 0,
-                 random.nextFloat() + 6);
+            0, random.nextFloat() * 360, 0,
+            random.nextFloat() + 6);
 
          terrain.getStaticEntities().add(staticEntity);
       } else if (random.nextInt(100) % 10 == 0) {
          staticEntity = new Entity(planatusForest, new Vector3f(x, y - 2, z),
-                 0, random.nextFloat() * 360, 0,
-                 random.nextFloat() + 6);
+            0, random.nextFloat() * 360, 0,
+            random.nextFloat() + 6);
 
          terrain.getStaticEntities().add(staticEntity);
       }
@@ -205,8 +208,8 @@ public class EntityCollections {
     * @param scale
     */
    public void createStaticEntity(String entityName, Vector3f position, float xRot, float yRot, float zRot, float scale) {
-      TexturedModel staticEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, "Entities", loader),
-              new ModelTexture(loader.loadTexture(entityName, "Entities")));
+      TexturedModel staticEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, entitiesDir, loader),
+         new ModelTexture(loader.loadTexture(entityName, entitiesDir)));
 
       miscStaticEntities.add(new Entity(staticEntity, position, xRot, yRot, zRot, scale));
    }
@@ -222,8 +225,8 @@ public class EntityCollections {
     * @param scale
     */
    public void createStaticEntity(String entityName, float xPos, float zPos, float yRot, float scale) {
-      TexturedModel staticEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, "Entities", loader),
-              new ModelTexture(loader.loadTexture(entityName, "Entities")));
+      TexturedModel staticEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, entitiesDir, loader),
+         new ModelTexture(loader.loadTexture(entityName, entitiesDir)));
       float yPos = Terrain.getCurrentTerrain(terrainTree, xPos, zPos).getTerrainHeight(xPos, zPos);
       Vector3f position = new Vector3f(xPos, yPos, zPos);
 
@@ -238,8 +241,8 @@ public class EntityCollections {
     * @param scale
     */
    public void createStaticEntity(String entityName, Player player, float scale) {
-      TexturedModel staticEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, "Entities", loader),
-              new ModelTexture(loader.loadTexture(entityName, "Entities")));
+      TexturedModel staticEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, entitiesDir, loader),
+         new ModelTexture(loader.loadTexture(entityName, entitiesDir)));
 
       miscStaticEntities.add(new Entity(staticEntity, player.getPosition(), player.getRotX(), player.getRotY(), player.getRotZ(), scale));
    }
@@ -262,9 +265,9 @@ public class EntityCollections {
     * @param lightPosOffset
     */
    public void createLitEntity(String entityName, Vector3f position, float xRot, float yRot, float zRot, float scale,
-           Vector3f color, Vector3f attenuation, Vector3f lightPosOffset) {
-      TexturedModel litEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, "Entities", loader),
-              new ModelTexture(loader.loadTexture(entityName, "Entities")));
+      Vector3f color, Vector3f attenuation, Vector3f lightPosOffset) {
+      TexturedModel litEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, entitiesDir, loader),
+         new ModelTexture(loader.loadTexture(entityName, entitiesDir)));
 
       miscLitEntities.add(new Entity(litEntity, position, xRot, yRot, zRot, scale));
 
@@ -291,9 +294,9 @@ public class EntityCollections {
     * @param lightPosOffset
     */
    public void createLitEntity(String entityName, float xPos, float zPos, float yRot, float scale,
-           Vector3f color, Vector3f attenuation, Vector3f lightPosOffset) {
-      TexturedModel litEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, "Entities", loader),
-              new ModelTexture(loader.loadTexture(entityName, "Entities")));
+      Vector3f color, Vector3f attenuation, Vector3f lightPosOffset) {
+      TexturedModel litEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, entitiesDir, loader),
+         new ModelTexture(loader.loadTexture(entityName, entitiesDir)));
       float yPos = Terrain.getCurrentTerrain(terrainTree, xPos, zPos).getTerrainHeight(xPos, zPos);
       Vector3f position = new Vector3f(xPos, yPos, zPos);
 
@@ -319,9 +322,9 @@ public class EntityCollections {
     * @param lightPosOffset
     */
    public void createLitEntity(String entityName, Player player, float scale,
-           Vector3f color, Vector3f attenuation, Vector3f lightPosOffset) {
-      TexturedModel litEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, "Entities", loader),
-              new ModelTexture(loader.loadTexture(entityName, "Entities")));
+      Vector3f color, Vector3f attenuation, Vector3f lightPosOffset) {
+      TexturedModel litEntity = new TexturedModel(OBJLoader.loadObjModel(entityName, entitiesDir, loader),
+         new ModelTexture(loader.loadTexture(entityName, entitiesDir)));
       Vector3f position = player.getPosition();
 
       miscLitEntities.add(new Entity(litEntity, position, player.getRotX(), player.getRotY(), player.getRotZ(), scale));

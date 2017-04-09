@@ -42,11 +42,11 @@ public class OBJLoader {
     * @param loader
     * @return RawModwl object
     */
-   public static RawModel loadObjModel(String fileName, String directory, Loader loader) {
+   public static RawModel loadObjModel(String fileName, File directory, Loader loader) {
       FileReader fr = null;
-
+      File file = new File(directory, fileName + ".obj");
       try {
-         fr = new FileReader(new File("Resources\\" + directory + "\\" + fileName + ".obj"));
+         fr = new FileReader(file);
       } catch (FileNotFoundException e) {
          System.err.println("Could not load file: " + fileName);
       }
@@ -70,17 +70,17 @@ public class OBJLoader {
             String[] currentLine = line.split(" ");
             if (line.startsWith("v ")) {
                Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]),
-                       Float.parseFloat(currentLine[2]),
-                       Float.parseFloat(currentLine[3]));
+                  Float.parseFloat(currentLine[2]),
+                  Float.parseFloat(currentLine[3]));
                vertices.add(vertex);
             } else if (line.startsWith("vt ")) {
                Vector2f texture = new Vector2f(Float.parseFloat(currentLine[1]),
-                       Float.parseFloat(currentLine[2]));
+                  Float.parseFloat(currentLine[2]));
                textures.add(texture);
             } else if (line.startsWith("vn ")) {
                Vector3f normal = new Vector3f(Float.parseFloat(currentLine[1]),
-                       Float.parseFloat(currentLine[2]),
-                       Float.parseFloat(currentLine[3]));
+                  Float.parseFloat(currentLine[2]),
+                  Float.parseFloat(currentLine[3]));
                normals.add(normal);
             } else if (line.startsWith("f ")) {
                texturesArray = new float[vertices.size() * 2];
@@ -131,7 +131,7 @@ public class OBJLoader {
    }
 
    private static void processVertex(String[] vertexData, List<Integer> indices, List<Vector2f> textures,
-           List<Vector3f> vertices, List<Vector3f> normals, float[] texturesArray, float[] normalsArray) {
+      List<Vector3f> vertices, List<Vector3f> normals, float[] texturesArray, float[] normalsArray) {
       int currentVertexPointer = Integer.parseInt(vertexData[0]) - 1;
       indices.add(currentVertexPointer);
 

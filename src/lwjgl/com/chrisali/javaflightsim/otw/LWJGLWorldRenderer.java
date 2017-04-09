@@ -15,6 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.otw;
 
+import com.chrisali.javaflightsim.controllers.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
@@ -204,7 +205,8 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
     * Initializes and generates all assets needed to render lights, entities, particles terrain and text
     */
    private void loadAssets() {
-
+      Configuration conf = Configuration.getInstance();
+      File entitiesDir = conf.getEntities();
       //==================================== Sun ===========================================================
       lights = new ArrayList<>();
       lights.add(new Light(new Vector3f(20000, 40000, 20000), new Vector3f(0.95f, 0.95f, 0.95f)));
@@ -214,8 +216,8 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
 
       //================================= Ownship ===========================================================
       // Model used for aircraft; scale set to 0 to be invisible for now
-      TexturedModel bunny = new TexturedModel(OBJLoader.loadObjModel("bunny", "Entities", loader),
-         new ModelTexture(loader.loadTexture("bunny", "Entities")));
+      TexturedModel bunny = new TexturedModel(OBJLoader.loadObjModel("bunny", entitiesDir, loader),
+         new ModelTexture(loader.loadTexture("bunny", entitiesDir)));
       // Initial position of ownship
       Map<InitialConditions, Double> initialConditions = controller.getInitialConditions();
       ownshipPosition = new Vector3f((float) initialConditions.get(InitialConditions.INITN).doubleValue() / 15,
@@ -238,7 +240,8 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
       entities.setTerrainTree(terrainCollection.getTerrainTree());
 
       //=============================== Particles ==========================================================
-      ParticleTexture clouds = new ParticleTexture(loader.loadTexture("clouds", "Particles"), 4, true);
+      File particlesDir = conf.getParticles();
+      ParticleTexture clouds = new ParticleTexture(loader.loadTexture("clouds", particlesDir), 4, true);
 
       // Generates clouds at random positions along terrain map
       Random random = new Random();
@@ -248,7 +251,8 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
 
       //=============================== Interface ==========================================================
       // Generates font and on screen text
-      FontType font = new FontType(loader.loadTexture("ubuntu", "Fonts"), new File("Resources\\Fonts\\ubuntu.fnt"));
+      File fontsDir = conf.getFonts();
+      FontType font = new FontType(loader.loadTexture("ubuntu", fontsDir), new File(fontsDir, "ubuntu.fnt"));
       texts.put("FlightData", new GUIText("", 0.85f, font, new Vector2f(0, 0), 1f, true));
       texts.put("Paused", new GUIText("PAUSED", 1.15f, font, new Vector2f(0.5f, 0.5f), 1f, false, new Vector3f(1, 0, 0)));
 

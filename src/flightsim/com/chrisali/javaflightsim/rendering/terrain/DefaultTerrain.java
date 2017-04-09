@@ -40,7 +40,7 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
    /**
     * Constructor for Terrain object.
     * Uses a reference to the aircraft to calculate the distance the midpoint of this terrain instance is from
-    * the ownship. This is used to compare to other Terrain objects in compareTo()</p>
+    * the ownship. This is used to compare to other Terrain objects in compareTo()
     *
     * @param gridX gridX index in the terrain array that this object resides
     * @param gridZ gridZ index in the terrain array that this object resides
@@ -48,7 +48,7 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
     * @param directory point to a height map .png file to give the terrain vertical modeling
     * @param ownship the aircraft
     */
-   public DefaultTerrain(int gridX, int gridZ, String fileName, String directory, Vector3D ownship) {
+   public DefaultTerrain(int gridX, int gridZ, String fileName, File directory, Vector3D ownship) {
       this.x = gridX * SIZE;
       this.z = gridZ * SIZE;
       this.ownship = ownship;
@@ -61,11 +61,11 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
     * @param fileName
     * @param directory (usually "DefaultTerrain" or can specify sub-directories such as "DefaultTerrain\\1-1")
     */
-   private void generateTerrain(String fileName, String directory) {
+   private void generateTerrain(String fileName, File directory) {
       BufferedImage image = null;
 
       try {
-         image = ImageIO.read(new File("Resources\\" + directory + "\\" + fileName + ".png"));
+         image = ImageIO.read(new File(directory, fileName + ".png"));
       } catch (IOException e) {
          System.err.println("Could not load height map: " + fileName + ".png");
       }
