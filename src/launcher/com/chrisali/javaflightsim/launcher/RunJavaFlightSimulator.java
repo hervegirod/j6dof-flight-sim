@@ -44,7 +44,8 @@ public class RunJavaFlightSimulator {
     */
    private static void runApp() {
       SimulationController controller = new SimulationController();
-      LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer(controller);
+      LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+      lwjglRenderer.setSimulationController(controller);
       controller.setWorldRenderer(lwjglRenderer);
       controller.setTerrainProvider(lwjglRenderer);
       MainFrame mainFrame = new MainFrame(controller);

@@ -101,21 +101,35 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
     * Sets up OTW display with {@link DisplayOptions} and {@link AudioOptions}, as well as a link to
     * {@link AircraftBuilder} to determine if multiple engines in aircraft. If {@link SimulationController}
     * object specified, display will embed itself within {@link SimulationWindow} in {@link MainFrame}
-    *
-    * @param controller
     */
-   public LWJGLWorldRenderer(SimulationController controller) {
+   public LWJGLWorldRenderer() {
+   }
+
+   /**
+    * Set the simulation controller.
+    *
+    * @param controller the simulation controller
+    */
+   @Override
+   public void setSimulationController(SimulationController controller) {
       this.controller = controller;
    }
 
+   /**
+    * Return true if the World renderer is started.
+    *
+    * @return true if the World renderer is started
+    */
    @Override
    public boolean isStarted() {
       return isStarted;
    }
 
+   /**
+    * Start thr World renderer.
+    */
    @Override
    public void start() {
-
       isStarted = true;
       //=================================== Set Up ==========================================================
       // Initializes display window depending on presence of SimulationController's MainFrame object,

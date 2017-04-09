@@ -14,47 +14,38 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.rendering;
+package com.chrisali.javaflightsim.rendering.terrain;
 
-import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
+import com.chrisali.javaflightsim.utilities.Vector3D;
+import java.util.TreeMap;
 
 /**
- * The World Renderer interface.
+ * An array of {@link DefaultTerrain} objects used to model out the world.
  *
  * @author Herve Girod
- * @since 0.2
  */
-public interface WorldRenderer extends FlightDataListener {
+public class DefaultTerrainCollection {
+   private TreeMap<String, DefaultTerrain> terrainTree;
 
    /**
-    * Set the simulation controller.
+    * Creates a TreeMao of {@link DefaultTerrain} objects, with texture blending and height maps. Each key to the tree map consists of
+    * the string "xGrid-zGrid", which represents the terrain object's position relative to other terrains in an array fashion
     *
-    * @param controller the simulation controller
+    * @param numTerrains
+    * @param loader
+    * @param ownship
     */
-   public void setSimulationController(SimulationController controller);
+   public DefaultTerrainCollection(int numTerrains, Vector3D ownship) {
+      terrainTree = new TreeMap<>();
 
-   /**
-    * Return true if the WorldRenderer is currently running.
-    *
-    * @return true if the WorldRenderer is currently running
-    */
-   public boolean isRunning();
+      for (int i = 0; i < numTerrains; i++) {
+         for (int j = 0; j < numTerrains; j++) {
+            terrainTree.put(i + "-" + j, new DefaultTerrain(i, j, "heightMap", "Terrain", ownship));
+         }
+      }
+   }
 
-   /**
-    * Request the WorldRenderer to close.
-    */
-   public void requestClose();
-
-   /**
-    * Start the world renderer.
-    */
-   public void start();
-
-   /**
-    * Return true if the world renderer is started.
-    *
-    * @return true if the world renderer is started
-    */
-   public boolean isStarted();
+   public TreeMap<String, DefaultTerrain> getTerrainTree() {
+      return terrainTree;
+   }
 }

@@ -48,7 +48,6 @@ import javax.swing.JPanel;
  * which renders the Out The Window display and instrument panel.
  *
  * @author Christopher Ali
- *
  */
 public class MainFrame extends JFrame {
 
@@ -194,8 +193,8 @@ public class MainFrame extends JFrame {
             cardPanel.setVisible(false);
 
             simulationController.startSimulation();
-            MainFrame.this.setVisible(simulationController.getSimulationOptions().contains(Options.ANALYSIS_MODE) ? true : false);
-            simulationWindow.setVisible(simulationController.getSimulationOptions().contains(Options.ANALYSIS_MODE) ? false : true);
+            MainFrame.this.setVisible(simulationController.getSimulationOptions().contains(Options.ANALYSIS_MODE));
+            simulationWindow.setVisible(!simulationController.getSimulationOptions().contains(Options.ANALYSIS_MODE));
          }
       });
       add(buttonPanel, BorderLayout.CENTER);

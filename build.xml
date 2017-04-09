@@ -216,8 +216,9 @@
       </jar>
    </target>         
    <target name="-j6dofLWJGL" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
-      <jar description="jar binary file" compress="true" jarfile="${dist.dir}/${j6dof-lwjgl.jar}"> 
-         <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
+      <jar description="jar binary file" compress="true" 
+           jarfile="${dist.dir}/${j6dof-lwjgl.jar}" manifest="${src.dir}/manifest-lwjgl.mf"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}"> 
             <include name="com/chrisali/javaflightsim/otw/**/*.class"/>        
             <include name="com/chrisali/javaflightsim/otw/**/*.txt"/>       
          </fileset>          

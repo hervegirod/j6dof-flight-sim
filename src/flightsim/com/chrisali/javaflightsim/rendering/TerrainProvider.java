@@ -16,14 +16,21 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.rendering;
 
+import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 
 /**
- * The World Renderer interface.
+ * A Terrain Provider interface.
  *
  * @since 0.2
  */
 public interface TerrainProvider extends FlightDataListener {
+   /**
+    * Set the simulation controller.
+    *
+    * @param controller the simulation controller
+    */
+   public void setSimulationController(SimulationController controller);
 
    /**
     * Return the terrain height at the current position

@@ -23,7 +23,8 @@ public class TestWorld {
 
    public static void main(String[] args) {
       SimulationController controller = new SimulationController();
-      LWJGLWorldRenderer worldRenderer = new LWJGLWorldRenderer(controller);
+      LWJGLWorldRenderer worldRenderer = new LWJGLWorldRenderer();
+      worldRenderer.setSimulationController(controller);
       RunWorld runWorld = new RunWorld(controller);
       runWorld.setWorldRenderer(worldRenderer);
       runWorld.setTerrainProvider(worldRenderer);

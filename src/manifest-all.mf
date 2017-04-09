@@ -7,8 +7,4 @@ Class-Path: j6dof-lwjgl.jar \
             lib/jcommon-1.0.23.jar \
             lib/jfreechart-1.0.19.jar \
             lib/jinput.jar \
-            lib/lwjgl.jar \
-            lib/lwjgl_util.jar \
-            lib/lzma.jar \
-            lib/slick.jar \
             lib/trident-7.2.1.jar
