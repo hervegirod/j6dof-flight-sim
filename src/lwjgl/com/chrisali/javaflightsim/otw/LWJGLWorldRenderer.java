@@ -306,7 +306,7 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
       DecimalFormat df2 = new DecimalFormat("0.00");
       DecimalFormat df0 = new DecimalFormat("0");
 
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       sb.append("AIRSPEED: ").append(df0.format(receivedFlightData.get(FlightDataType.IAS))).append(" KIAS | ")
          .append("HEADING: ").append(df0.format(receivedFlightData.get(FlightDataType.HEADING))).append(" DEG | ")
          .append("ALTITUDE: ").append(df0.format(receivedFlightData.get(FlightDataType.ALTITUDE))).append(" FT | ")
@@ -321,8 +321,8 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    public void onFlightDataReceived(FlightData flightData) {
       Map<FlightDataType, Double> receivedFlightData = flightData.getFlightData();
 
-      if (!receivedFlightData.containsValue(null) && (ownshipPosition != null || ownshipRotation != null)
-         && receivedFlightData != null) {
+      if (receivedFlightData != null && !receivedFlightData.containsValue(null)
+         && (ownshipPosition != null || ownshipRotation != null)) {
 
          x = receivedFlightData.get(FlightDataType.NORTH);
          z = receivedFlightData.get(FlightDataType.EAST);

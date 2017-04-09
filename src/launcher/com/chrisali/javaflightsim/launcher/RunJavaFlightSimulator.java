@@ -18,6 +18,7 @@ package com.chrisali.javaflightsim.launcher;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.menus.MainFrame;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
+import com.chrisali.javaflightsim.plotting.PlotWindow;
 import javax.swing.SwingUtilities;
 
 /**
@@ -45,7 +46,10 @@ public class RunJavaFlightSimulator {
    private static void runApp() {
       SimulationController controller = new SimulationController();
       LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+      PlotWindow plotWindow = new PlotWindow();
+      plotWindow.setSimulationController(controller);
       lwjglRenderer.setSimulationController(controller);
+      controller.setDataAnalyzer(plotWindow);
       controller.setWorldRenderer(lwjglRenderer);
       controller.setTerrainProvider(lwjglRenderer);
       MainFrame mainFrame = new MainFrame(controller);

@@ -24,6 +24,7 @@ import com.chrisali.javaflightsim.menus.SimulationWindow;
 import com.chrisali.javaflightsim.menus.optionspanel.AudioOptions;
 import com.chrisali.javaflightsim.menus.optionspanel.DisplayOptions;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
+import com.chrisali.javaflightsim.rendering.DataAnalyzer;
 import com.chrisali.javaflightsim.rendering.RunWorld;
 import com.chrisali.javaflightsim.rendering.TerrainProvider;
 import com.chrisali.javaflightsim.rendering.WorldRenderer;
@@ -42,13 +43,10 @@ import com.chrisali.javaflightsim.utilities.FileUtilities;
 import java.awt.Canvas;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Controls the configuration and running of processes supporting the simulation component of JavaFlightSim. This consists of:
@@ -92,6 +90,7 @@ public class SimulationController {
    // providers
    private WorldRenderer worldRenderer = null;
    private TerrainProvider terrainProvider = null;
+   private DataAnalyzer dataAnalyzer = null;
 
    // Aircraft
    private AircraftBuilder ab;
@@ -99,10 +98,6 @@ public class SimulationController {
 
    // Menus and Integrated Simulation Window
    private MainFrame mainFrame;
-
-   // Plotting
-   private PlotWindow plotWindow;
-   private Set<String> plotCategories = new HashSet<>(Arrays.asList("Controls", "Instruments", "Position", "Rates", "Miscellaneous"));
 
    // Raw Data Console
    private ConsoleTablePanel consoleTablePanel;
@@ -312,6 +307,11 @@ public class SimulationController {
       this.terrainProvider = terrainProvider;
    }
 
+   public void setDataAnalyzer(DataAnalyzer dataAnalyzer) {
+      this.dataAnalyzer = dataAnalyzer;
+      dataAnalyzer.setSimulationController(this);
+   }
+
    /**
     * Initializes, trims and starts the flight controls, simulation (and flight and environment data, if selected) threads.
     * Depending on options specified, a console panel and/or plot window will also be initialized and opened
@@ -336,7 +336,7 @@ public class SimulationController {
          try {
             // Wait a bit to allow the simulation to finish running
             Thread.sleep(1000);
-            plotSimulation();
+            analyzeSimulation();
             //Stop flight controls thread after analysis finished
             FlightControls.setRunning(false);
          } catch (InterruptedException e) {
@@ -391,26 +391,22 @@ public class SimulationController {
    /**
     * Initializes the plot window if not already initialized, otherwise refreshes the window and sets it visible again
     */
-   public void plotSimulation() {
-      if (plotWindow == null) {
-         plotWindow = new PlotWindow(plotCategories, this);
-      } else {
-         plotWindow.refreshPlots(runSim.getLogsOut());
-      }
-
-      if (!isPlotWindowVisible()) {
-         plotWindow.setVisible(true);
+   public void analyzeSimulation() {
+      if (dataAnalyzer != null) {
+         dataAnalyzer.refresh(runSim.getLogsOut());
       }
    }
 
    /**
-    * @return if the plot window is visible
+    * Return true if the data analyzer is running.
+    *
+    * @return true if the data analyzer is running
     */
-   public boolean isPlotWindowVisible() {
-      if (plotWindow == null) {
+   public boolean isDataAnalyzerRunning() {
+      if (dataAnalyzer == null) {
          return false;
       } else {
-         return plotWindow.isVisible();
+         return dataAnalyzer.isRunning();
       }
    }
 

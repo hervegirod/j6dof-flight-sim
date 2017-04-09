@@ -16,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.plotting;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.rendering.DataAnalyzer;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.integration.SimOuts;
 import java.awt.BorderLayout;
@@ -25,6 +26,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,84 +43,40 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- * Generates a window of JFreeChart plots in tabs containing relevant data from the simulation
+ * Generates a window of JFreeChart plots in tabs containing relevant data from the simulation.
  */
-public class PlotWindow extends JFrame implements ProgressDialogListener {
-
+public class PlotWindow extends JFrame implements DataAnalyzer, ProgressDialogListener {
    private static final long serialVersionUID = -4197697777449504415L;
 
    private List<Map<SimOuts, Double>> logsOut;
-   private Set<String> simPlotCategories;
 
    private JTabbedPane tabPane;
    private List<SimulationPlot> plotList;
    private SwingWorker<Void, Integer> tabPaneWorker;
    private Thread refreshPlotThread;
    private ProgressDialog progressDialog;
-
    private SimulationController controller;
+   private Set<String> simPlotCategories = new HashSet<>(Arrays.asList("Controls", "Instruments", "Position", "Rates", "Miscellaneous"));
+   private boolean isRunning = false;
+
+   public PlotWindow() {
+      super();
+   }
 
    /**
     * Plots data from the simulation in a Swing window. It loops through
     * the {@link PlotWindow#simPlotCategories} set to create {@link SimulationPlot} objects using the data
     * from {@link Integrate6DOFEquations#getLogsOut()}, and assigns them to tabs in a JTabbedPane.
     *
-    * @param simPlotCategories the Simulation plot categories
     * @param controller the Simulation Controller
     */
-   public PlotWindow(Set<String> simPlotCategories, SimulationController controller) {
-      super(controller.getAircraftBuilder().getAircraft().getName() + " Plots");
-      setLayout(new BorderLayout());
-
-      this.logsOut = controller.getLogsOut();
-      this.simPlotCategories = simPlotCategories;
+   @Override
+   public void setSimulationController(SimulationController controller) {
+      this.setTitle(controller.getAircraftBuilder().getAircraft().getName() + " Plots");
       this.controller = controller;
-      plotList = new ArrayList<>();
-
-      //-------------- Progress Dialog ----------------------------
-      progressDialog = new ProgressDialog(this, "Refreshing Plots");
-      progressDialog.setProgressDialogListener(this);
-
-      //------------------ Tab Pane ------------------------------
-      tabPane = new JTabbedPane();
-
-      if (this.logsOut != null && this.simPlotCategories != null) {
-         initializePlots(logsOut);
-      }
-
-      tabPane.addChangeListener(new ChangeListener() {
-         @Override
-         public void stateChanged(ChangeEvent e) {
-            PlotWindow.this.setSize(tabPane.getSelectedComponent().getPreferredSize());
-         }
-      });
-      add(tabPane, BorderLayout.CENTER);
-
-      //================== Window Settings ====================================
-      setJMenuBar(createMenuBar());
-
-      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-      addWindowListener(new WindowAdapter() {
-         @Override
-         public void windowClosing(WindowEvent e) {
-            setVisible(false);
-
-            if (refreshPlotThread != null) {
-               refreshPlotThread.interrupt();
-            }
-            if (tabPaneWorker != null) {
-               tabPaneWorker.cancel(true);
-            }
-         }
-      });
-
-      //setSize(tabPane.getSelectedComponent().getPreferredSize());
-      setVisible(true);
    }
 
    private JMenuBar createMenuBar() {
-
       //+++++++++++++++++++++++++ File Menu ++++++++++++++++++++++++++++++++++++++++++
       JMenu fileMenu = new JMenu("File");
       fileMenu.setMnemonic(KeyEvent.VK_F);
@@ -145,7 +104,7 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
       refreshItem.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent ev) {
-            controller.plotSimulation();
+            controller.analyzeSimulation();
          }
       });
       plotsMenu.add(refreshItem);
@@ -158,7 +117,7 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
          @Override
          public void actionPerformed(ActionEvent ev) {
             controller.clearLogsOut();
-            controller.plotSimulation();
+            controller.analyzeSimulation();
          }
       });
       plotsMenu.add(clearPlotsItem);
@@ -204,7 +163,6 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
 
          @Override
          protected Void doInBackground() throws Exception {
-
             try {
                int count = 0;
 
@@ -234,13 +192,65 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
       tabPaneWorker.execute();
    }
 
+   private void setup() {
+      setLayout(new BorderLayout());
+      this.logsOut = controller.getLogsOut();
+      plotList = new ArrayList<>();
+
+      //-------------- Progress Dialog ----------------------------
+      progressDialog = new ProgressDialog(this, "Refreshing Plots");
+      progressDialog.setProgressDialogListener(this);
+
+      //------------------ Tab Pane ------------------------------
+      tabPane = new JTabbedPane();
+
+      if (this.logsOut != null && this.simPlotCategories != null) {
+         initializePlots(logsOut);
+      }
+
+      tabPane.addChangeListener(new ChangeListener() {
+         @Override
+         public void stateChanged(ChangeEvent e) {
+            PlotWindow.this.setSize(tabPane.getSelectedComponent().getPreferredSize());
+         }
+      });
+      add(tabPane, BorderLayout.CENTER);
+
+      //================== Window Settings ====================================
+      setJMenuBar(createMenuBar());
+
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+      addWindowListener(new WindowAdapter() {
+         @Override
+         public void windowClosing(WindowEvent e) {
+            setVisible(false);
+
+            if (refreshPlotThread != null) {
+               refreshPlotThread.interrupt();
+            }
+            if (tabPaneWorker != null) {
+               tabPaneWorker.cancel(true);
+            }
+         }
+      });
+
+      //setSize(tabPane.getSelectedComponent().getPreferredSize());
+      setVisible(true);
+   }
+
    /**
     * Commands each plot in the plotList ArrayList to update its XYSeries values using data from logsOut.
     * This will also set the plot window visible again if it has been closed.
     *
-    * @param logsOut
+    * @param logsOut the logOuts
     */
-   public void refreshPlots(List<Map<SimOuts, Double>> logsOut) {
+   @Override
+   public void refresh(List<Map<SimOuts, Double>> logsOut) {
+      if (!isRunning) {
+         this.setup();
+
+      }
       progressDialog.setMaximum(simPlotCategories.size());
       progressDialog.setTitle("Refreshing Plots");
       progressDialog.setVisible(true);
@@ -270,6 +280,15 @@ public class PlotWindow extends JFrame implements ProgressDialogListener {
       };
 
       refreshPlotThread.start();
+      if (!isVisible()) {
+         setVisible(true);
+      }
+      isRunning = true;
+   }
+
+   @Override
+   public boolean isRunning() {
+      return isRunning;
    }
 
    @Override

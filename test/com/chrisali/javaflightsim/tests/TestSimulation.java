@@ -16,14 +16,13 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import com.chrisali.javaflightsim.simulation.setup.Trimming;
-import java.util.Arrays;
-import java.util.HashSet;
 import javax.swing.JFrame;
 
 /**
@@ -49,6 +48,11 @@ public class TestSimulation {
 
    public TestSimulation() {
       this.simController = new SimulationController();
+      SimulationController controller = new SimulationController();
+      LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+      lwjglRenderer.setSimulationController(controller);
+      controller.setWorldRenderer(lwjglRenderer);
+      controller.setTerrainProvider(lwjglRenderer);
       simController.getSimulationOptions().clear();
       simController.getSimulationOptions().add(Options.ANALYSIS_MODE);
       simController.setAircraftBuilder(new AircraftBuilder("TwinNavion")); // Twin Navion with 2 Lycoming IO-360
@@ -71,9 +75,10 @@ public class TestSimulation {
       } catch (InterruptedException e) {
       }
 
-      this.plots = new PlotWindow(new HashSet<String>(Arrays.asList("Controls", "Instruments", "Position", "Rates", "Miscellaneous")),
-         simController);
+      this.plots = new PlotWindow();
+      plots.setSimulationController(simController);
       plots.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      simController.setDataAnalyzer(plots);
 
       FlightControls.setRunning(false);
    }

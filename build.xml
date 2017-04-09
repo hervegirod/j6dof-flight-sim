@@ -24,6 +24,7 @@
       <property name="j6dof-all.jar" value="j6dof-flight-sim-all.jar" />   
       <property name="j6dof-core.jar" value="j6dof-core.jar" />  
       <property name="j6dof-lwjgl.jar" value="j6dof-lwjgl.jar" /> 
+      <property name="j6dof-plots.jar" value="j6dof-plots.jar" /> 
       <property name="j6dof-launcher.jar" value="j6dof-launcher.jar" />   
       <property name="javadocEXE" value="${jdk.home}/bin/javadoc.exe"/>       
       <condition property="distrib.exists">
@@ -94,6 +95,7 @@
             <include name="${j6dof-core.jar}"/>
             <include name="${j6dof-launcher.jar}"/>
             <include name="${j6dof-lwjgl.jar}"/>
+            <include name="${j6dof-plots.jar}"/>
             <include name="steelseries.jar"/>           
          </fileset>
          <fileset description="libs" dir=".">
@@ -175,7 +177,8 @@
    <!-- =================================================================== --> 
    <target depends="init,compile,-pre-jar,-do-jar-without-manifest,-post-jar" description="Build JAR." name="jar"/> 
    <target name="-do-jar-without-manifest" 
-           depends="-j6dofCore, -j6dofAll, -j6dofLauncher, -j6dofCore, -j6dofLWJGL, -steelseries" />
+           depends="-j6dofCore, -j6dofAll, -j6dofLauncher, -j6dofCore, -j6dofLWJGL, -j6dofplots, -steelseries" />
+   
    <target name="-j6dofAll" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
       <jar description="jar binary file" compress="true" 
            jarfile="${dist.dir}/${j6dof-all.jar}" manifest="${src.dir}/manifest-all.mf"> 
@@ -201,20 +204,12 @@
             <include name="com/**/*.class"/> 
             <include name="com/**/*.txt"/> 
             <include name="com/**/*.properties"/> 
-            <exclude name="com/chrisali/javaflightsim/otw/**/*.*"/>    
+            <exclude name="com/chrisali/javaflightsim/otw/**/*.*"/>
+            <exclude name="com/chrisali/javaflightsim/plotting/**/*.*"/>      
             <exclude name="com/chrisali/javaflightsim/launcher/**/*.*"/>                 
          </fileset>        
       </jar>   
    </target>
-   <target name="-steelseries" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
-      <jar description="jar binary file" compress="true" jarfile="${dist.dir}/steelseries.jar"> 
-         <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
-            <include name="eu/**/*.class"/> 
-            <include name="eu/**/*.png"/> 
-            <include name="eu/**/*.ttf"/>                
-         </fileset>          
-      </jar>
-   </target>         
    <target name="-j6dofLWJGL" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
       <jar description="jar binary file" compress="true" 
            jarfile="${dist.dir}/${j6dof-lwjgl.jar}" manifest="${src.dir}/manifest-lwjgl.mf"> 
@@ -223,7 +218,24 @@
             <include name="com/chrisali/javaflightsim/otw/**/*.txt"/>       
          </fileset>          
       </jar>          
-   </target> 
+   </target>    
+   <target name="-j6dofplots" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" 
+           jarfile="${dist.dir}/${j6dof-plots.jar}" manifest="${src.dir}/manifest-plots.mf"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}"> 
+            <include name="com/chrisali/javaflightsim/plotting/**/*.class"/>             
+         </fileset>          
+      </jar>          
+   </target>    
+   <target name="-steelseries" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" jarfile="${dist.dir}/steelseries.jar"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}" > 
+            <include name="eu/**/*.class"/> 
+            <include name="eu/**/*.png"/> 
+            <include name="eu/**/*.ttf"/>                
+         </fileset>          
+      </jar>
+   </target>
    
    <!-- =================================================================== -->
    <!-- Deploy                                                  -->
@@ -274,6 +286,7 @@
             <include name="${j6dof-core.jar}"/>
             <include name="${j6dof-launcher.jar}"/>
             <include name="${j6dof-lwjgl.jar}"/>
+            <include name="${j6dof-plots.jar}"/>
             <include name="steelseries.jar"/>
          </fileset>
       </copy>
