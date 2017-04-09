@@ -38,7 +38,6 @@ public class DefaultTerrain implements Comparable<DefaultTerrain> {
    private float[][] heightArray;
 
    /**
-    * <p>
     * Constructor for Terrain object.
     * Uses a reference to the aircraft to calculate the distance the midpoint of this terrain instance is from
     * the ownship. This is used to compare to other Terrain objects in compareTo()</p>
