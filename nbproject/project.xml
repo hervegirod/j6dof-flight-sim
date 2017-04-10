@@ -6,6 +6,8 @@
             <name>j6dof-flight-sim</name>
             <source-roots>
                 <root id="src.flightsim.dir" name="flightsim"/>
+                <root id="src.instruments2.dir" name="instruments"/>
+                <root id="src.controls2.dir" name="controls"/>
                 <root id="src.lwjgl.dir" name="lwjgl"/>
                 <root id="src.plots.dir" name="plots"/>
                 <root id="src.launcher.dir" name="launcher"/>
