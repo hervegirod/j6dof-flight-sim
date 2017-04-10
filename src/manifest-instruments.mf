@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Class-Path: steelseries.jar \
+            lib/trident-7.2.1.jar

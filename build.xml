@@ -19,10 +19,13 @@
       <property name="archiveName" value="j6dof-flight-sim"/> 
       <property name="distrib" value="distrib" /> 
       <property name="libs.dir" value="lib" /> 
+      <property name="tools.dir" value="lib" />
       <property name="src.flightsim" value="${src.dir}/flightsim" />  
       <property name="src.steelseries" value="${src.dir}/steelseries" />                 
       <property name="j6dof-all.jar" value="j6dof-flight-sim-all.jar" />   
       <property name="j6dof-core.jar" value="j6dof-core.jar" />  
+      <property name="j6dof-controls.jar" value="j6dof-controls.jar" />
+      <property name="j6dof-instruments.jar" value="j6dof-instruments.jar" /> 
       <property name="j6dof-lwjgl.jar" value="j6dof-lwjgl.jar" /> 
       <property name="j6dof-plots.jar" value="j6dof-plots.jar" /> 
       <property name="j6dof-launcher.jar" value="j6dof-launcher.jar" />   
@@ -95,11 +98,16 @@
             <include name="${j6dof-core.jar}"/>
             <include name="${j6dof-launcher.jar}"/>
             <include name="${j6dof-lwjgl.jar}"/>
+            <include name="${j6dof-controls.jar}"/>
+            <include name="${j6dof-instruments.jar}"/>
             <include name="${j6dof-plots.jar}"/>
             <include name="steelseries.jar"/>           
          </fileset>
          <fileset description="libs" dir=".">
             <include name="${libs.dir}/**/*.*"/>
+         </fileset>
+         <fileset description="tools" dir=".">
+            <include name="${tools.dir}/**/*.*"/>
          </fileset>
          <fileset description="miscellanous" dir=".">
             <include name="nbproject/**/*.*"/>
@@ -147,21 +155,30 @@
          <fileset dir="${src.dir}" excludes="${excludes}" includes="${includes}">
             <filename name="**/*.java"/>
          </fileset>
-         <group title="Simulation">
-            <package name="com.chrisali.javaflightsim.consoletable*" />
+         <group title="Core Simulation">
             <package name="com.chrisali.javaflightsim.controllers*" />
             <package name="com.chrisali.javaflightsim.datatransfer*" />
-            <package name="com.chrisali.javaflightsim.instrumentpanel*" />
             <package name="com.chrisali.javaflightsim.menus*" />
             <package name="com.chrisali.javaflightsim.rendering*" />
             <package name="com.chrisali.javaflightsim.simulation*" />
             <package name="com.chrisali.javaflightsim.utilities*" />
+            <package name="com.chrisali.javaflightsim.conf*" />
+            <package name="com.chrisali.javaflightsim.gui*" />
          </group>    
          <group title="LWJGL rendering library">
             <package name="com.chrisali.javaflightsim.otw*" />
          </group>   
+         <group title="Controls">
+            <package name="com.chrisali.javaflightsim.controls*" />
+         </group>                
+         <group title="Instruments">
+            <package name="com.chrisali.javaflightsim.instruments*" />
+         </group>            
          <group title="Plotting library">
             <package name="com.chrisali.javaflightsim.plotting*" />
+         </group>         
+         <group title="Launcher">
+            <package name="com.chrisali.javaflightsim.launcher*" />
          </group>                        
          <group title="Steel Series">
             <package name="eu.hansolo.steelseries*" />
@@ -178,7 +195,7 @@
    <!-- =================================================================== --> 
    <target depends="init,compile,-pre-jar,-do-jar-without-manifest,-post-jar" description="Build JAR." name="jar"/> 
    <target name="-do-jar-without-manifest" 
-           depends="-j6dofCore, -j6dofAll, -j6dofLauncher, -j6dofCore, -j6dofLWJGL, -j6dofplots, -steelseries" />
+           depends="-j6dofCore, -j6dofAll, -j6dofLauncher, -j6dofCore, -j6dofLWJGL, -j6dofinstruments, -j6dofcontrols, -j6dofplots, -steelseries" />
    
    <target name="-j6dofAll" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
       <jar description="jar binary file" compress="true" 
@@ -207,6 +224,8 @@
             <include name="com/**/*.properties"/> 
             <exclude name="com/chrisali/javaflightsim/otw/**/*.*"/>
             <exclude name="com/chrisali/javaflightsim/plotting/**/*.*"/>      
+            <exclude name="com/chrisali/javaflightsim/controls/**/*.*"/>   
+            <exclude name="com/chrisali/javaflightsim/instruments/**/*.*"/>    
             <exclude name="com/chrisali/javaflightsim/launcher/**/*.*"/>                 
          </fileset>        
       </jar>   
@@ -217,6 +236,22 @@
          <fileset defaultexcludes="yes" dir="${build.classes.dir}"> 
             <include name="com/chrisali/javaflightsim/otw/**/*.class"/>        
             <include name="com/chrisali/javaflightsim/otw/**/*.txt"/>       
+         </fileset>          
+      </jar>          
+   </target>    
+   <target name="-j6dofinstruments" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" 
+           jarfile="${dist.dir}/${j6dof-instruments.jar}" manifest="${src.dir}/manifest-instruments.mf"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}"> 
+            <include name="com/chrisali/javaflightsim/instruments/**/*.class"/>             
+         </fileset>          
+      </jar>          
+   </target>   
+   <target name="-j6dofcontrols" depends="init,-post-init,compile,-pre-pre-jar,-pre-jar" > 
+      <jar description="jar binary file" compress="true" 
+           jarfile="${dist.dir}/${j6dof-controls.jar}" manifest="${src.dir}/manifest-controls.mf"> 
+         <fileset defaultexcludes="yes" dir="${build.classes.dir}"> 
+            <include name="com/chrisali/javaflightsim/controls/**/*.class"/>             
          </fileset>          
       </jar>          
    </target>    
@@ -287,6 +322,8 @@
             <include name="${j6dof-core.jar}"/>
             <include name="${j6dof-launcher.jar}"/>
             <include name="${j6dof-lwjgl.jar}"/>
+            <include name="${j6dof-controls.jar}"/>
+            <include name="${j6dof-instruments.jar}"/>
             <include name="${j6dof-plots.jar}"/>
             <include name="steelseries.jar"/>
          </fileset>

@@ -1,5 +1,7 @@
 Manifest-Version: 1.0
 Main-Class: com.chrisali.javaflightsim.launcher.RunJavaFlightSimulator
 Class-Path: j6dof-lwjgl.jar \
+            j6dof-controls.jar \
+            j6dof-instruments.jar \
             j6dof-plots.jar \
             j6dof-core.jar

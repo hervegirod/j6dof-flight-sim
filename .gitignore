@@ -20,3 +20,17 @@
 !/lib/lzma.jar
 !/lib/slick.jar
 !/lib/trident-7.2.1.jar
+/distrib/lib/jinput-wintab.dll
+/distrib/lib/jinput-raw_64.dll
+/distrib/lib/jinput-dx8_64.dll
+/distrib/lib/OpenAL32.dll
+/distrib/lib/jinput-raw.dll
+/distrib/lib/lwjgl64.dll
+/distrib/lib/OpenAL64.dll
+/distrib/lib/jinput-dx8.dll
+/distrib/setenv.bat
+/distrib/start.bat
+/distrib/start-launcher.bat
+/distrib/Aircraft/
+/distrib/Resources/
+/distrib/SimConfig/
