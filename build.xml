@@ -12,7 +12,7 @@
     <import file="nbproject/build-impl.xml"/>
     
    <!-- =================================================================== --> 
-   <!-- post NB init --> 
+   <!-- post NB init -->
    <!-- =================================================================== --> 
    <target name="-post-init" depends="-init-project" > 
       <!-- general properties definition --> 
