@@ -16,13 +16,14 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.gui;
 
+import com.chrisali.javaflightsim.conf.DisplayOptions;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
-import com.chrisali.javaflightsim.instrumentpanel.ClosePanelListener;
-import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
+import com.chrisali.javaflightsim.instruments.InstrumentPanel;
 import com.chrisali.javaflightsim.rendering.RunWorld;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import java.awt.Canvas;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -41,26 +42,25 @@ import javax.swing.JFrame;
  *
  */
 public class SimulationWindow extends JFrame {
-
    private static final long serialVersionUID = 7290660958478331031L;
-
-   private InstrumentPanel instrumentPanel;
-   private Canvas outTheWindowCanvas;
-
+   private Instruments instruments;
+   private final Canvas outTheWindowCanvas;
    private ClosePanelListener closePanelListener;
+   private SimulationController controller = null;
+   private GridBagConstraints gc = null;
 
    /**
     * Constructor for simulation window; takes {@link SimulationController} argument to gain access to
     * starting and stopping threads for {@link RunWorld} on this thread.
     *
-    * @param controller the SimulationController
+    * @param controller the Simulation Controller
+    * @param instruments the instruments
     */
-   public SimulationWindow(SimulationController controller) {
+   public SimulationWindow(SimulationController controller, Instruments instruments) {
       super("Java Flight Simulator");
-
+      this.controller = controller;
       setLayout(new GridBagLayout());
-
-      GridBagConstraints gc = new GridBagConstraints();
+      gc = new GridBagConstraints();
 
       gc.fill = GridBagConstraints.BOTH;
       gc.gridy = 0;
@@ -90,10 +90,9 @@ public class SimulationWindow extends JFrame {
       //------------------------- Instrument Panel ---------------------------------------------
       gc.gridy++;
 
-      instrumentPanel = new InstrumentPanel();
-
-      if (controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL)) {
-         add(instrumentPanel, gc);
+      if (instruments != null && controller.getSimulationOptions().contains(Options.INSTRUMENT_PANEL)) {
+         controller.getFlightData().addFlightDataListener(instruments);
+         add((Component) instruments, gc);
       }
 
       //========================== Window Settings =============================================
@@ -108,18 +107,28 @@ public class SimulationWindow extends JFrame {
       });
 
       Dimension windowSize = new Dimension(controller.getDisplayOptions().get(DisplayOptions.DISPLAY_WIDTH),
-         controller.getDisplayOptions().get(DisplayOptions.DISPLAY_HEIGHT));
+              controller.getDisplayOptions().get(DisplayOptions.DISPLAY_HEIGHT));
       setSize(windowSize.width, windowSize.height);
       setResizable(false);
       setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
    }
 
    /**
-    * @return {@link InstrumentPanel} object to set {@link FlightDataListener} to the instrument panel
-    * in {@link MainFrame}
+    * Return the Simulation Controller.
+    *
+    * @return the Simulation Controlle
     */
-   public InstrumentPanel getInstrumentPanel() {
-      return instrumentPanel;
+   public SimulationController getSimulationController() {
+      return controller;
+   }
+
+   /**
+    * Return the Instruments object.
+    *
+    * @return the Instruments object to set {@link FlightDataListener} to the instrument panel
+    */
+   public Instruments getInstruments() {
+      return instruments;
    }
 
    /**

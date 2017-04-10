@@ -15,7 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.otw.renderengine;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.otw.entities.Camera;
 import com.chrisali.javaflightsim.otw.models.RawModel;
 import com.chrisali.javaflightsim.otw.shaders.WaterShader;

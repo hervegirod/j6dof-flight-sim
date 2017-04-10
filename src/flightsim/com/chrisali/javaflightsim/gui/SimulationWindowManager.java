@@ -17,8 +17,6 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.gui;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.instrumentpanel.ClosePanelListener;
-import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
 
 /**
  *
@@ -27,18 +25,25 @@ import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
 public class SimulationWindowManager implements GUIManager {
    private SimulationController controller;
    private SimulationWindow simulationWindow;
+   private final Instruments instruments;
 
-   public SimulationWindowManager() {
+   public SimulationWindowManager(Instruments instruments) {
+      this.instruments = instruments;
    }
 
    public void setSimulationController(SimulationController controller) {
       this.controller = controller;
    }
 
+   @Override
+   public Instruments getInstruments() {
+      return instruments;
+   }
+
    /**
     * Return the SimulationWindow object.
     *
-    * @return {@link SimulationWindow} object for {@link RunWorld}.
+    * @return {@link SimulationWindow} object.
     */
    @Override
    public SimulationWindow getSimulationWindow() {
@@ -47,11 +52,11 @@ public class SimulationWindowManager implements GUIManager {
 
    /**
     * (Re)initializes simulationWindow object so that instrument panel and OTW view are scaled correctly depending
-    * on if the instrument panel is shown or not
+    * on if the instrument panel is shown or not.
     */
    @Override
    public void initSimulationWindow() {
-      simulationWindow = new SimulationWindow(controller);
+      simulationWindow = new SimulationWindow(controller, instruments);
       simulationWindow.setClosePanelListener(new ClosePanelListener() {
          @Override
          public void panelWindowClosed() {
@@ -69,13 +74,5 @@ public class SimulationWindowManager implements GUIManager {
    @Override
    public void disposeSimulationWindow() {
       simulationWindow.dispose();
-   }
-
-   /**
-    * @return {@link InstrumentPanel} object for {@link SimulationController} to set a
-    * {@link FlightDataListener} to when {@link SimulationController#startSimulation()} is called
-    */
-   public InstrumentPanel getInstrumentPanel() {
-      return simulationWindow.getInstrumentPanel();
    }
 }

@@ -176,9 +176,7 @@ public class Aerodynamics {
     * @param stabDer
     * @return interpStabDer
     */
-   public Double calculateInterpStabDer(double[] windParameters,
-           Map<FlightControlType, Double> controls,
-           StabilityDerivatives stabDer) {
+   public Double calculateInterpStabDer(double[] windParameters, Map<FlightControlType, Double> controls, StabilityDerivatives stabDer) {
       Double interpStabDer;
       PiecewiseBicubicSplineInterpolatingFunction pbsif;
 

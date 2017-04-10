@@ -16,7 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.rendering.terrain;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.utilities.Vector3D;
 import java.io.File;
 import java.util.TreeMap;

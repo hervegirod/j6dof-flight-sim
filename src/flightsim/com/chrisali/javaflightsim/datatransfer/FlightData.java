@@ -33,22 +33,27 @@ import java.util.Set;
  */
 public class FlightData implements Runnable {
    private static boolean running;
-   private Map<FlightDataType, Double> flightData = Collections.synchronizedMap(new EnumMap<>(FlightDataType.class));
-
-   private Integrate6DOFEquations runSim;
-   private List<FlightDataListener> dataListenerList;
-   private Set<FlightDataListener> dataListeners;
+   private final Map<FlightDataType, Double> flightData = Collections.synchronizedMap(new EnumMap<>(FlightDataType.class));
+   private Integrate6DOFEquations runSim = null;
+   private final List<FlightDataListener> dataListenerList;
+   private final Set<FlightDataListener> dataListeners;
 
    /**
     * Creates an instance of {@link FlightData} with a reference to {@link Integrate6DOFEquations} so
-    * that the thread in this class knows when the simulation is running
-    *
-    * @param runSim
+    * that the thread in this class knows when the simulation is running.
     */
-   public FlightData(Integrate6DOFEquations runSim) {
-      this.runSim = runSim;
+   public FlightData() {
       this.dataListenerList = new ArrayList<>();
       this.dataListeners = new HashSet<>();
+   }
+
+   /**
+    * Set the Integrate6DOFEquations.
+    *
+    * @param runSim the Integrate6DOFEquations
+    */
+   public void setIntegrate6DOFEquations(Integrate6DOFEquations runSim) {
+      this.runSim = runSim;
    }
 
    public Map<FlightDataType, Double> getFlightData() {
@@ -58,7 +63,7 @@ public class FlightData implements Runnable {
    /**
     * Polls simOut for data, and assigns and converts the values needed to the flightData EnumMap
     *
-    * @param simOut
+    * @param simOut the simOut
     */
    public void updateData(Map<SimOuts, Double> simOut) {
       final Double TAS_TO_IAS = 1 / (1 + ((simOut.get(SimOuts.ALT) / 1000) * 0.02));
@@ -121,13 +126,12 @@ public class FlightData implements Runnable {
    }
 
    /**
-    * Adds a listener that implements {@link FlightDataListener} to a list of listeners that can listen
-    * to {@link FlightData}.
+    * Adds a listener that implements {@link FlightDataListener} to a list of listeners that can listen to {@link FlightData}.
     *
-    * @param dataListener
+    * @param dataListener the FlightDataListener
     */
    public void addFlightDataListener(FlightDataListener dataListener) {
-      if (!dataListeners.contains(dataListener)) {
+      if (dataListener != null && !dataListeners.contains(dataListener)) {
          dataListenerList.add(dataListener);
       }
    }
@@ -168,7 +172,7 @@ public class FlightData implements Runnable {
 
       for (Map.Entry<FlightDataType, Double> entry : flightData.entrySet()) {
          sb.append(entry.getKey().toString()).append(": ").append(entry.getValue())
-            .append(" ").append(entry.getKey().getUnit()).append("\n");
+                 .append(" ").append(entry.getKey().getUnit()).append("\n");
       }
       sb.append("\n");
 

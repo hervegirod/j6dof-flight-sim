@@ -16,7 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.controls;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import java.util.Map;
@@ -26,7 +26,6 @@ import java.util.Map;
  * or limiting flight control deflections
  */
 public class FlightControlsUtilities {
-
    /**
     * Main trim values of flight controls to determine default value if doublet input not underway
     */
@@ -56,11 +55,11 @@ public class FlightControlsUtilities {
     * @return flightControls EnumMap
     */
    public static Map<FlightControlType, Double> makeDoublet(Map<FlightControlType, Double> controls,
-      double t,
-      double startTime,
-      double duration,
-      double amplitude,
-      FlightControlType controlType) {
+           double t,
+           double startTime,
+           double duration,
+           double amplitude,
+           FlightControlType controlType) {
 
       if (t > startTime && t < (startTime + duration)) {
          controls.put(controlType, trimControls.get(controlType) + amplitude);
@@ -85,25 +84,25 @@ public class FlightControlsUtilities {
    public static Map<FlightControlType, Double> doubletSeries(Map<FlightControlType, Double> controls, double t) {
       // Update controls with an aileron doublet
       controls = makeDoublet(controls,
-         t,
-         10.0,
-         0.5,
-         0.035,
-         FlightControlType.AILERON);
+              t,
+              10.0,
+              0.5,
+              0.035,
+              FlightControlType.AILERON);
       // Update controls with a rudder doublet
       controls = makeDoublet(controls,
-         t,
-         13.0,
-         0.5,
-         0.035,
-         FlightControlType.RUDDER);
+              t,
+              13.0,
+              0.5,
+              0.035,
+              FlightControlType.RUDDER);
       // Update controls with an elevator doublet
       controls = makeDoublet(controls,
-         t,
-         50.0,
-         0.5,
-         0.035,
-         FlightControlType.ELEVATOR);
+              t,
+              50.0,
+              0.5,
+              0.035,
+              FlightControlType.ELEVATOR);
       return controls;
    }
 
@@ -125,5 +124,39 @@ public class FlightControlsUtilities {
          }
       }
       return map;
+   }
+
+   /**
+    * Standardizes rate of control deflection of keyboard and joystick button inputs regardless of the
+    * simulation update rate based on the {@link FlightControlType} argument provided and the
+    *
+    * @param type the control type
+    * @param dt the frame time DT
+    * @return the deflection rate
+    */
+   public static double getDeflectionRate(FlightControlType type, double dt) {
+      switch (type) {
+         case AILERON:
+         case ELEVATOR:
+         case RUDDER:
+            return 0.12 * dt;
+         case THROTTLE_1:
+         case THROTTLE_2:
+         case THROTTLE_3:
+         case THROTTLE_4:
+         case PROPELLER_1:
+         case PROPELLER_2:
+         case PROPELLER_3:
+         case PROPELLER_4:
+         case MIXTURE_1:
+         case MIXTURE_2:
+         case MIXTURE_3:
+         case MIXTURE_4:
+            return 0.5 * dt;
+         case FLAPS:
+            return 0.15 * dt;
+         default:
+            return 0;
+      }
    }
 }

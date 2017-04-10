@@ -16,8 +16,9 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.integration;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.controls.FlightControls;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentDataListener;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentDataType;
@@ -25,7 +26,6 @@ import com.chrisali.javaflightsim.simulation.aero.AccelAndMoments;
 import com.chrisali.javaflightsim.simulation.aircraft.Aircraft;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.enviroment.Environment;
 import com.chrisali.javaflightsim.simulation.enviroment.EnvironmentParameters;
 import com.chrisali.javaflightsim.simulation.propulsion.Engine;
@@ -80,11 +80,11 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
    private double[] totalMoments = new double[3];
 
    // Simulation Controls (Joystick, Keyboard, etc.)
-   private Map<FlightControlType, Double> controls;
+   private final Map<FlightControlType, Double> controls;
 
    // Integrator Fields
    private ClassicalRungeKuttaIntegrator integrator;
-   private double[] sixDOFDerivatives = new double[14];
+   private final double[] sixDOFDerivatives = new double[14];
    private double[] y = new double[14];
    private double[] initialConditions = new double[14];
 
@@ -106,23 +106,20 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 
    /**
     * Creates the {@link Integrate6DOFEquations} object with references to {@link FlightControls} and {@link SimulationController}
-    * objects
+    * objects.
     *
     * @param flightControls
     * @param simController
     */
-   public Integrate6DOFEquations(FlightControls flightControls, SimulationController simController) {
-
-      controls = flightControls.getFlightControls();
+   public Integrate6DOFEquations(Map<FlightControlType, Double> flightControls, SimulationController simController) {
+      controls = flightControls;
       aircraft = simController.getAircraftBuilder().getAircraft();
       engineList = simController.getAircraftBuilder().getEngineList();
       options = simController.getSimulationOptions();
 
       // Use Apache Commons Lang to convert EnumMap values into primitive double[]
-      initialConditions = ArrayUtils.toPrimitive(simController.getInitialConditions().values()
-         .toArray(new Double[initialConditions.length]));
-      integratorConfig = ArrayUtils.toPrimitive(simController.getIntegratorConfig().values()
-         .toArray(new Double[integratorConfig.length]));
+      initialConditions = ArrayUtils.toPrimitive(simController.getInitialConditions().values().toArray(new Double[initialConditions.length]));
+      integratorConfig = ArrayUtils.toPrimitive(simController.getIntegratorConfig().values().toArray(new Double[integratorConfig.length]));
 
       // Allows simulation to run forever in pilot in the loop simulation if ANALYSIS_MODE not enabled
       if (!options.contains(Options.ANALYSIS_MODE) && options.contains(Options.UNLIMITED_FLIGHT)) {
@@ -137,14 +134,14 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
 
       // Set up ground reaction integration
       groundReaction = new IntegrateGroundReaction(linearVelocities,
-         NEDPosition,
-         eulerAngles,
-         angularRates,
-         windParameters,
-         sixDOFDerivatives,
-         integratorConfig,
-         aircraft,
-         controls);
+              NEDPosition,
+              eulerAngles,
+              angularRates,
+              windParameters,
+              sixDOFDerivatives,
+              integratorConfig,
+              aircraft,
+              controls);
 
       // Initialize accelerations and moments, and calculate initial data members' values
       AccelAndMoments.init(aircraft);
@@ -181,10 +178,10 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
     * @see Source: <i>Small Unmanned Aircraft: Theory and Practice by Beard, R.W. and McLain, T.W.</i>
     */
    private void updateDerivatives(double[] y) {
-      double[][] dirCosMat = SixDOFUtilities.body2Ned(new double[] { y[6], y[7], y[8] });      // create DCM for NED equations ([column][row])
+      double[][] dirCosMat = SixDOFUtilities.body2Ned(new double[]{ y[6], y[7], y[8] });      // create DCM for NED equations ([column][row])
       double[] inertiaCoeffs = SixDOFUtilities.calculateInertiaCoeffs(aircraft.getInertiaValues());
       double[] ned2LLA = SixDOFUtilities.ned2LLA(y);
-      double[] windSpdNED = new double[] { environmentParameters.get(EnvironmentParameters.WIND_SPEED_N),
+      double[] windSpdNED = new double[]{ environmentParameters.get(EnvironmentParameters.WIND_SPEED_N),
          environmentParameters.get(EnvironmentParameters.WIND_SPEED_E),
          environmentParameters.get(EnvironmentParameters.WIND_SPEED_D) };
 
@@ -253,24 +250,24 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
       //System.out.println(groundReaction);
       // Update accelerations
       linearAccelerations = AccelAndMoments.calculateLinearAccelerations(windParameters,
-         angularRates,
-         environmentParameters,
-         controls,
-         alphaDot,
-         engineList,
-         aircraft,
-         groundReaction,
-         heightAGL);
+              angularRates,
+              environmentParameters,
+              controls,
+              alphaDot,
+              engineList,
+              aircraft,
+              groundReaction,
+              heightAGL);
       // Update moments
       totalMoments = AccelAndMoments.calculateTotalMoments(windParameters,
-         angularRates,
-         environmentParameters,
-         controls,
-         alphaDot,
-         engineList,
-         aircraft,
-         groundReaction,
-         heightAGL);
+              angularRates,
+              environmentParameters,
+              controls,
+              alphaDot,
+              engineList,
+              aircraft,
+              groundReaction,
+              heightAGL);
 
       // Recalculates derivatives for next step
       updateDerivatives(y);
@@ -416,16 +413,16 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
             if (options.contains(Options.PAUSED) & options.contains(Options.RESET)) {
                Configuration conf = Configuration.getInstance();
                initialConditions = ArrayUtils.toPrimitive(IntegrationSetup.gatherInitialConditions(conf.getInitialConditionsConfig()).values()
-                  .toArray(new Double[initialConditions.length]));
+                       .toArray(new Double[initialConditions.length]));
             }
 
             // If paused, skip the integration and update process
             if (!options.contains(Options.PAUSED)) {
                // Run a single step of integration each step of the loop
                y = integrator.singleStep(new SixDOFEquations(), // derivatives
-                  t, // start time
-                  initialConditions, // initial conditions
-                  t + integratorConfig[1]);     // end time (t+dt)
+                       t, // start time
+                       initialConditions, // initial conditions
+                       t + integratorConfig[1]);     // end time (t+dt)
 
                // Update data members' values
                updateDataMembers();

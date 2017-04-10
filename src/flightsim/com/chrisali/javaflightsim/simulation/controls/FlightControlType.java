@@ -15,7 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.controls;
 
-import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.AbstractController;
+import com.chrisali.javaflightsim.controls.hidcontrollers.AbstractController;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 

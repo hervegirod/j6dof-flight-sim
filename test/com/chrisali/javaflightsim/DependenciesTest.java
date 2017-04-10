@@ -40,6 +40,11 @@ public class DependenciesTest {
    private static final String PLOTS = "j6dof-plots.jar";
    private static final String PLOTS_LIB = "jfreechart-1.0.19.jar";
    private static final String PLOTS_LIB2 = "jcommon-1.0.23.jar";
+   private static final String INSTRUMENTS = "j6dof-instruments.jar";
+   private static final String INSTRUMENTS_LIB1 = "steelseries.jar";
+   private static final String INSTRUMENTS_LIB2 = "trident-7.2.1.jar";
+   private static final String CONTROLS = "j6dof-controls.jar";
+   private static final String CONTROLS_LIB = "jinput.jar";
    private static JarDependencies coreDepend = null;
    private static JarDependencies lwjglDepend = null;
    private static JarDependencies lwjglLib1Depend = null;
@@ -48,6 +53,11 @@ public class DependenciesTest {
    private static JarDependencies plotsLib1Depend = null;
    private static JarDependencies plotsLib2Depend = null;
    private static JarDependencies launcherDepend = null;
+   private static JarDependencies instrumentsDepend = null;
+   private static JarDependencies instrumentsLib1Depend = null;
+   private static JarDependencies instrumentsLib2Depend = null;
+   private static JarDependencies controlsDepend = null;
+   private static JarDependencies controlsLibDepend = null;
 
    public DependenciesTest() {
    }
@@ -92,6 +102,25 @@ public class DependenciesTest {
       jarFile = new File(dist, LAUNCHER);
       launcherDepend = new JarDependencies();
       launcherDepend.setFile(jarFile);
+
+      // instruments
+      jarFile = new File(dist, INSTRUMENTS);
+      instrumentsDepend = new JarDependencies();
+      instrumentsDepend.setFile(jarFile);
+      jarFile = new File(dist, INSTRUMENTS_LIB1);
+      instrumentsLib1Depend = new JarDependencies();
+      instrumentsLib1Depend.setFile(jarFile);
+      jarFile = new File(lib, INSTRUMENTS_LIB2);
+      instrumentsLib2Depend = new JarDependencies();
+      instrumentsLib2Depend.setFile(jarFile);
+
+      // controls
+      jarFile = new File(dist, CONTROLS);
+      controlsDepend = new JarDependencies();
+      controlsDepend.setFile(jarFile);
+      jarFile = new File(lib, CONTROLS_LIB);
+      controlsLibDepend = new JarDependencies();
+      controlsLibDepend.setFile(jarFile);
    }
 
    @AfterClass
@@ -104,6 +133,11 @@ public class DependenciesTest {
       plotsLib1Depend = null;
       plotsLib2Depend = null;
       launcherDepend = null;
+      instrumentsDepend = null;
+      instrumentsLib1Depend = null;
+      instrumentsLib2Depend = null;
+      controlsDepend = null;
+      controlsLibDepend = null;
    }
 
    @Before
@@ -161,5 +195,39 @@ public class DependenciesTest {
       boolean isDepending = coreDepend.isDependingOn(launcherDepend);
       DependencyPrinter.printDependencies(coreDepend, launcherDepend);
       assertFalse(CORE + " must not depend on " + LAUNCHER, isDepending);
+   }
+
+   /**
+    * Test that the core jar file don't depend on the insreuments library.
+    */
+   @Test
+   public void testDependenciesOnInstruments() {
+      System.out.println("DependenciesTest : testDependenciesOnInstruments");
+      boolean isDepending = coreDepend.isDependingOn(instrumentsDepend);
+      DependencyPrinter.printDependencies(coreDepend, instrumentsDepend);
+      assertFalse(CORE + " must not depend on " + INSTRUMENTS, isDepending);
+
+      isDepending = coreDepend.isDependingOn(instrumentsLib1Depend);
+      DependencyPrinter.printDependencies(coreDepend, instrumentsLib1Depend);
+      assertFalse(CORE + " must not depend on " + INSTRUMENTS_LIB1, isDepending);
+
+      isDepending = coreDepend.isDependingOn(instrumentsLib2Depend);
+      DependencyPrinter.printDependencies(coreDepend, instrumentsLib2Depend);
+      assertFalse(CORE + " must not depend on " + INSTRUMENTS_LIB2, isDepending);
+   }
+
+   /**
+    * Test that the core jar file don't depend on the insreuments library.
+    */
+   @Test
+   public void testDependenciesOnControls() {
+      System.out.println("DependenciesTest : testDependenciesOnControls");
+      boolean isDepending = coreDepend.isDependingOn(controlsDepend);
+      DependencyPrinter.printDependencies(coreDepend, controlsDepend);
+      assertFalse(CORE + " must not depend on " + CONTROLS, isDepending);
+
+      isDepending = coreDepend.isDependingOn(controlsLibDepend);
+      DependencyPrinter.printDependencies(coreDepend, controlsLibDepend);
+      assertFalse(CORE + " must not depend on " + CONTROLS_LIB, isDepending);
    }
 }

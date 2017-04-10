@@ -15,8 +15,8 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.launcher.menus.optionspanel;
 
-import com.chrisali.javaflightsim.gui.AudioOptions;
-import com.chrisali.javaflightsim.gui.DisplayOptions;
+import com.chrisali.javaflightsim.conf.AudioOptions;
+import com.chrisali.javaflightsim.conf.DisplayOptions;
 import com.chrisali.javaflightsim.launcher.menus.CancelButtonListener;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import java.awt.BorderLayout;
@@ -112,9 +112,7 @@ public class OptionsPanel extends JPanel {
       setPreferredSize(dims);
    }
 
-   public void setAllOptions(EnumSet<Options> simulationOptions, int stepSize,
-           EnumMap<DisplayOptions, Integer> displayOptions,
-           EnumMap<AudioOptions, Float> audioOptions) {
+   public void setAllOptions(EnumSet<Options> simulationOptions, int stepSize, EnumMap<DisplayOptions, Integer> displayOptions, EnumMap<AudioOptions, Float> audioOptions) {
       this.stepSize = stepSize;
       simulationOptionsTab.setOptionsTab(simulationOptions, stepSize);
       displayOptionsTab.setOptionsTab(displayOptions);

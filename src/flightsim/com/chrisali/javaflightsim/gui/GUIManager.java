@@ -23,12 +23,14 @@ import com.chrisali.javaflightsim.datatransfer.FlightData;
  * @author Herve
  */
 public interface GUIManager {
+   public Instruments getInstruments();
+
    public void initSimulationWindow();
 
    /**
     * Return the SimulationWindow object.
     *
-    * @return {@link SimulationWindow} object for {@link RunWorld}.
+    * @return {@link SimulationWindow} object.
     */
    public SimulationWindow getSimulationWindow();
 

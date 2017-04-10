@@ -15,7 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.otw.audio.AudioMaster;
 import com.chrisali.javaflightsim.otw.audio.SoundCollection;

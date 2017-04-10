@@ -15,7 +15,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.launcher.menus.optionspanel;
 
-import com.chrisali.javaflightsim.gui.AudioOptions;
+import com.chrisali.javaflightsim.conf.AudioOptions;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;

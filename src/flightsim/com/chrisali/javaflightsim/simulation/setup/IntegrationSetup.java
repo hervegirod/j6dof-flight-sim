@@ -30,7 +30,7 @@ import java.util.EnumMap;
 public class IntegrationSetup {
 
    /**
-    * Parses a text file formatted as described in {@link FileUtilities#readFileAndSplit(java.lang.String, java.lang.String)} to generate an
+    * Parses a text file formatted as described in {@link FileUtilities#readFileAndSplit(java.io.File)} to generate an
     * EnumMap of initial conditions used by {@link Integrate6DOFEquations} to start the integration for the simulation.
     *
     * @param file the file
@@ -57,14 +57,14 @@ public class IntegrationSetup {
    }
 
    private static void setDefaultInitialConditions(EnumMap<InitialConditions, Double> initialConditions) {
-      Double[] defaultIC = new Double[] { 210.0, 0.0, -3.99, 0.0, 0.0, 5000.0, 0.0, -0.025, 1.57, 0.0, 0.0, 0.0 };
+      Double[] defaultIC = new Double[]{ 210.0, 0.0, -3.99, 0.0, 0.0, 5000.0, 0.0, -0.025, 1.57, 0.0, 0.0, 0.0 };
       for (int i = 0; i < defaultIC.length; i++) {
          initialConditions.put(InitialConditions.values()[i], defaultIC[i]);
       }
    }
 
    /**
-    * Parses a text file formatted as described in {@link FileUtilities#readFileAndSplit(java.lang.String, java.lang.String)} to generate an
+    * Parses a text file formatted as described in {@link FileUtilities#readFileAndSplit(java.io.File)} to generate an
     * EnumMap of settings used by {@link Integrate6DOFEquations} to control the start, step and end times for the simulation.
     *
     * @param file the file
@@ -91,14 +91,14 @@ public class IntegrationSetup {
    }
 
    private static void setDefaultIntegratorConfig(EnumMap<IntegratorConfig, Double> integratorConfig) {
-      double[] defaultIntConfig = new double[] { 0.0, 0.05, 100.0 };
+      double[] defaultIntConfig = new double[]{ 0.0, 0.05, 100.0 };
       for (int i = 0; i < defaultIntConfig.length; i++) {
          integratorConfig.put(IntegratorConfig.values()[i], defaultIntConfig[i]);
       }
    }
 
    /**
-    * Parses a text file formatted as described in {@link FileUtilities#readFileAndSplit(java.lang.String, java.lang.String)} to generate an
+    * Parses a text file formatted as described in {@link FileUtilities#readFileAndSplit(java.io.File)} to generate an
     * EnumMap of initial controls used by {@link Integrate6DOFEquations} to start the integration for the simulation.
     *
     * @param file the file
@@ -125,7 +125,7 @@ public class IntegrationSetup {
    }
 
    private static void setDefaultInitialControls(EnumMap<FlightControlType, Double> initControl) {
-      double[] defaultControl = new double[] { 0.036, 0, 0, 0.65, 0.65, 0.65, 0.65, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0, 0 };
+      double[] defaultControl = new double[]{ 0.036, 0, 0, 0.65, 0.65, 0.65, 0.65, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0, 0, 0, 0 };
       for (int i = 0; i < defaultControl.length; i++) {
          initControl.put(FlightControlType.values()[i], defaultControl[i]);
       }

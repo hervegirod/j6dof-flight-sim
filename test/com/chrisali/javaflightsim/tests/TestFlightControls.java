@@ -16,7 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 
 /**
@@ -27,9 +27,9 @@ import com.chrisali.javaflightsim.simulation.setup.Options;
  *
  */
 public class TestFlightControls implements Runnable {
-   private FlightControls flightControls;
-   private Thread flightControlsThread;
-   private SimulationController simController;
+   private final FlightControls flightControls;
+   private final Thread flightControlsThread;
+   private final SimulationController simController;
 
    public TestFlightControls() {
       this.simController = new SimulationController();

@@ -15,15 +15,15 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.otw;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.AudioOptions;
+import com.chrisali.javaflightsim.conf.Configuration;
+import com.chrisali.javaflightsim.conf.DisplayOptions;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 import com.chrisali.javaflightsim.datatransfer.FlightDataType;
-import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.gui.SimulationWindow;
-import com.chrisali.javaflightsim.gui.AudioOptions;
-import com.chrisali.javaflightsim.gui.DisplayOptions;
+import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.otw.audio.AudioMaster;
 import com.chrisali.javaflightsim.otw.audio.SoundCollection;
 import com.chrisali.javaflightsim.otw.audio.SoundCollection.SoundCategory;
@@ -173,7 +173,9 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
          ParticleMaster.update(camera);
 
          //--------- Audio--------------------
-         SoundCollection.update(soundValues, controller);
+         if (AudioMaster.isInitialized()) {
+            SoundCollection.update(soundValues, controller);
+         }
 
          //----------- UI --------------------
          texts.get("Paused").setTextString(controller.getSimulationOptions()

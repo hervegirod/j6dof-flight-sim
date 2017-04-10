@@ -16,6 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.instruments.InstrumentPanel;
 import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import javax.swing.SwingUtilities;
 
@@ -31,6 +32,7 @@ public class TestGUI {
    }
 
    private static void runApp() {
-      new MainFrame(new SimulationController());
+      InstrumentPanel instruments = new InstrumentPanel();
+      new MainFrame(new SimulationController(), instruments);
    }
 }

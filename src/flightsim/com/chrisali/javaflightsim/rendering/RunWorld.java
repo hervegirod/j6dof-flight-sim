@@ -16,13 +16,13 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.rendering;
 
+import com.chrisali.javaflightsim.conf.AudioOptions;
+import com.chrisali.javaflightsim.conf.DisplayOptions;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
-import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.gui.SimulationWindow;
-import com.chrisali.javaflightsim.gui.AudioOptions;
-import com.chrisali.javaflightsim.gui.DisplayOptions;
+import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 
 /**
@@ -31,10 +31,10 @@ import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
  *
  * @author Christopher Ali
  * @author Herve Girod
- * @since 0.1
+ * @version 0.2
  */
 public class RunWorld implements Runnable {
-   private SimulationController controller;
+   private final SimulationController controller;
    private WorldRenderer worldRenderer = null;
    private TerrainProvider terrainProvider = null;
 

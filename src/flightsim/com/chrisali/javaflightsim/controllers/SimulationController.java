@@ -16,14 +16,15 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.controllers;
 
-import com.chrisali.javaflightsim.consoletable.ConsoleTablePanel;
+import com.chrisali.javaflightsim.conf.AudioOptions;
+import com.chrisali.javaflightsim.conf.Configuration;
+import com.chrisali.javaflightsim.conf.DisplayOptions;
+import com.chrisali.javaflightsim.controls.FlightControls;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.gui.GUIManager;
-import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.gui.SimulationWindow;
-import com.chrisali.javaflightsim.gui.AudioOptions;
-import com.chrisali.javaflightsim.gui.DisplayOptions;
+import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.rendering.DataAnalyzer;
 import com.chrisali.javaflightsim.rendering.RunWorld;
@@ -32,7 +33,7 @@ import com.chrisali.javaflightsim.rendering.WorldRenderer;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.integration.SimOuts;
 import com.chrisali.javaflightsim.simulation.setup.InitialConditions;
@@ -42,7 +43,6 @@ import com.chrisali.javaflightsim.simulation.setup.Options;
 import com.chrisali.javaflightsim.simulation.setup.Trimming;
 import com.chrisali.javaflightsim.utilities.FileUtilities;
 import java.io.File;
-import java.io.IOException;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
@@ -55,7 +55,7 @@ import java.util.Map;
  * <p>
  * Plotting of the simulation states and data ({@link PlotWindow})</p>
  * <p>
- * Raw data display of simulation states ({@link ConsoleTablePanel})</p>
+ * Raw data display of simulation states ({@link com.chrisali.javaflightsim.launcher.consoletable.ConsoleTablePanel})</p>
  * <p>
  * Transmission of flight data to the instrument panel and out the window display ({@link FlightData})</p>
  * <p>
@@ -70,16 +70,15 @@ public class SimulationController {
    private EnumMap<DisplayOptions, Integer> displayOptions;
    private EnumMap<AudioOptions, Float> audioOptions;
    private EnumSet<Options> simulationOptions;
-   private EnumMap<InitialConditions, Double> initialConditions;
-   private EnumMap<IntegratorConfig, Double> integratorConfig;
-   private EnumMap<FlightControlType, Double> initialControls;
+   private final EnumMap<InitialConditions, Double> initialConditions;
+   private final EnumMap<IntegratorConfig, Double> integratorConfig;
+   private final EnumMap<FlightControlType, Double> initialControls;
 
    // Simulation
-   private FlightControls flightControls;
-   private Thread flightControlsThread;
+   private Map<FlightControlType, Double> flightControls;
    private Integrate6DOFEquations runSim;
    private Thread simulationThread;
-   private FlightData flightData;
+   private final FlightData flightData;
    private Thread flightDataThread;
 
    // providers
@@ -94,9 +93,6 @@ public class SimulationController {
    // Menus and Integrated Simulation Window
    private GUIManager guiManager;
 
-   // Raw Data Console
-   private ConsoleTablePanel consoleTablePanel;
-
    // Out the Window
    private RunWorld outTheWindow;
    private Thread outTheWindowThread;
@@ -108,6 +104,16 @@ public class SimulationController {
     * to be edited through the menu options in the view
     */
    public SimulationController() {
+      this(false);
+   }
+
+   /**
+    * Constructor for the controller that initializes initial settings, configurations and conditions
+    * to be edited through the menu options in the view
+    *
+    * @param createControls tyue if initial controls must be created
+    */
+   public SimulationController(boolean createControls) {
       simulationOptions = FileUtilities.parseSimulationSetup();
       displayOptions = FileUtilities.parseDisplaySetup();
       audioOptions = FileUtilities.parseAudioSetup();
@@ -120,6 +126,17 @@ public class SimulationController {
       String aircraftName = FileUtilities.parseSimulationSetupForAircraft();
       Configuration.getInstance().setAircraft(aircraftName);
       ab = new AircraftBuilder(aircraftName);
+      flightData = new FlightData();
+
+      if (createControls) {
+         Map<FlightControlType, Double> controls = getControls();
+         FlightControlsUtilities.init();
+         setFlightControls(controls);
+      }
+   }
+
+   public void updateControls() {
+      FlightControlsUtilities.limitControls(flightControls);
    }
 
    //=============================== Configuration ===========================================================
@@ -146,15 +163,15 @@ public class SimulationController {
 
    /**
     * Updates simulation and display options and then saves the configurations to text files using either
-    * {@link FileUtilities#writeConfigFile(java.lang.String, java.lang.String, java.util.Set, java.lang.String)} or
-    * {@link FileUtilities#writeConfigFile(java.lang.String, java.lang.String, java.util.Map)}.
+    * {@link FileUtilities#writeConfigFile(java.io.File, java.util.Set, java.lang.String)} or
+    * {@link FileUtilities#writeConfigFile(java.io.File, java.util.Map)}.
     *
     * @param newOptions the new options
     * @param newDisplayOptions the new display options
     * @param newAudioOptions the new audio options
     */
    public void updateOptions(EnumSet<Options> newOptions, EnumMap<DisplayOptions, Integer> newDisplayOptions,
-      EnumMap<AudioOptions, Float> newAudioOptions) {
+           EnumMap<AudioOptions, Float> newAudioOptions) {
       Configuration conf = Configuration.getInstance();
       if (conf.hasSimulationConfig()) {
          File simulSetup = conf.getSimulationSetupConfig();
@@ -268,7 +285,7 @@ public class SimulationController {
    /**
     * @return initialControls EnumMap
     */
-   public EnumMap<FlightControlType, Double> getInitialControls() {
+   public final EnumMap<FlightControlType, Double> getControls() {
       return initialControls;
    }
 
@@ -329,25 +346,28 @@ public class SimulationController {
       dataAnalyzer.setSimulationController(this);
    }
 
+   public final void setFlightControls(Map<FlightControlType, Double> flightControls) {
+      this.flightControls = flightControls;
+   }
+
+   /**
+    * Return the FlightData.
+    *
+    * @return the FlightData
+    */
+   public FlightData getFlightData() {
+      return flightData;
+   }
+
    /**
     * Initializes, trims and starts the flight controls, simulation (and flight and environment data, if selected) threads.
     * Depending on options specified, a console panel and/or plot window will also be initialized and opened
     */
    public void startSimulation() {
       Trimming.trimSim(this, false);
-
-      flightControls = new FlightControls(this);
-      flightControlsThread = new Thread(flightControls);
-
       runSim = new Integrate6DOFEquations(flightControls, this);
       simulationThread = new Thread(runSim);
-
-      flightControlsThread.start();
       simulationThread.start();
-
-      if (simulationOptions.contains(Options.CONSOLE_DISPLAY)) {
-         initializeConsole();
-      }
 
       if (simulationOptions.contains(Options.ANALYSIS_MODE)) {
          try {
@@ -363,8 +383,10 @@ public class SimulationController {
          outTheWindow = new RunWorld(this);
          outTheWindow.setTerrainProvider(terrainProvider);
          outTheWindow.setWorldRenderer(worldRenderer);
-         //(Re)initalize simulation window to prevent scaling issues with instrument panel
-         guiManager.initSimulationWindow();
+         if (guiManager != null) {
+            //(Re)initalize simulation window to prevent scaling issues with instrument panel
+            guiManager.initSimulationWindow();
+         }
 
          environmentData = new EnvironmentData(outTheWindow);
          environmentData.addEnvironmentDataListener(runSim);
@@ -372,8 +394,10 @@ public class SimulationController {
          environmentDataThread = new Thread(environmentData);
          environmentDataThread.start();
 
-         flightData = new FlightData(runSim);
-         guiManager.addFlightDataListeners(flightData);
+         flightData.setIntegrate6DOFEquations(runSim);
+         if (guiManager != null) {
+            guiManager.addFlightDataListeners(flightData);
+         }
          flightData.addFlightDataListener(outTheWindow.getWorldRenderer());
          flightData.addFlightDataListener(outTheWindow.getTerrainProvider());
 
@@ -383,8 +407,8 @@ public class SimulationController {
    }
 
    /**
-    * Stops simulation, flight controls and data transfer threads (if running), closes the raw data {@link ConsoleTablePanel},
-    * {@link SimulationWindow}, and opens the main menus window again
+    * Stops simulation, flight controls and data transfer threads (if running), closes the raw
+    * data {@link com.chrisali.javaflightsim.launcher.consoletable.ConsoleTablePanel}, {@link SimulationWindow}, and opens the main menus window again.
     */
    public void stopSimulation() {
       if (runSim != null && Integrate6DOFEquations.isRunning() && simulationThread != null && simulationThread.isAlive()) {
@@ -424,36 +448,6 @@ public class SimulationController {
       } else {
          return dataAnalyzer.isRunning();
       }
-   }
-
-   //=============================== Console =============================================================
-   /**
-    * Initializes the raw data console window and starts the auto-refresh of its contents
-    */
-   public void initializeConsole() {
-      consoleTablePanel = new ConsoleTablePanel(this);
-      consoleTablePanel.startTableRefresh();
-   }
-
-   /**
-    * @return if the raw data console window is visible
-    */
-   public boolean isConsoleWindowVisible() {
-      if (consoleTablePanel == null) {
-         return false;
-      } else {
-         return consoleTablePanel.isVisible();
-      }
-   }
-
-   /**
-    * Saves the raw data in the console window to a .csv file
-    *
-    * @param file
-    * @throws IOException
-    */
-   public void saveConsoleOutput(File file) throws IOException {
-      FileUtilities.saveToCSVFile(file, runSim.getLogsOut());
    }
 
    //========================== Main Frame Menus =========================================================

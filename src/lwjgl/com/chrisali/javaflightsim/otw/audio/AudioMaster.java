@@ -28,22 +28,34 @@ import org.lwjgl.util.WaveData;
 import org.lwjgl.util.vector.Vector3f;
 
 public class AudioMaster {
+   private static boolean initialized = false;
    private static List<Integer> buffers = new ArrayList<Integer>();
+
+   public static boolean isInitialized() {
+      return initialized;
+   }
 
    public static void init() {
       try {
          AL.create();
+         initialized = true;
       } catch (LWJGLException e) {
          System.err.println("Unable to initialize OpenAL!\n" + e.getMessage());
       }
    }
 
    public static void setListenerData(Vector3f position, Vector3f velocity) {
+      if (!initialized) {
+         return;
+      }
       AL10.alListener3f(AL10.AL_POSITION, position.x, position.y, position.z);
       AL10.alListener3f(AL10.AL_VELOCITY, velocity.x, velocity.y, velocity.z);
    }
 
    public static int loadSound(File directory, String fileName) {
+      if (!initialized) {
+         return -1;
+      }
       int buffer = AL10.alGenBuffers();
       buffers.add(buffer);
       File wavfile = new File(directory, fileName + ".wav");
@@ -61,6 +73,9 @@ public class AudioMaster {
    }
 
    public static void cleanUp() {
+      if (!initialized) {
+         return;
+      }
       for (int buffer : buffers) {
          AL10.alDeleteBuffers(buffer);
       }

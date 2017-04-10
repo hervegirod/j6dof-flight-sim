@@ -15,8 +15,8 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.launcher.menus.optionspanel;
 
-import com.chrisali.javaflightsim.gui.AudioOptions;
-import com.chrisali.javaflightsim.gui.DisplayOptions;
+import com.chrisali.javaflightsim.conf.AudioOptions;
+import com.chrisali.javaflightsim.conf.DisplayOptions;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import java.util.EnumMap;
 import java.util.EnumSet;

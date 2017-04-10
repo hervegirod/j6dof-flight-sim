@@ -15,12 +15,12 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.tests;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.controls.FlightControls;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import com.chrisali.javaflightsim.simulation.setup.Trimming;
@@ -69,7 +69,7 @@ public class TestSimulation {
       this.flightControls = new FlightControls(simController);
       this.flightControlsThread = new Thread(flightControls);
 
-      this.runSim = new Integrate6DOFEquations(flightControls, simController);
+      this.runSim = new Integrate6DOFEquations(flightControls.getFlightControls(), simController);
       this.simulationThread = new Thread(runSim);
 
       flightControlsThread.start();

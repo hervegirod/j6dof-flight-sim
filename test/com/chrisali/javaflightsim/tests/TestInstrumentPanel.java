@@ -16,9 +16,9 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.controls.FlightControls;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
-import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
-import com.chrisali.javaflightsim.simulation.controls.FlightControls;
+import com.chrisali.javaflightsim.instruments.InstrumentPanel;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import java.awt.BorderLayout;
@@ -52,8 +52,9 @@ public class TestInstrumentPanel {
 
       FlightControls flightControls = new FlightControls(simController);
 
-      Integrate6DOFEquations runSim = new Integrate6DOFEquations(flightControls, simController);
-      FlightData flightData = new FlightData(runSim);
+      Integrate6DOFEquations runSim = new Integrate6DOFEquations(flightControls.getFlightControls(), simController);
+      FlightData flightData = new FlightData();
+      flightData.setIntegrate6DOFEquations(runSim);
 
       new Thread(flightControls).start();
       new Thread(runSim).start();

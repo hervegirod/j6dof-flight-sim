@@ -16,9 +16,11 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.launcher;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.gui.Instruments;
 import com.chrisali.javaflightsim.gui.SimulationWindowManager;
+import com.chrisali.javaflightsim.instruments.InstrumentPanel;
 import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
@@ -107,14 +109,18 @@ public class RunJavaFlightSimulator {
          plotWindow.setSimulationController(controller);
          controller.setDataAnalyzer(plotWindow);
       }
+      Instruments instruments = null;
+      if (hasInstruments) {
+         instruments = new InstrumentPanel();
+      }
 
       if (hasMenus) {
-         MainFrame mainFrame = new MainFrame(controller);
+         MainFrame mainFrame = new MainFrame(controller, instruments);
          // Pass in mainFrame reference so that OTW display can get Canvas
          // reference
          controller.setGUIManager(mainFrame);
       } else {
-         SimulationWindowManager guiManager = new SimulationWindowManager();
+         SimulationWindowManager guiManager = new SimulationWindowManager(instruments);
          guiManager.setSimulationController(controller);
          controller.setGUIManager(guiManager);
          guiManager.initSimulationWindow();

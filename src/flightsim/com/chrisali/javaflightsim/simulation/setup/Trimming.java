@@ -16,7 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.setup;
 
-import com.chrisali.javaflightsim.controllers.Configuration;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
 import com.chrisali.javaflightsim.simulation.aero.StabilityDerivatives;
@@ -77,7 +77,7 @@ public class Trimming {
       aero = new Aerodynamics(aircraft);
 
       initialConditions = controller.getInitialConditions();
-      initialControls = controller.getInitialControls();
+      initialControls = controller.getControls();
 
       environmentParams = Environment.getAndUpdateEnvironmentParams(new double[] { 0, 0, initialConditions.get(InitialConditions.INITD) });
 

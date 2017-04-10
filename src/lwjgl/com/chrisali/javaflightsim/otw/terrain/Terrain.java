@@ -71,7 +71,7 @@ public class Terrain implements Comparable<Terrain> {
     * fileName and Directory point to a height map .png file to give the terrain vertical modeling</p>
     *
     * <p>
-    * Uses {@link EntityCollections#createAutogenImageEntities(com.chrisali.javaflightsim.otw.terrain.Terrain, java.lang.String, java.lang.String)} to generate populate this object's lists of entities
+    * Uses {@link EntityCollections#createAutogenImageEntities(com.chrisali.javaflightsim.otw.terrain.Terrain, java.lang.String, java.io.File)} to generate populate this object's lists of entities
     * using an autogen image file in ./Resources/Terrain/</p>
     *
     * <p>
@@ -88,8 +88,8 @@ public class Terrain implements Comparable<Terrain> {
     * @param ownship
     */
    public Terrain(int gridX, int gridZ, String fileName, File directory,
-      Loader loader, TerrainTexturePack texturePack, TerrainTexture blendMap,
-      Ownship ownship) {
+           Loader loader, TerrainTexturePack texturePack, TerrainTexture blendMap,
+           Ownship ownship) {
       this.texturePack = texturePack;
       this.blendMap = blendMap;
       this.x = gridX * SIZE;
@@ -248,14 +248,14 @@ public class Terrain implements Comparable<Terrain> {
       float terrainHeight;
       if (xCoord <= (1 - zCoord)) {
          terrainHeight = RenderingUtilities.barycentric(new Vector3f(0, heightArray[gridX][gridZ], 0),
-            new Vector3f(1, heightArray[gridX + 1][gridZ], 0),
-            new Vector3f(0, heightArray[gridX][gridZ + 1], 1),
-            new Vector2f(xCoord, zCoord));
+                 new Vector3f(1, heightArray[gridX + 1][gridZ], 0),
+                 new Vector3f(0, heightArray[gridX][gridZ + 1], 1),
+                 new Vector2f(xCoord, zCoord));
       } else {
          terrainHeight = RenderingUtilities.barycentric(new Vector3f(1, heightArray[gridX + 1][gridZ], 0),
-            new Vector3f(1, heightArray[gridX + 1][gridZ + 1], 1),
-            new Vector3f(0, heightArray[gridX][gridZ + 1], 1),
-            new Vector2f(xCoord, zCoord));
+                 new Vector3f(1, heightArray[gridX + 1][gridZ + 1], 1),
+                 new Vector3f(0, heightArray[gridX][gridZ + 1], 1),
+                 new Vector2f(xCoord, zCoord));
       }
 
       return terrainHeight;
@@ -323,7 +323,7 @@ public class Terrain implements Comparable<Terrain> {
       float terrainMidpointZ = z + (MAX_HEIGHT / 2);
 
       return (float) Math.sqrt(Math.pow((ownship.getPosition().x - terrainMidpointX), 2)
-         + Math.pow((ownship.getPosition().z - terrainMidpointZ), 2));
+              + Math.pow((ownship.getPosition().z - terrainMidpointZ), 2));
    }
 
    /**
@@ -335,7 +335,7 @@ public class Terrain implements Comparable<Terrain> {
    @Override
    public int compareTo(Terrain terrain) {
       return this.getDistanceFromOwnship() > terrain.getDistanceFromOwnship() ? 1
-         : this.getDistanceFromOwnship() < terrain.getDistanceFromOwnship() ? -1 : 0;
+              : this.getDistanceFromOwnship() < terrain.getDistanceFromOwnship() ? -1 : 0;
    }
 
 }

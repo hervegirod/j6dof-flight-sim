@@ -67,9 +67,8 @@ public class FixedPitchPropEngine extends Engine {
     * Updates all fields of engine. Called by {@link Integrate6DOFEquations} to recalculate thrust, moment,
     * fuel flow and RPM for this engine.
     */
-   public void updateEngineState(Map<FlightControlType, Double> controls,
-           Map<EnvironmentParameters, Double> environmentParameters,
-           double[] windParameters) {		//{vTrue,beta,alpha}
+   @Override
+   public void updateEngineState(Map<FlightControlType, Double> controls, Map<EnvironmentParameters, Double> environmentParameters, double[] windParameters) {
       // Assign engine controls depending on engine number specified
       switch (engineNumber) {
          case 1:

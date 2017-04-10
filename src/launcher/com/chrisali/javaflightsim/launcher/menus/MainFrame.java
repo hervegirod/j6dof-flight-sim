@@ -16,23 +16,27 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.launcher.menus;
 
-import com.chrisali.javaflightsim.gui.SimulationWindow;
+import com.chrisali.javaflightsim.conf.AudioOptions;
+import com.chrisali.javaflightsim.conf.DisplayOptions;
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.controls.FlightControls;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
+import com.chrisali.javaflightsim.gui.ClosePanelListener;
 import com.chrisali.javaflightsim.gui.GUIManager;
-import com.chrisali.javaflightsim.instrumentpanel.ClosePanelListener;
-import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
+import com.chrisali.javaflightsim.gui.Instruments;
+import com.chrisali.javaflightsim.gui.SimulationWindow;
+import com.chrisali.javaflightsim.instruments.InstrumentPanel;
+import com.chrisali.javaflightsim.launcher.consoletable.ConsoleTablePanel;
 import com.chrisali.javaflightsim.launcher.menus.aircraftpanel.AircraftConfigurationListener;
 import com.chrisali.javaflightsim.launcher.menus.aircraftpanel.AircraftPanel;
 import com.chrisali.javaflightsim.launcher.menus.aircraftpanel.WeightConfiguredListener;
 import com.chrisali.javaflightsim.launcher.menus.initialconditionspanel.InitialConditionsConfigurationListener;
 import com.chrisali.javaflightsim.launcher.menus.initialconditionspanel.InitialConditionsPanel;
-import com.chrisali.javaflightsim.gui.AudioOptions;
-import com.chrisali.javaflightsim.gui.DisplayOptions;
 import com.chrisali.javaflightsim.launcher.menus.optionspanel.OptionsConfigurationListener;
 import com.chrisali.javaflightsim.launcher.menus.optionspanel.OptionsPanel;
 import com.chrisali.javaflightsim.rendering.RunWorld;
+import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 import com.chrisali.javaflightsim.utilities.FileUtilities;
@@ -41,6 +45,8 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import javax.swing.JFrame;
@@ -63,17 +69,22 @@ public class MainFrame extends JFrame implements GUIManager {
    private SimulationWindow simulationWindow;
    private JPanel cardPanel;
    private CardLayout cardLayout;
+   // Raw Data Console
+   private ConsoleTablePanel consoleTablePanel;
+   private Instruments instruments;
 
    /**
     * Constructor, which takes a {@link SimulationController} reference to gain access to methods to
     * configure the simulation
     *
-    * @param controller
+    * @param controller the SimulationController
+    * @param instruments the instruments
     */
-   public MainFrame(SimulationController controller) {
+   public MainFrame(SimulationController controller, Instruments instruments) {
       super("Java Flight Sim");
 
       simulationController = controller;
+      this.instruments = instruments;
 
       setLayout(new BorderLayout());
       Dimension dims = new Dimension(200, 400);
@@ -120,8 +131,8 @@ public class MainFrame extends JFrame implements GUIManager {
       optionsPanel.setOptionsConfigurationListener(new OptionsConfigurationListener() {
          @Override
          public void simulationOptionsConfigured(EnumSet<Options> options, int stepSize,
-            EnumMap<DisplayOptions, Integer> displayOptions,
-            EnumMap<AudioOptions, Float> audioOptions) {
+                 EnumMap<DisplayOptions, Integer> displayOptions,
+                 EnumMap<AudioOptions, Float> audioOptions) {
             buttonPanel.setOptionsLabel(options, stepSize);
             simulationController.updateIntegratorConfig(stepSize);
             simulationController.updateOptions(options, displayOptions, audioOptions);
@@ -193,7 +204,7 @@ public class MainFrame extends JFrame implements GUIManager {
             setSize(dims);
             cardPanel.setVisible(false);
 
-            simulationController.startSimulation();
+            startSimulation();
             MainFrame.this.setVisible(simulationController.getSimulationOptions().contains(Options.ANALYSIS_MODE));
             simulationWindow.setVisible(!simulationController.getSimulationOptions().contains(Options.ANALYSIS_MODE));
          }
@@ -208,7 +219,7 @@ public class MainFrame extends JFrame implements GUIManager {
          @Override
          public void windowClosing(WindowEvent e) {
             int closeDialog = JOptionPane.showConfirmDialog(MainFrame.this, "Are you sure you wish to quit?",
-               "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (closeDialog == JOptionPane.YES_OPTION) {
                System.gc();
                System.exit(0);
@@ -223,6 +234,48 @@ public class MainFrame extends JFrame implements GUIManager {
       setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
    }
 
+   private void startSimulation() {
+      FlightControls flightControls = new FlightControls(simulationController);
+      simulationController.setFlightControls(flightControls.getFlightControls());
+      Thread flightControlsThread = new Thread(flightControls);
+      simulationController.startSimulation();
+      flightControlsThread.start();
+      EnumSet<Options> simulationOptions = simulationController.getSimulationOptions();
+      if (simulationOptions.contains(Options.CONSOLE_DISPLAY)) {
+         initializeConsole();
+      }
+   }
+
+   /**
+    * Initializes the raw data console window and starts the auto-refresh of its contents
+    */
+   public void initializeConsole() {
+      consoleTablePanel = new ConsoleTablePanel(this, simulationController);
+      consoleTablePanel.startTableRefresh();
+   }
+
+   /**
+    * @return if the raw data console window is visible
+    */
+   public boolean isConsoleWindowVisible() {
+      if (consoleTablePanel == null) {
+         return false;
+      } else {
+         return consoleTablePanel.isVisible();
+      }
+   }
+
+   /**
+    * Saves the raw data in the console window to a .csv file
+    *
+    * @param file
+    * @throws IOException
+    */
+   public void saveConsoleOutput(File file) throws IOException {
+      Integrate6DOFEquations runSim = simulationController.getSimulation();
+      FileUtilities.saveToCSVFile(file, runSim.getLogsOut());
+   }
+
    /**
     * Sets all options and text on panels by calling methods in {@link SimulationController} to
     * parse setup files and get EnumMap values
@@ -230,12 +283,12 @@ public class MainFrame extends JFrame implements GUIManager {
    private void setOptionsAndText() {
       try {
          simulationController.updateOptions(FileUtilities.parseSimulationSetup(),
-            FileUtilities.parseDisplaySetup(),
-            FileUtilities.parseAudioSetup());
+                 FileUtilities.parseDisplaySetup(),
+                 FileUtilities.parseAudioSetup());
          simulationController.updateAircraft(FileUtilities.parseSimulationSetupForAircraft());
       } catch (IllegalArgumentException e) {
          JOptionPane.showMessageDialog(this, "Unable to read SimulationSetup.txt!",
-            "Error Reading File", JOptionPane.ERROR_MESSAGE);
+                 "Error Reading File", JOptionPane.ERROR_MESSAGE);
       }
 
       int stepSize = (int) (1 / simulationController.getIntegratorConfig().get(IntegratorConfig.DT));
@@ -245,9 +298,7 @@ public class MainFrame extends JFrame implements GUIManager {
       buttonPanel.setAircraftLabel(aircraftName);
 
       aircraftPanel.setAircraftPanel(aircraftName);
-      optionsPanel.setAllOptions(simulationController.getSimulationOptions(), stepSize,
-         simulationController.getDisplayOptions(),
-         simulationController.getAudioOptions());
+      optionsPanel.setAllOptions(simulationController.getSimulationOptions(), stepSize, simulationController.getDisplayOptions(), simulationController.getAudioOptions());
    }
 
    //=============================== Simulation Window ==============================================
@@ -257,13 +308,14 @@ public class MainFrame extends JFrame implements GUIManager {
     */
    @Override
    public void initSimulationWindow() {
-      simulationWindow = new SimulationWindow(simulationController);
+      simulationWindow = new SimulationWindow(simulationController, instruments);
+
       simulationWindow.setClosePanelListener(new ClosePanelListener() {
          @Override
          public void panelWindowClosed() {
             simulationController.stopSimulation();
             simulationWindow.setVisible(false);
-            MainFrame.this.setVisible(true);
+            setVisible(true);
          }
       });
    }
@@ -282,18 +334,18 @@ public class MainFrame extends JFrame implements GUIManager {
    public void disposeSimulationWindow() {
       simulationWindow.dispose();
       this.setVisible(true);
-   }   
+   }
 
    @Override
    public void addFlightDataListeners(FlightData flightData) {
-      flightData.addFlightDataListener(getInstrumentPanel());
+      flightData.addFlightDataListener(getInstruments());
    }
 
    /**
     * @return {@link InstrumentPanel} object for {@link SimulationController} to set a
     * {@link FlightDataListener} to when {@link SimulationController#startSimulation()} is called
     */
-   public InstrumentPanel getInstrumentPanel() {
-      return simulationWindow.getInstrumentPanel();
+   public Instruments getInstruments() {
+      return simulationWindow.getInstruments();
    }
 }

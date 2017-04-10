@@ -15,11 +15,11 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.setup;
 
-import com.chrisali.javaflightsim.instrumentpanel.InstrumentPanel;
 import com.chrisali.javaflightsim.gui.SimulationWindow;
+import com.chrisali.javaflightsim.instruments.InstrumentPanel;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
-import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Joystick;
-import com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Mouse;
+import com.chrisali.javaflightsim.controls.hidcontrollers.Joystick;
+import com.chrisali.javaflightsim.controls.hidcontrollers.Mouse;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 
 /**
@@ -34,17 +34,17 @@ import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
  * <p>
  * PAUSED - Pauses the integration and therefore the simulation; used in combination with RESET to return the simulation to initial conditions</p>
  * <p>
- * RESET - Resets the integration to initial conditions using {@link IntegrationSetup#gatherInitialConditions(String)}</p>
+ * RESET - Resets the integration to initial conditions using {@link IntegrationSetup#gatherInitialConditions(java.io.File)}</p>
  * <p>
  * CONSOLE_DISPLAY - Displays every piece of data in {@link Integrate6DOFEquations#getSimOut()} in the console for each step of integration</p>
  * <p>
- * USE_JOYSTICK - Uses JInput to integrate a {@link Joystick} and {@link com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Keyboard} to allow pilot in the loop simulation</p>
+ * USE_JOYSTICK - Uses JInput to integrate a {@link Joystick} and {@link com.chrisali.javaflightsim.controls.hidcontrollers.Keyboard} to allow pilot in the loop simulation</p>
  * <p>
- * USE_MOUSE - Uses JInput to integrate a {@link Mouse} and {@link com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Keyboard} to allow pilot in the loop simulation</p>
+ * USE_MOUSE - Uses JInput to integrate a {@link Mouse} and {@link com.chrisali.javaflightsim.controls.hidcontrollers.Keyboard} to allow pilot in the loop simulation</p>
  * <p>
- * USE_CH_CONTROLS - Uses JInput to integrate a {@link com.chrisali.javaflightsim.simulation.controls.hidcontrollers.CHControls} and {@link com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Keyboard} to allow pilot in the loop simulation</p>
+ * USE_CH_CONTROLS - Uses JInput to integrate a {@link com.chrisali.javaflightsim.controls.hidcontrollers.CHControls} and {@link com.chrisali.javaflightsim.controls.hidcontrollers.Keyboard} to allow pilot in the loop simulation</p>
  * <p>
- * USE_KEYBOARD_ONLY - Uses JInput to integrate only a {@link com.chrisali.javaflightsim.simulation.controls.hidcontrollers.Keyboard} to allow pilot in the loop simulation</p>
+ * USE_KEYBOARD_ONLY - Uses JInput to integrate only a {@link com.chrisali.javaflightsim.controls.hidcontrollers.Keyboard} to allow pilot in the loop simulation</p>
  * <p>
  * INSTRUMENT_PANEL - Displays {@link InstrumentPanel} view in {@link SimulationWindow}</p>
  */
