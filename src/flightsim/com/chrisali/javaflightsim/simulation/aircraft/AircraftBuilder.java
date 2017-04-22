@@ -77,7 +77,7 @@ public class AircraftBuilder {
 
       if (numEngines > 0 & numEngines < 5) {
          for (int i = 1; i <= numEngines; i++) {
-            Map<EngineParameters, String> engineParams = new EnumMap<EngineParameters, String>(EngineParameters.class);
+            Map<EngineParameters, String> engineParams = new EnumMap<>(EngineParameters.class);
 
             // Iterate through propulsion file, assign engine parameters to EnumMap from
             // lines of readPropulsionFile that match the engine number (engX_1, maxBHP_2, etc)
@@ -90,7 +90,7 @@ public class AircraftBuilder {
                }
             }
 
-            double[] enginePosition = new double[] { Double.parseDouble(engineParams.get(EngineParameters.POS_X)),
+            double[] enginePosition = new double[]{ Double.parseDouble(engineParams.get(EngineParameters.POS_X)),
                Double.parseDouble(engineParams.get(EngineParameters.POS_Y)),
                Double.parseDouble(engineParams.get(EngineParameters.POS_Z)) };
 
@@ -99,11 +99,11 @@ public class AircraftBuilder {
                case "fixedPitchPropEngine":
                default:
                   this.engineList.add(new FixedPitchPropEngine(engineParams.get(EngineParameters.NAME),
-                     Double.parseDouble(engineParams.get(EngineParameters.MAX_BHP)),
-                     Double.parseDouble(engineParams.get(EngineParameters.MAX_RPM)),
-                     Double.parseDouble(engineParams.get(EngineParameters.PROP_DIAMETER)),
-                     enginePosition,
-                     i));
+                          Double.parseDouble(engineParams.get(EngineParameters.MAX_BHP)),
+                          Double.parseDouble(engineParams.get(EngineParameters.MAX_RPM)),
+                          Double.parseDouble(engineParams.get(EngineParameters.PROP_DIAMETER)),
+                          enginePosition,
+                          i));
                   break;
             }
 

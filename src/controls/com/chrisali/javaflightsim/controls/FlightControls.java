@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -28,7 +29,6 @@ import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
 import com.chrisali.javaflightsim.simulation.setup.Options;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ import java.util.Map;
  *
  *
  * @author Christopher Ali
- *
+ * @version 0.5
  */
 public class FlightControls implements Runnable, FlightDataListener {
    private static boolean running;
@@ -121,7 +121,9 @@ public class FlightControls implements Runnable, FlightDataListener {
     * @return controls
     */
    public synchronized Map<FlightControlType, Double> getFlightControls() {
-      return Collections.unmodifiableMap(controls);
+      // FIXME: replace the old one when it functions agains with an unmodifiable map
+      // return Collections.unmodifiableMap(controls);
+      return controls;
    }
 
    /**

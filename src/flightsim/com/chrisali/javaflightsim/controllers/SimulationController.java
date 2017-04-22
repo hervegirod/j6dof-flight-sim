@@ -63,7 +63,7 @@ import java.util.Map;
  *
  * @author Christopher Ali
  * @author Herve Girod
- * @since 0.1
+ * @version 0.5
  */
 public class SimulationController {
    // Configuration
@@ -124,7 +124,7 @@ public class SimulationController {
       initialControls = IntegrationSetup.gatherInitialControls(conf.getInitialControlsConfig());
 
       String aircraftName = FileUtilities.parseSimulationSetupForAircraft();
-      Configuration.getInstance().setAircraft(aircraftName);
+      Configuration.getInstance().configureAircraft(aircraftName);
       ab = new AircraftBuilder(aircraftName);
       flightData = new FlightData();
 
@@ -171,7 +171,7 @@ public class SimulationController {
     * @param newAudioOptions the new audio options
     */
    public void updateOptions(EnumSet<Options> newOptions, EnumMap<DisplayOptions, Integer> newDisplayOptions,
-           EnumMap<AudioOptions, Float> newAudioOptions) {
+      EnumMap<AudioOptions, Float> newAudioOptions) {
       Configuration conf = Configuration.getInstance();
       if (conf.hasSimulationConfig()) {
          File simulSetup = conf.getSimulationSetupConfig();
@@ -195,7 +195,7 @@ public class SimulationController {
     */
    public void updateAircraft(String aircraftName) {
       Configuration conf = Configuration.getInstance();
-      conf.setAircraft(aircraftName);
+      conf.configureAircraft(aircraftName);
       ab = new AircraftBuilder(aircraftName);
       if (conf.hasSimulationConfig()) {
          File simulSetup = conf.getSimulationSetupConfig();

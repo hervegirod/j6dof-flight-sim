@@ -16,8 +16,8 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.utilities;
 
-import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.conf.AudioOptions;
+import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.conf.DisplayOptions;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
 import com.chrisali.javaflightsim.simulation.integration.SimOuts;
@@ -38,9 +38,10 @@ import java.util.Set;
 
 /**
  * Contains various static methods for reading and parsing text files into lists.
+ *
+ * @version 0.5
  */
 public class FileUtilities {
-
    //===================================================================================================
    //										File Reading
    //===================================================================================================

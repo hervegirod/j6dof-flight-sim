@@ -17,7 +17,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.conf;
 
 /**
- * Used by the audioOptions EnumSet to set volume settings for different types of sounds
+ * Used by the audioOptions EnumSet to set volume settings for different types of sounds.
  */
 public enum AudioOptions {
    ENGINE_VOLUME("engine_volume"),

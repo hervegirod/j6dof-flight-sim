@@ -14,25 +14,49 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.conf;
+package com.chrisali.javaflightsim.otw.shaders;
 
 /**
- * Used by the displayOptions EnumSet to set options for the out the window display.
+ * This loader is used to load the Shader programs.
  *
  * @version 0.5
  */
-public enum DisplayOptions {
-   DISPLAY_WIDTH("display_width"),
-   DISPLAY_HEIGHT("display_height"),
-   ANTI_ALIASING("anti_aliasing");
+public class ShaderLoader {
+   private static ShaderLoader shaderLoader = null;
+   private ClassLoader loader = null;
 
-   private String option;
-
-   private DisplayOptions(String option) {
-      this.option = option;
+   private ShaderLoader() {
+      loader = Thread.currentThread().getContextClassLoader();
    }
 
-   public String toString() {
-      return option;
+   /**
+    * Return the unique instance.
+    *
+    * @return the instance
+    */
+   public static ShaderLoader getInstance() {
+      if (shaderLoader == null) {
+         shaderLoader = new ShaderLoader();
+      }
+      return shaderLoader;
    }
+
+   /**
+    * Return the class loader used to load the Shaders.
+    *
+    * @return the class loader
+    */
+   public ClassLoader getClassLoader() {
+      return loader;
+   }
+
+   /**
+    * Set the class loader used to load the Shaders.
+    *
+    * @param loader the class loader
+    */
+   public void setClassLoader(ClassLoader loader) {
+      this.loader = loader;
+   }
+
 }

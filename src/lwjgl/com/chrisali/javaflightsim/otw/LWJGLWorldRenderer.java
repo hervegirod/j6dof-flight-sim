@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -69,7 +70,7 @@ import org.lwjgl.util.vector.Vector4f;
  * The display runs in a separate thread that receives data from {@link FlightData} via {@link FlightDataListener}
  *
  * @author Christopher Ali
- *
+ * @version 0.5
  */
 public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    private Loader loader;
@@ -91,12 +92,13 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    private Vector3f ownshipPosition;
    private Vector3f ownshipRotation;
    private Camera camera;
-   private Map<String, GUIText> texts = new HashMap<>();
+   private final Map<String, GUIText> texts = new HashMap<>();
    private boolean running = false;
    private boolean isStarted = false;
    private double x = 0;
    private double y = 0;
    private double z = 0;
+   private boolean includeSounds = true;
 
    /**
     * Sets up OTW display with {@link DisplayOptions} and {@link AudioOptions}, as well as a link to
@@ -104,6 +106,15 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
     * object specified, display will embed itself within {@link SimulationWindow} in {@link MainFrame}
     */
    public LWJGLWorldRenderer() {
+   }
+
+   /**
+    * Set if sounds must be included.
+    *
+    * @param includeSounds true if sounds must be included
+    */
+   public void setIncludeSounds(boolean includeSounds) {
+      this.includeSounds = includeSounds;
    }
 
    /**
@@ -150,8 +161,10 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
       MasterRenderer.setFogGradient(3.5f);
 
       // Initialize sounds and position of listener
-      AudioMaster.init();
-      AudioMaster.setListenerData(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
+      if (includeSounds) {
+         AudioMaster.init();
+         AudioMaster.setListenerData(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
+      }
 
       // Load particles and on-screen text
       ParticleMaster.init(loader, masterRenderer.getProjectionMatrix());

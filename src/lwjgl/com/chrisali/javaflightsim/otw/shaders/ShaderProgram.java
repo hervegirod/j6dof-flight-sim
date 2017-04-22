@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -28,15 +29,20 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
 
+/**
+ * The Shader program.
+ *
+ * @version 0.5
+ */
 public abstract class ShaderProgram {
-   protected static final String SHADER_ROOT_PATH = "/com/chrisali/javaflightsim/otw/shaders/";
-
+   /**
+    * The Shaders root path.
+    */
+   protected static final String SHADER_ROOT_PATH = "com/chrisali/javaflightsim/otw/shaders/";
    private int programID;
    private int vertexShaderID;
    private int fragmentStaderID;
-
    private static FloatBuffer matrixBuffer = BufferUtils.createFloatBuffer(16);
-
    protected static int maxLights = 8;
 
    public ShaderProgram(String vertexFile, String fragmentFile) {
@@ -49,6 +55,17 @@ public abstract class ShaderProgram {
       GL20.glLinkProgram(programID);
       GL20.glValidateProgram(programID);
       getAllUniformLocations();
+   }
+
+   /**
+    * Load a Shader.
+    *
+    * @param shaderFile the Shader file.
+    * @return the Shader InputStream
+    */
+   protected InputStream loadShader(String shaderFile) {
+      ClassLoader loader = ShaderLoader.getInstance().getClassLoader();
+      return loader.getResourceAsStream(shaderFile);
    }
 
    protected abstract void getAllUniformLocations();
@@ -115,11 +132,11 @@ public abstract class ShaderProgram {
       GL20.glUniformMatrix4(location, false, matrixBuffer);
    }
 
-   private static int loadShader(String file, int type) {
+   private int loadShader(String file, int type) {
       StringBuilder shaderSource = new StringBuilder();
 
       try {
-         InputStream in = Class.class.getResourceAsStream(file);
+         InputStream in = loadShader(file);
          BufferedReader reader = new BufferedReader(new InputStreamReader(in));
          String line;
          while ((line = reader.readLine()) != null) {

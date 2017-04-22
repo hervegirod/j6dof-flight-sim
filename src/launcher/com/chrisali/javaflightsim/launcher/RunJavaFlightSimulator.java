@@ -31,10 +31,10 @@ import java.util.Map.Entry;
 import javax.swing.SwingUtilities;
 
 /**
- * Runner class to start Java Flight Simulator
+ * Runner class to start Java Flight Simulator.
  *
  * @author Christopher Ali
- *
+ * @version 0.5
  */
 public class RunJavaFlightSimulator {
    private volatile String aircraftName = null;
@@ -42,6 +42,7 @@ public class RunJavaFlightSimulator {
    private volatile boolean hasInstruments = true;
    private volatile boolean hasPlot = true;
    private volatile boolean hasWorld = true;
+   private volatile boolean hasSounds = true;
 
    private static boolean isTrue(String valueS) {
       return valueS.equalsIgnoreCase("true");
@@ -65,6 +66,8 @@ public class RunJavaFlightSimulator {
             hasPlot = isTrue(entry.getValue());
          } else if (entry.getKey().equals("aircraftName")) {
             aircraftName = entry.getValue();
+         } else if (entry.getKey().equals("hasSounds")) {
+            hasSounds = isTrue(entry.getValue());
          }
       }
 
@@ -90,12 +93,13 @@ public class RunJavaFlightSimulator {
       Configuration conf = Configuration.getInstance();
       conf.setDefaultConfiguration();
       if (aircraftName != null) {
-         conf.forceAircraftName(aircraftName);
+         conf.setAircraft(aircraftName);
       }
 
       SimulationController controller = new SimulationController();
       if (hasWorld) {
          LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+         lwjglRenderer.setIncludeSounds(hasSounds);
          controller.setWorldRenderer(lwjglRenderer);
          controller.setTerrainProvider(lwjglRenderer);
          lwjglRenderer.setSimulationController(controller);

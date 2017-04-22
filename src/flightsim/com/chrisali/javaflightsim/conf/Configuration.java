@@ -19,8 +19,9 @@ package com.chrisali.javaflightsim.conf;
 import java.io.File;
 
 /**
+ * The configuration singleton.
  *
- * @since 0.2 Herve
+ * @version 0.5
  */
 public class Configuration {
    private static Configuration conf = null;
@@ -45,6 +46,15 @@ public class Configuration {
          conf = new Configuration();
       }
       return conf;
+   }
+
+   /**
+    * Set the resources directory.
+    *
+    * @param resourcesDir the resources directory
+    */
+   public void setResources(File resourcesDir) {
+      setResourcesConfig(resourcesDir);
    }
 
    /**
@@ -287,8 +297,28 @@ public class Configuration {
       }
    }
 
-   public void forceAircraftName(String aircraftName) {
-      setAircraft(aircraftName);
+   /**
+    * Set the aircraft directory.
+    *
+    * @param aircraft the aircraft directory
+    */
+   public void setAircraft(File aircraft) {
+      this.aircraftDir = aircraft;
+      if (!aircraftDir.exists() || !aircraftDir.isDirectory()) {
+         aircraftDir = null;
+      } else {
+         aircraftLookupTables = new File(aircraftDir, "LookupTables");
+      }
+      aircraftNameSet = true;
+   }
+
+   /**
+    * Set the aircraft name.
+    *
+    * @param aircraftName the aircraft name
+    */
+   public void setAircraft(String aircraftName) {
+      configureAircraft(aircraftName);
       aircraftNameSet = true;
    }
 
@@ -298,7 +328,7 @@ public class Configuration {
     * @param aircraftName the aircraft name
     * @return the selected aircraft configuration
     */
-   public File setAircraft(String aircraftName) {
+   public File configureAircraft(String aircraftName) {
       if (!aircraftNameSet) {
          this.aircraftName = aircraftName;
          aircraftLookupTables = null;

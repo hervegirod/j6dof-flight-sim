@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -27,10 +28,20 @@ import org.lwjgl.openal.AL10;
 import org.lwjgl.util.WaveData;
 import org.lwjgl.util.vector.Vector3f;
 
+/**
+ * The Audio master.
+ *
+ * @version 0.5
+ */
 public class AudioMaster {
    private static boolean initialized = false;
    private static List<Integer> buffers = new ArrayList<Integer>();
 
+   /**
+    * Return true if the AudioMaster has been initialized.
+    *
+    * @return true if the AudioMaster has been initialized
+    */
    public static boolean isInitialized() {
       return initialized;
    }
