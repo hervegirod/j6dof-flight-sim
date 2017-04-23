@@ -23,9 +23,9 @@ import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
  * The World Renderer interface.
  *
  * @author Herve Girod
- * @since 0.2
+ * @version 0.5f
  */
-public interface WorldRenderer extends FlightDataListener {
+public interface OTWWorld extends FlightDataListener {
 
    /**
     * Set the simulation controller.
@@ -35,14 +35,14 @@ public interface WorldRenderer extends FlightDataListener {
    public void setSimulationController(SimulationController controller);
 
    /**
-    * Return true if the WorldRenderer is currently running.
+    * Return true if the OTWWorld is currently running.
     *
-    * @return true if the WorldRenderer is currently running
+    * @return true if the OTWWorld is currently running
     */
    public boolean isRunning();
 
    /**
-    * Request the WorldRenderer to close.
+    * Request the OTWWorld to close.
     */
    public void requestClose();
 

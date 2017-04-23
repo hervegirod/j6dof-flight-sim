@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,7 +19,7 @@ package com.chrisali.javaflightsim.tests;
 import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.controls.FlightControls;
-import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
+import com.chrisali.javaflightsim.otw.LWJGLWorld;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
@@ -50,11 +51,11 @@ public class TestSimulation {
    public TestSimulation() {
       Configuration conf = Configuration.getInstance();
       conf.setDefaultConfiguration();
-      conf.setAircraft("TwinNavion");
+      conf.configureAircraft("TwinNavion");
 
       this.simController = new SimulationController();
       SimulationController controller = new SimulationController();
-      LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+      LWJGLWorld lwjglRenderer = new LWJGLWorld();
       lwjglRenderer.setSimulationController(controller);
       controller.setWorldRenderer(lwjglRenderer);
       controller.setTerrainProvider(lwjglRenderer);

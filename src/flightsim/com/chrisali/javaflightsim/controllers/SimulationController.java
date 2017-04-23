@@ -27,9 +27,9 @@ import com.chrisali.javaflightsim.gui.SimulationWindow;
 import com.chrisali.javaflightsim.launcher.menus.MainFrame;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.rendering.DataAnalyzer;
+import com.chrisali.javaflightsim.rendering.OTWWorld;
 import com.chrisali.javaflightsim.rendering.RunWorld;
 import com.chrisali.javaflightsim.rendering.TerrainProvider;
-import com.chrisali.javaflightsim.rendering.WorldRenderer;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.aircraft.MassProperties;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
@@ -63,7 +63,7 @@ import java.util.Map;
  *
  * @author Christopher Ali
  * @author Herve Girod
- * @version 0.5
+ * @version 0.5f
  */
 public class SimulationController {
    // Configuration
@@ -82,7 +82,7 @@ public class SimulationController {
    private Thread flightDataThread;
 
    // providers
-   private WorldRenderer worldRenderer = null;
+   private OTWWorld worldRenderer = null;
    private TerrainProvider terrainProvider = null;
    private DataAnalyzer dataAnalyzer = null;
 
@@ -333,7 +333,7 @@ public class SimulationController {
       }
    }
 
-   public void setWorldRenderer(WorldRenderer worldRenderer) {
+   public void setWorldRenderer(OTWWorld worldRenderer) {
       this.worldRenderer = worldRenderer;
    }
 

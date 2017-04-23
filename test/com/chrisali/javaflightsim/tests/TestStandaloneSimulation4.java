@@ -18,22 +18,23 @@ package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
+import com.chrisali.javaflightsim.controls.FlightControls;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 import com.chrisali.javaflightsim.datatransfer.FlightDataType;
-import com.chrisali.javaflightsim.rendering.terrain.DefaultTerrainProvider;
+import com.chrisali.javaflightsim.otw.LWJGLWorld;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import java.util.EnumMap;
 
 /**
  * This class tests the creation and starting of a standalone simulation.
  */
-public class TestStandaloneSimulation2 implements FlightDataListener {
+public class TestStandaloneSimulation4 implements FlightDataListener {
    private SimulationController controller = null;
    private EnumMap<FlightControlType, Double> controls = null;
    private boolean started = false;
 
-   public TestStandaloneSimulation2(SimulationController controller) {
+   public TestStandaloneSimulation4(SimulationController controller) {
       this.controller = controller;
       controller.getFlightData().addFlightDataListener(this);
       controls = controller.getControls();
@@ -46,16 +47,23 @@ public class TestStandaloneSimulation2 implements FlightDataListener {
       conf.setAircraft("LookupNavion");
 
       // simulation controller creation
-      SimulationController controller = new SimulationController(true);
+      SimulationController controller = new SimulationController(false);
 
-      // terrain provider creation
-      DefaultTerrainProvider terrainProvider = new DefaultTerrainProvider();
-      controller.setTerrainProvider(terrainProvider);
-      terrainProvider.setSimulationController(controller);
+      // World renderer creation
+      LWJGLWorld lwjglRenderer = new LWJGLWorld();
+      lwjglRenderer.setIncludeSounds(false);
+      controller.setWorldRenderer(lwjglRenderer);
+      controller.setTerrainProvider(lwjglRenderer);
+      lwjglRenderer.setSimulationController(controller);
+
+      FlightControls flightControls = new FlightControls(controller);
+      controller.setFlightControls(flightControls.getFlightControls());
+      Thread flightControlsThread = new Thread(flightControls);
 
       // start simulation
-      TestStandaloneSimulation2 test = new TestStandaloneSimulation2(controller);
+      TestStandaloneSimulation4 test = new TestStandaloneSimulation4(controller);
       controller.startSimulation();
+      flightControlsThread.start();
       controller.startOTWThread();
    }
 

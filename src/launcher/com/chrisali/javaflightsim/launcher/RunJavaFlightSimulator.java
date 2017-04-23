@@ -22,7 +22,7 @@ import com.chrisali.javaflightsim.gui.Instruments;
 import com.chrisali.javaflightsim.gui.SimulationWindowManager;
 import com.chrisali.javaflightsim.instruments.InstrumentPanel;
 import com.chrisali.javaflightsim.launcher.menus.MainFrame;
-import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
+import com.chrisali.javaflightsim.otw.LWJGLWorld;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.rendering.terrain.DefaultTerrainProvider;
 import java.util.Iterator;
@@ -34,7 +34,7 @@ import javax.swing.SwingUtilities;
  * Runner class to start Java Flight Simulator.
  *
  * @author Christopher Ali
- * @version 0.5
+ * @version 0.5f
  */
 public class RunJavaFlightSimulator {
    private volatile String aircraftName = null;
@@ -98,7 +98,7 @@ public class RunJavaFlightSimulator {
 
       SimulationController controller = new SimulationController();
       if (hasWorld) {
-         LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+         LWJGLWorld lwjglRenderer = new LWJGLWorld();
          lwjglRenderer.setIncludeSounds(hasSounds);
          controller.setWorldRenderer(lwjglRenderer);
          controller.setTerrainProvider(lwjglRenderer);

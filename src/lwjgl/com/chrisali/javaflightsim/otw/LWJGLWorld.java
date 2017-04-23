@@ -46,8 +46,8 @@ import com.chrisali.javaflightsim.otw.renderengine.OBJLoader;
 import com.chrisali.javaflightsim.otw.terrain.Terrain;
 import com.chrisali.javaflightsim.otw.terrain.TerrainCollection;
 import com.chrisali.javaflightsim.otw.textures.ModelTexture;
+import com.chrisali.javaflightsim.rendering.OTWWorld;
 import com.chrisali.javaflightsim.rendering.TerrainProvider;
-import com.chrisali.javaflightsim.rendering.WorldRenderer;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
 import com.chrisali.javaflightsim.simulation.setup.InitialConditions;
 import com.chrisali.javaflightsim.simulation.setup.Options;
@@ -70,9 +70,9 @@ import org.lwjgl.util.vector.Vector4f;
  * The display runs in a separate thread that receives data from {@link FlightData} via {@link FlightDataListener}
  *
  * @author Christopher Ali
- * @version 0.5
+ * @version 0.5f
  */
-public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
+public class LWJGLWorld implements OTWWorld, TerrainProvider {
    private Loader loader;
    private MasterRenderer masterRenderer;
    private List<Light> lights;
@@ -105,7 +105,7 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
     * {@link AircraftBuilder} to determine if multiple engines in aircraft. If {@link SimulationController}
     * object specified, display will embed itself within {@link SimulationWindow} in {@link MainFrame}
     */
-   public LWJGLWorldRenderer() {
+   public LWJGLWorld() {
    }
 
    /**
@@ -296,9 +296,9 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
 
    //=============================== Synchronization ======================================================
    /**
-    * Return true if the WorldRenderer is currently running.
+    * Return true if the OTWWorld is currently running.
     *
-    * @return true if the WorldRenderer is currently running
+    * @return true if the OTWWorld is currently running
     */
    @Override
    public synchronized boolean isRunning() {
@@ -306,7 +306,7 @@ public class LWJGLWorldRenderer implements WorldRenderer, TerrainProvider {
    }
 
    /**
-    * Request the WorldRenderer to close.
+    * Request the OTWWorld to close.
     */
    @Override
    public synchronized void requestClose() {

@@ -21,7 +21,7 @@ import com.chrisali.javaflightsim.controllers.SimulationController;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 import com.chrisali.javaflightsim.datatransfer.FlightDataType;
-import com.chrisali.javaflightsim.otw.LWJGLWorldRenderer;
+import com.chrisali.javaflightsim.otw.LWJGLWorld;
 import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
 import java.util.EnumMap;
 
@@ -43,13 +43,14 @@ public class TestStandaloneSimulation3 implements FlightDataListener {
       // configuration
       Configuration conf = Configuration.getInstance();
       conf.setDefaultConfiguration();
-      conf.forceAircraftName("LookupNavion");
+      conf.setAircraft("LookupNavion");
 
       // simulation controller creation
       SimulationController controller = new SimulationController(true);
 
       // World renderer creation
-      LWJGLWorldRenderer lwjglRenderer = new LWJGLWorldRenderer();
+      LWJGLWorld lwjglRenderer = new LWJGLWorld();
+      lwjglRenderer.setIncludeSounds(false);
       controller.setWorldRenderer(lwjglRenderer);
       controller.setTerrainProvider(lwjglRenderer);
       lwjglRenderer.setSimulationController(controller);

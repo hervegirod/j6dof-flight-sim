@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
+   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -61,7 +62,7 @@ public class TestAircraftBuilder {
       //new TestAircraftBuilder("TwinNavion");
       Configuration conf = Configuration.getInstance();
       conf.setDefaultConfiguration();
-      conf.setAircraft("LookupNavion");
+      conf.configureAircraft("LookupNavion");
       new TestAircraftBuilder(conf.getAircraftName());
    }
 }

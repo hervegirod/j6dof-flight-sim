@@ -36,7 +36,7 @@ public class TestStandaloneSimulation implements FlightDataListener {
       // configuration
       Configuration conf = Configuration.getInstance();
       conf.setDefaultConfiguration();
-      conf.forceAircraftName("LookupNavion");
+      conf.setAircraft("LookupNavion");
 
       // simulation controller creation
       SimulationController controller = new SimulationController(true);

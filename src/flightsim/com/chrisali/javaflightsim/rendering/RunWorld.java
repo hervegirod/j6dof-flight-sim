@@ -31,11 +31,11 @@ import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
  *
  * @author Christopher Ali
  * @author Herve Girod
- * @version 0.2
+ * @version 0.5f
  */
 public class RunWorld implements Runnable {
    private final SimulationController controller;
-   private WorldRenderer worldRenderer = null;
+   private OTWWorld worldRenderer = null;
    private TerrainProvider terrainProvider = null;
 
    /**
@@ -54,7 +54,7 @@ public class RunWorld implements Runnable {
     *
     * @param worldRenderer the World Renderer
     */
-   public void setWorldRenderer(WorldRenderer worldRenderer) {
+   public void setWorldRenderer(OTWWorld worldRenderer) {
       this.worldRenderer = worldRenderer;
    }
 
@@ -72,7 +72,7 @@ public class RunWorld implements Runnable {
     *
     * @return the World Renderer
     */
-   public WorldRenderer getWorldRenderer() {
+   public OTWWorld getWorldRenderer() {
       return worldRenderer;
    }
 
@@ -106,9 +106,9 @@ public class RunWorld implements Runnable {
    }
 
    /**
-    * Return true if the WorldRenderer or the TerrainProvider are currently running.
+    * Return true if the OTWWorld or the TerrainProvider are currently running.
     *
-    * @return true if the WorldRenderer or the TerrainProvider are currently running
+    * @return true if the OTWWorld or the TerrainProvider are currently running
     */
    public synchronized boolean isRunning() {
       boolean isRunning = false;
@@ -120,7 +120,7 @@ public class RunWorld implements Runnable {
    }
 
    /**
-    * Request the WorldRenderer to close.
+    * Request the OTWWorld to close.
     */
    public synchronized void requestClose() {
       if (worldRenderer != null) {
