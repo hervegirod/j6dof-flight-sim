@@ -16,25 +16,25 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.controls.FlightControls;
+import com.chrisali.javaflightsim.controls.PhysicalFlightControls;
 import com.chrisali.javaflightsim.simulation.setup.Options;
 
 /**
- * Test class for {@link FlightControls}. Creates flight controls object and thread to
+ * Test class for {@link PhysicalFlightControls}. Creates flight controls object and thread to
  * run, and outputs values for each flight control deflection/setting
  *
  * @author Christopher Ali
  *
  */
 public class TestFlightControls implements Runnable {
-   private final FlightControls flightControls;
+   private final PhysicalFlightControls flightControls;
    private final Thread flightControlsThread;
    private final SimulationController simController;
 
    public TestFlightControls() {
       this.simController = new SimulationController();
       simController.getSimulationOptions().add(Options.USE_CH_CONTROLS);
-      this.flightControls = new FlightControls(simController);
+      this.flightControls = new PhysicalFlightControls(simController);
       this.flightControlsThread = new Thread(flightControls);
    }
 
@@ -45,7 +45,7 @@ public class TestFlightControls implements Runnable {
       try {
          Thread.sleep(500);
 
-         while (FlightControls.isRunning()) {
+         while (PhysicalFlightControls.isRunning()) {
             System.out.println(flightControls.toString());
             System.out.println();
             System.out.println(simController.getSimulationOptions());

@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
-   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -17,7 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.controls;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.controls.hidcontrollers.AbstractController;
+import com.chrisali.javaflightsim.controls.hidcontrollers.AbstractPhysicalController;
 import com.chrisali.javaflightsim.controls.hidcontrollers.CHControls;
 import com.chrisali.javaflightsim.controls.hidcontrollers.Joystick;
 import com.chrisali.javaflightsim.controls.hidcontrollers.Keyboard;
@@ -36,19 +35,19 @@ import java.util.Map;
  * Contains the Flight Controls thread used to handle flight controls actuated by human interface devices, such as
  * {@link Joystick}, {@link Keyboard}, {@link Mouse} or {@link CHControls}, or by P/PD controllers such as autopilots
  * and stability augmentation sytems. Also contains method to inject doublets into controls when simulation is run
- * as analysis. Uses {@link FlightDataListener} to feed back {@link FlightData} to use in P/PD controllers
- *
+ * as analysis. Uses {@link FlightDataListener} to feed back {@link FlightData} to use in P/PD controllers.
  *
  * @author Christopher Ali
- * @version 0.5
+ * @author Herve Girod
+ * @version 0.8
  */
-public class FlightControls implements Runnable, FlightDataListener {
+public class PhysicalFlightControls implements Runnable, FlightDataListener {
    private static boolean running;
    private Map<FlightControlType, Double> controls;
    private final Map<IntegratorConfig, Double> integratorConfig;
    private final EnumSet<Options> options;
 
-   private AbstractController hidController;
+   private AbstractPhysicalController hidController;
    private final Keyboard hidKeyboard;
 
    /**
@@ -57,7 +56,7 @@ public class FlightControls implements Runnable, FlightDataListener {
     *
     * @param simController the Simulation Controller
     */
-   public FlightControls(SimulationController simController) {
+   public PhysicalFlightControls(SimulationController simController) {
       this.controls = simController.getControls();
       this.integratorConfig = simController.getIntegratorConfig();
       this.options = simController.getSimulationOptions();
@@ -121,27 +120,25 @@ public class FlightControls implements Runnable, FlightDataListener {
     * @return controls
     */
    public synchronized Map<FlightControlType, Double> getFlightControls() {
-      // FIXME: replace the old one when it functions agains with an unmodifiable map
-      // return Collections.unmodifiableMap(controls);
       return controls;
    }
 
    /**
-    * Lets other objects know if {@link FlightControls} thread is running
+    * Lets other objects know if {@link PhysicalFlightControls} thread is running
     *
-    * @return if {@link FlightControls} thread is running
+    * @return if {@link PhysicalFlightControls} thread is running
     */
    public static synchronized boolean isRunning() {
       return running;
    }
 
    /**
-    * Lets other objects request to stop the {@link FlightControls} thread by setting running to false
+    * Lets other objects request to stop the {@link PhysicalFlightControls} thread by setting running to false
     *
     * @param running
     */
    public static synchronized void setRunning(boolean running) {
-      FlightControls.running = running;
+      PhysicalFlightControls.running = running;
    }
 
    @Override

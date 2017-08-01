@@ -14,47 +14,24 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.rendering;
+package com.chrisali.javaflightsim.controls.hidcontrollers;
 
-import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
+import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
+import com.chrisali.javaflightsim.simulation.controls.AbstractController;
+import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
+import java.util.ArrayList;
+import net.java.games.input.Controller;
 
 /**
- * The World Renderer interface.
+ * Contains methods implemented {@link Joystick}, {@link Keyboard} and {@link Mouse} to take controller inputs
+ * given by JInput, and convert them to actual control deflections used by the simulation in {@link Integrate6DOFEquations}
+ * and {@link Aerodynamics}.
  *
  * @author Herve Girod
- * @version 0.5
+ * @version 0.8
  */
-public interface OTWWorld extends FlightDataListener {
+public abstract class AbstractPhysicalController extends AbstractController {
+   protected ArrayList<Controller> controllerList;
 
-   /**
-    * Set the simulation controller.
-    *
-    * @param controller the simulation controller
-    */
-   public void setSimulationController(SimulationController controller);
-
-   /**
-    * Return true if the OTWWorld is currently running.
-    *
-    * @return true if the OTWWorld is currently running
-    */
-   public boolean isRunning();
-
-   /**
-    * Request the OTWWorld to close.
-    */
-   public void requestClose();
-
-   /**
-    * Start the world renderer.
-    */
-   public void start();
-
-   /**
-    * Return true if the world renderer is started.
-    *
-    * @return true if the world renderer is started
-    */
-   public boolean isStarted();
+   protected abstract void searchForControllers();
 }

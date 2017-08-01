@@ -15,13 +15,13 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.controls.hidcontrollers;
 
+import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
+import java.util.ArrayList;
+import java.util.Map;
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Controller;
 import net.java.games.input.ControllerEnvironment;
-import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * The Mouse object uses JInput to integrate mouse functionality into the simulation as a joystick substitute.
@@ -31,9 +31,10 @@ import java.util.Map;
  * and Elevator are controlled by horizontal and vertical mouse movement, respectively, and all throttles are controlled
  * by the mouse wheel.
  *
- * @see AbstractController
+ * @see AbstractPhysicalController
+ * @version 0.5
  */
-public class Mouse extends AbstractController {
+public class Mouse extends AbstractPhysicalController {
 
    // Since mouse axes are measured relative to the stopped position, these fields store the control deflection,
    // and the mouse axis value is added to these
@@ -80,7 +81,7 @@ public class Mouse extends AbstractController {
 
    /**
     * Get button, mouse wheel and axis values from mouse, and return a Map for updateFlightControls()
-    * in {@link AbstractController}
+    * in {@link AbstractPhysicalController}
     *
     * @return controls Map
     */

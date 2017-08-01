@@ -14,41 +14,33 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  If you have any questions about this project, you can visit
  the project website at the project page on http://github.com/chris-ali/j6dof-flight-sim/
  */
-package com.chrisali.javaflightsim.controls.hidcontrollers;
+package com.chrisali.javaflightsim.simulation.controls;
 
-import net.java.games.input.Controller;
 import com.chrisali.javaflightsim.conf.Configuration;
+import com.chrisali.javaflightsim.controls.hidcontrollers.*;
 import com.chrisali.javaflightsim.simulation.aero.Aerodynamics;
-import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
-import com.chrisali.javaflightsim.simulation.controls.FlightControlsUtilities;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 import com.chrisali.javaflightsim.simulation.setup.IntegratorConfig;
-import java.util.ArrayList;
 import java.util.Map;
 
 /**
  * Contains methods implemented {@link Joystick}, {@link Keyboard} and {@link Mouse} to take controller inputs
  * given by JInput, and convert them to actual control deflections used by the simulation in {@link Integrate6DOFEquations}
- * and {@link Aerodynamics}
+ * and {@link Aerodynamics}.
+ *
+ * @author Herve Girod
+ * @version 0.5
  */
 public abstract class AbstractController {
-   protected ArrayList<Controller> controllerList;
-
-   // Gets the frame time DT from IntegratorConfig.txt
+   // The frame time DT from IntegratorConfig.txt
    protected double dt = 0;
-
    // Add these trim values to getControlDeflection method call to emulate trim deflections
    protected static double trimElevator = 0.0;
    protected static double trimAileron = 0.0;
    protected static double trimRudder = 0.0;
-
    // Flaps deflection
    protected static double flaps = 0.0;
-
-   protected abstract void searchForControllers();
-
-   protected abstract Map<FlightControlType, Double> updateControllerValues(Map<FlightControlType, Double> controls);
 
    public AbstractController() {
       Configuration conf = Configuration.getInstance();
@@ -97,6 +89,8 @@ public abstract class AbstractController {
          return Math.pow(value, 2);
       }
    }
+
+   protected abstract Map<FlightControlType, Double> updateControllerValues(Map<FlightControlType, Double> controls);
 
    /**
     * Updates values for controls in controls EnumMap, limiting their max/min via limitControls method.

@@ -31,7 +31,7 @@ import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
  *
  * @author Christopher Ali
  * @author Herve Girod
- * @version 0.5f
+ * @version 0.5
  */
 public class RunWorld implements Runnable {
    private final SimulationController controller;

@@ -16,7 +16,7 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
 package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.controls.FlightControls;
+import com.chrisali.javaflightsim.controls.PhysicalFlightControls;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.instruments.InstrumentPanel;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
@@ -28,7 +28,7 @@ import javax.swing.SwingUtilities;
 /**
  * Creates a real-time pilot in the loop simulation using {@link Integrate6DOFEquations}, and
  * creates an {@link InstrumentPanel} object in JFrame object to test all gauges with the
- * simulation; uses CH controls running on separate thread in {@link FlightControls} for flight controls
+ * simulation; uses CH controls running on separate thread in {@link PhysicalFlightControls} for flight controls
  *
  * @author Christopher Ali
  *
@@ -50,7 +50,7 @@ public class TestInstrumentPanel {
       simController.getSimulationOptions().add(Options.UNLIMITED_FLIGHT);
       simController.getSimulationOptions().add(Options.USE_CH_CONTROLS);
 
-      FlightControls flightControls = new FlightControls(simController);
+      PhysicalFlightControls flightControls = new PhysicalFlightControls(simController);
 
       Integrate6DOFEquations runSim = new Integrate6DOFEquations(flightControls.getFlightControls(), simController);
       FlightData flightData = new FlightData();

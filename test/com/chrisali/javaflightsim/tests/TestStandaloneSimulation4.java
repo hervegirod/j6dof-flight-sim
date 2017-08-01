@@ -18,7 +18,7 @@ package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.controls.FlightControls;
+import com.chrisali.javaflightsim.controls.PhysicalFlightControls;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.datatransfer.FlightDataListener;
 import com.chrisali.javaflightsim.datatransfer.FlightDataType;
@@ -28,6 +28,9 @@ import java.util.EnumMap;
 
 /**
  * This class tests the creation and starting of a standalone simulation.
+ *
+ * @author Herve Girod
+ * @version 0.8
  */
 public class TestStandaloneSimulation4 implements FlightDataListener {
    private SimulationController controller = null;
@@ -56,7 +59,7 @@ public class TestStandaloneSimulation4 implements FlightDataListener {
       controller.setTerrainProvider(lwjglRenderer);
       lwjglRenderer.setSimulationController(controller);
 
-      FlightControls flightControls = new FlightControls(controller);
+      PhysicalFlightControls flightControls = new PhysicalFlightControls(controller);
       controller.setFlightControls(flightControls.getFlightControls());
       Thread flightControlsThread = new Thread(flightControls);
 

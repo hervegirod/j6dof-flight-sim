@@ -18,7 +18,7 @@ package com.chrisali.javaflightsim.simulation.integration;
 
 import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.controls.FlightControls;
+import com.chrisali.javaflightsim.controls.PhysicalFlightControls;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentDataListener;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentDataType;
@@ -105,7 +105,7 @@ public class Integrate6DOFEquations implements Runnable, EnvironmentDataListener
    private static boolean running;
 
    /**
-    * Creates the {@link Integrate6DOFEquations} object with references to {@link FlightControls} and {@link SimulationController}
+    * Creates the {@link Integrate6DOFEquations} object with references to {@link PhysicalFlightControls} and {@link SimulationController}
     * objects.
     *
     * @param flightControls

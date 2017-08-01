@@ -19,7 +19,7 @@ package com.chrisali.javaflightsim.controllers;
 import com.chrisali.javaflightsim.conf.AudioOptions;
 import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.conf.DisplayOptions;
-import com.chrisali.javaflightsim.controls.FlightControls;
+import com.chrisali.javaflightsim.controls.PhysicalFlightControls;
 import com.chrisali.javaflightsim.datatransfer.EnvironmentData;
 import com.chrisali.javaflightsim.datatransfer.FlightData;
 import com.chrisali.javaflightsim.gui.GUIManager;
@@ -63,7 +63,7 @@ import java.util.Map;
  *
  * @author Christopher Ali
  * @author Herve Girod
- * @version 0.5f
+ * @version 0.5
  */
 public class SimulationController {
    // Configuration
@@ -375,7 +375,7 @@ public class SimulationController {
             Thread.sleep(1000);
             analyzeSimulation();
             //Stop flight controls thread after analysis finished
-            FlightControls.setRunning(false);
+            PhysicalFlightControls.setRunning(false);
          } catch (InterruptedException e) {
          }
 
@@ -413,7 +413,7 @@ public class SimulationController {
    public void stopSimulation() {
       if (runSim != null && Integrate6DOFEquations.isRunning() && simulationThread != null && simulationThread.isAlive()) {
          Integrate6DOFEquations.setRunning(false);
-         FlightControls.setRunning(false);
+         PhysicalFlightControls.setRunning(false);
       }
 
       if (flightDataThread != null && flightDataThread.isAlive()) {

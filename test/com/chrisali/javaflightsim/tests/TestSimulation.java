@@ -1,6 +1,5 @@
 /*
  * Copyright (c) 2016, 2017 Chris Ali. All rights reserved.
-   Copyright (c) 2017 Herve Girod. All rights reserved.
  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License
@@ -18,7 +17,7 @@ package com.chrisali.javaflightsim.tests;
 
 import com.chrisali.javaflightsim.conf.Configuration;
 import com.chrisali.javaflightsim.controllers.SimulationController;
-import com.chrisali.javaflightsim.controls.FlightControls;
+import com.chrisali.javaflightsim.controls.PhysicalFlightControls;
 import com.chrisali.javaflightsim.otw.LWJGLWorld;
 import com.chrisali.javaflightsim.plotting.PlotWindow;
 import com.chrisali.javaflightsim.simulation.aircraft.AircraftBuilder;
@@ -30,15 +29,16 @@ import javax.swing.JFrame;
 /**
  * Runs a test of the flight simulation module in Analysis mode to test an aircraft and the simulation
  * workings; uses {@link SimulationController} to set the options, {@link AircraftBuilder} to initalize
- * the aircraft to test, {@link FlightControls} thread to run doublet inputs and {@link PlotWindow} to
+ * the aircraft to test, {@link PhysicalFlightControls} thread to run doublet inputs and {@link PlotWindow} to
  * plot the simulation results at the end
  *
  * @author Christopher Ali
- *
+ * @author Herve Girod
+ * @version 0.8
  */
 public class TestSimulation {
 
-   private FlightControls flightControls;
+   private PhysicalFlightControls flightControls;
    private Thread flightControlsThread;
 
    private Integrate6DOFEquations runSim;
@@ -67,7 +67,7 @@ public class TestSimulation {
 
       Trimming.trimSim(simController, false);
 
-      this.flightControls = new FlightControls(simController);
+      this.flightControls = new PhysicalFlightControls(simController);
       this.flightControlsThread = new Thread(flightControls);
 
       this.runSim = new Integrate6DOFEquations(flightControls.getFlightControls(), simController);
@@ -86,7 +86,7 @@ public class TestSimulation {
       plots.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       simController.setDataAnalyzer(plots);
 
-      FlightControls.setRunning(false);
+      PhysicalFlightControls.setRunning(false);
    }
 
    public static void main(String[] args) {

@@ -15,14 +15,14 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.controls.hidcontrollers;
 
+import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
+import java.util.ArrayList;
+import java.util.Map;
 import net.java.games.input.Component;
 import net.java.games.input.Component.Identifier;
 import net.java.games.input.Component.POV;
 import net.java.games.input.Controller;
 import net.java.games.input.ControllerEnvironment;
-import com.chrisali.javaflightsim.simulation.controls.FlightControlType;
-import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * The CHControls object uses JInput to integrate functionality for CH controls into the simulation.
@@ -33,9 +33,10 @@ import java.util.Map;
  * {@link FlightControlType}. Aileron and Elevator trim are handled by the POV hat switch, and all
  * throttles are controlled by the throttle quadrant.
  *
- * @see AbstractController
+ * @see AbstractPhysicalController
+ * @version 0.5
  */
-public class CHControls extends AbstractController {
+public class CHControls extends AbstractPhysicalController {
 
    /**
     * Constructor for CHControls class creates list of controllers using searchForControllers()
@@ -78,7 +79,7 @@ public class CHControls extends AbstractController {
 
    /**
     * Get button, POV and axis values from each joystick controller, and return a map for updateFlightControls()
-    * in {@link AbstractController}
+    * in {@link AbstractPhysicalController}
     *
     * @param controls the controls Map
     * @return controls Map the controls Map
@@ -181,15 +182,15 @@ public class CHControls extends AbstractController {
                // Y axis (Elevator)
                if (componentIdentifier == Component.Identifier.Axis.Y) {
                   controls.put(FlightControlType.ELEVATOR,
-                          calculateControlDeflection(FlightControlType.ELEVATOR,
-                                  negativeSquare(axisValue)) + trimElevator);
+                     calculateControlDeflection(FlightControlType.ELEVATOR,
+                        negativeSquare(axisValue)) + trimElevator);
                   continue; // Go to next component
                }
                // X axis (Aileron)
                if (componentIdentifier == Component.Identifier.Axis.X) {
                   controls.put(FlightControlType.AILERON,
-                          calculateControlDeflection(FlightControlType.AILERON,
-                                  negativeSquare(axisValue)) + trimAileron);
+                     calculateControlDeflection(FlightControlType.AILERON,
+                        negativeSquare(axisValue)) + trimAileron);
                   continue; // Go to next component
                }
             } else if (component.isAnalog() && controller.getName().toLowerCase().compareTo("ch pro pedals usb") == 0) {
@@ -208,8 +209,8 @@ public class CHControls extends AbstractController {
                // Z axis (Rudder)
                if (componentIdentifier == Component.Identifier.Axis.Z) {
                   controls.put(FlightControlType.RUDDER,
-                          calculateControlDeflection(FlightControlType.RUDDER,
-                                  negativeSquare(axisValue)) + trimRudder);
+                     calculateControlDeflection(FlightControlType.RUDDER,
+                        negativeSquare(axisValue)) + trimRudder);
                   continue; // Go to next component
                }
             } else if (component.isAnalog() && controller.getName().toLowerCase().compareTo("ch throttle quadrant usb") == 0) {

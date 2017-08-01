@@ -15,14 +15,14 @@ if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth F
  */
 package com.chrisali.javaflightsim.simulation.controls;
 
-import com.chrisali.javaflightsim.controls.hidcontrollers.AbstractController;
+import com.chrisali.javaflightsim.controls.hidcontrollers.AbstractPhysicalController;
 import com.chrisali.javaflightsim.simulation.integration.Integrate6DOFEquations;
 import com.chrisali.javaflightsim.simulation.setup.IntegrationSetup;
 
 /**
  * Enum that provides the keys for the controls EnumMap in {@link Integrate6DOFEquations}. Also used to parse
  * InitialControls text file in {@link IntegrationSetup} class. Minima and maxima are also defined in this class
- * as constants to be used in HID controller classes that implement {@link AbstractController}
+ * as constants to be used in HID controller classes that implement {@link AbstractPhysicalController}
  */
 public enum FlightControlType {
    ELEVATOR("elevator", Math.toRadians(-25), Math.toRadians(15)), // "Minimum" is up elevator
